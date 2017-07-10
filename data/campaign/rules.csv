@@ -6,9 +6,9 @@ AddText ""The gate awaits...""
 SetShortcut AG_Leave ""ESCAPE""
 FireAll PopulateOptions",,,
 AG_GateLeave,PopulateOptions,$tag:gate score:100,,,AG_Leave:Leave,
-AG_GateLeaveSelect,DialogOptionSelected,$option == AG_Leave,DismissDialog,Departing gate vicinity,,
+AG_GateLeaveSelect,DialogOptionSelected,$option == AG_Leave,DismissDialog,Departing gate vicinity.,,
 AG_Activate,PopulateOptions,$tag:gate score:100,,,AG_Activate:Activate gate,
-AG_ActivateSelect,DialogOptionSelected,$option == AG_Activate,,Gate activation stub!,,
+AG_ActivateSelect,DialogOptionSelected,$option == AG_Activate,ActivateGateCommandPlugin,,,
 AG_FlyThrough,PopulateOptions,$tag:gate score:100,,,AG_FlyThrough:Fly through the gate,
-AG_FlyThroughSelect,DialogOptionSelected,$option == AG_FlyThrough,"ActiveGatesCommandPlugin
-DismissDialog",Your fleet flies through the gate.,,
+AG_FlyThroughSelect,DialogOptionSelected,$option == AG_FlyThrough,"FlyThroughGateCommandPlugin
+DismissDialog",,,
