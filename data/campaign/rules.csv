@@ -3,12 +3,13 @@ id,trigger,conditions,script,text,options,notes
 AG_GateOpenDialog,OpenInteractionDialog,$tag:gate score:100,"ShowDefaultVisual
 PrintDescription 1
 AddText ""The gate awaits...""
-SetShortcut AG_Leave ""ESCAPE""
+AddGateData
 FireAll PopulateOptions",,,
-AG_GateLeave,PopulateOptions,$tag:gate score:100,,,AG_Leave:Leave,
-AG_GateLeaveSelect,DialogOptionSelected,$option == AG_Leave,DismissDialog,Departing gate vicinity.,,
-AG_Activate,PopulateOptions,$tag:gate score:100,,,AG_Activate:Activate gate,
-AG_ActivateSelect,DialogOptionSelected,$option == AG_Activate,ActivateGateCommandPlugin,,,
+AG_Leave,PopulateOptions,$tag:gate score:100,"SetShortcut AG_Leave ""ESCAPE""",,AG_Leave:Leave,
+AG_LeaveSelect,DialogOptionSelected,$option == AG_Leave,DismissDialog,Departing gate vicinity.,,
+AG_Activate,PopulateOptions,"$tag:gate
+!$tag:gate_activated score:100",,,AG_Activate:Activate gate,
+AG_ActivateSelect,DialogOptionSelected,$option == AG_Activate,ActivateGate,,,
 AG_FlyThrough,PopulateOptions,$tag:gate score:100,,,AG_FlyThrough:Fly through the gate,
-AG_FlyThroughSelect,DialogOptionSelected,$option == AG_FlyThrough,"FlyThroughGateCommandPlugin
+AG_FlyThroughSelect,DialogOptionSelected,$option == AG_FlyThrough,"FlyThroughGate
 DismissDialog",,,

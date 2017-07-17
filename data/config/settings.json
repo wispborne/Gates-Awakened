@@ -2,6 +2,12 @@
 	# where rule commands called from rules.csv can be implemented.
 	# rules from multiple packages CAN NOT share the same name
         "ruleCommandPackages":[
-		"data.campaign.rulecmd",
+		"org.toast.activegates",
 	],
+        "activeGatesFuelMultiplier": 4,
+        "activeGatesMetals": 500,
+        "activeGatesHeavyMachinery": 250,
+        "activeGatesTransplutonics": 250,
+        "activeGatesOrganics": 250,
+        "activeGatesVolatiles": 250,
 }

@@ -1,4 +1,4 @@
-package data.campaign.rulecmd;
+package org.toast.activegates;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 
-public class FlyThroughGateCommandPlugin extends data.campaign.rulecmd.GateCommandPlugin {
+public class FlyThroughGate extends GateCommandPlugin {
 
     @Override
     public boolean execute(String ruleId, InteractionDialogAPI dialog,
@@ -31,7 +31,15 @@ public class FlyThroughGateCommandPlugin extends data.campaign.rulecmd.GateComma
             return false;
         }
 
-        // FIXME pay fuel cost to use gate?
+        CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
+        float fuelcost = getFuelCost();
+        if (cargo.getFuel() >= fuelcost) {
+            cargo.removeFuel(fuelcost);
+        } else {
+            textPanel.addParagraph("Unfortunately, your fleet lacks the " + fuelcost +
+                    " fuel necessary to use the gate.");
+            return false;
+        }
 
         List<LocationAPI> systemsWithActivatedGates = new ArrayList<>();
         Random rng = new Random();
