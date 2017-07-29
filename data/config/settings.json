@@ -4,7 +4,8 @@
         "ruleCommandPackages":[
 		"org.toast.activegates",
 	],
-        "activeGatesFuelMultiplier": 4,
+        "activeGatesDebug": false,
+        "activeGatesFuelMultiplier": 1,
         "activeGatesMetals": 500,
         "activeGatesHeavyMachinery": 250,
         "activeGatesTransplutonics": 250,

@@ -3,7 +3,6 @@ package org.toast.activegates;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Random;
 
 import com.fs.starfarer.api.campaign.*;
 import org.lwjgl.util.vector.Vector2f;
@@ -31,8 +30,21 @@ public class FlyThroughGate extends GateCommandPlugin {
             return false;
         }
 
-        CargoAPI cargo = Global.getSector().getPlayerFleet().getCargo();
-        float fuelcost = getFuelCost();
+        String target = params.get(0).getStringWithTokenReplacement(ruleId, dialog, memoryMap);
+        if (target == null || target.isEmpty()) return false;
+
+        LocationAPI newSys = Global.getSector().getStarSystem(target);
+        textPanel.addParagraph(target + " selected");
+        if (newSys == null) {
+            textPanel.addParagraph("Could not find " + target + "; aborting");
+            return false;
+        }
+
+        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+
+        CargoAPI cargo = playerFleet.getCargo();
+        float fuelcost = getFuelCostPerLY() *
+                Misc.getDistanceLY(playerFleet.getLocationInHyperspace(), newSys.getLocation());
         if (cargo.getFuel() >= fuelcost) {
             cargo.removeFuel(fuelcost);
         } else {
@@ -41,20 +53,6 @@ public class FlyThroughGate extends GateCommandPlugin {
             return false;
         }
 
-        List<LocationAPI> systemsWithActivatedGates = new ArrayList<>();
-        Random rng = new Random();
-        for (LocationAPI system : Global.getSector().getStarSystems())
-        {
-            List<SectorEntityToken> candidates =
-                system.getEntitiesWithTag(ACTIVATED);
-            if (candidates.size() > 0)
-            {
-                systemsWithActivatedGates.add(system);
-            }
-        }
-        LocationAPI newSys = systemsWithActivatedGates.get(
-                rng.nextInt(systemsWithActivatedGates.size()));
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         LocationAPI oldSys = playerFleet.getContainingLocation();
         oldSys.removeEntity(playerFleet);
         newSys.addEntity(playerFleet);

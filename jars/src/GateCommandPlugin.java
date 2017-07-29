@@ -1,14 +1,28 @@
 package org.toast.activegates;
 
+import java.lang.Float;
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin;
+import com.fs.starfarer.api.util.Misc;
+import org.lwjgl.util.vector.Vector2f;
+
+import java.util.List;
 
 public abstract class GateCommandPlugin extends BaseCommandPlugin {
     public static final String ACTIVATED = "gate_activated";
 
-    public float getFuelCost() {
+    public boolean getDebug() {
+        return Global.getSettings().getBoolean("activeGatesDebug");
+    }
+
+    public float getFuelCostPerLY() {
         float multiplier = Global.getSettings().getFloat("activeGatesFuelMultiplier");
         float cost = Global.getSector().getPlayerFleet().getLogistics().getFuelCostPerLightYear() * multiplier;
         if (cost < 1) cost = 1;
@@ -62,4 +76,23 @@ public abstract class GateCommandPlugin extends BaseCommandPlugin {
             return false;
         }
     }
+
+    public Map<Float, String> getGateMap(String tag) {
+        // returns map of systems with activated gates, keyed by distance
+        // https://stackoverflow.com/questions/571388/how-can-i-sort-the-keys-of-a-map-in-java
+        Map<Float, String> map = new TreeMap<Float, String>();
+        Vector2f playerLoc = Global.getSector().getPlayerFleet().getLocationInHyperspace();
+        for (LocationAPI system : Global.getSector().getStarSystems())
+        {
+            List<SectorEntityToken> candidates = system.getEntitiesWithTag(tag);
+            if (candidates.size() > 0)
+            {
+                // FIXME find the right accessor: system.getName()???
+                map.put(Misc.getDistanceLY(playerLoc, system.getLocation()), system.getId());
+            }
+        }
+        return map;
+    }
+
+
 }
