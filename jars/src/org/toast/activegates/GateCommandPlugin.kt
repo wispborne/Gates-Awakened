@@ -25,35 +25,25 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
                 + getCommodityCost("organics") + " organics, and "
                 + getCommodityCost("volatiles") + " volatiles")
 
-    fun getCommodityCost(commodity: String): Float {
-        val settings = Global.getSettings()
-        return when {
-            commodity === "metals" -> settings.getFloat("activeGatesMetals")
-            commodity === "machinery" -> settings.getFloat("activeGatesHeavyMachinery")
-            commodity === "transplutonics" -> settings.getFloat("activeGatesTransplutonics")
-            commodity === "organics" -> settings.getFloat("activeGatesOrganics")
-            commodity === "volatiles" -> settings.getFloat("activeGatesVolatiles")
-            else -> 0f
-        }
-    }
+    private val activationCost: Map<String, Float> =
+            mapOf(
+                    "metals" to Global.getSettings().getFloat("activeGatesMetals"),
+                    "machinery" to Global.getSettings().getFloat("activeGatesHeavyMachinery"),
+                    "transplutonics" to Global.getSettings().getFloat("activeGatesTransplutonics"),
+                    "organics" to Global.getSettings().getFloat("activeGatesOrganics"),
+                    "volatiles" to Global.getSettings().getFloat("activeGatesVolatiles"))
 
     fun canActivate(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
-        return cargo.getCommodityQuantity("metals") >= getCommodityCost("metals") &&
-                cargo.getCommodityQuantity("rare_metals") >= getCommodityCost("transplutonics") &&
-                cargo.getCommodityQuantity("heavy_machinery") >= getCommodityCost("machinery") &&
-                cargo.getCommodityQuantity("organics") >= getCommodityCost("organics") &&
-                cargo.getCommodityQuantity("volatiles") >= getCommodityCost("volatiles")
+        return activationCost.all { commodityAndCost -> cargo.getCommodityQuantity(commodityAndCost.key) >= commodityAndCost.value }
     }
 
     fun payActivationCost(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
         return if (canActivate()) {
-            cargo.removeCommodity("metals", getCommodityCost("metals"))
-            cargo.removeCommodity("rare_metals", getCommodityCost("transplutonics"))
-            cargo.removeCommodity("heavy_machinery", getCommodityCost("machinery"))
-            cargo.removeCommodity("organics", getCommodityCost("organics"))
-            cargo.removeCommodity("volatiles", getCommodityCost("volatiles"))
+            activationCost.forEach { commodity, cost ->
+                cargo.removeCommodity(commodity, cost)
+            }
             true
         } else {
             false
@@ -75,9 +65,9 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
         return map
     }
 
+    private fun getCommodityCost(commodity: String) = activationCost[commodity] ?: 0F
+
     companion object {
         val ACTIVATED = "gate_activated"
     }
-
-
 }
