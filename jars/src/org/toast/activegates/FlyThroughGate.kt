@@ -8,9 +8,10 @@ import com.fs.starfarer.api.util.Misc
 
 class FlyThroughGate : GateCommandPlugin() {
 
-    override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
+    override fun execute(ruleId: String?, dialog: InteractionDialogAPI?,
                          params: List<Misc.Token>,
                          memoryMap: Map<String, MemoryAPI>): Boolean {
+        super.execute(ruleId, dialog, params, memoryMap)
 
         if (dialog == null) return false
 

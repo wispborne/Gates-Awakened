@@ -10,12 +10,12 @@ class AddGateData : GateCommandPlugin() {
     override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
                          params: List<Misc.Token>,
                          memoryMap: Map<String, MemoryAPI>): Boolean {
+        super.execute(ruleId, dialog, params, memoryMap)
 
         if (dialog == null) return false
 
         val textPanel = dialog.textPanel
         val currentGate = dialog.interactionTarget
-        val mem = currentGate.memoryWithoutUpdate
 
         if (!currentGate.hasTag(GateCommandPlugin.ACTIVATED)) {
             textPanel.addParagraph("It will take $commodityCostString to activate the gate.")
@@ -37,23 +37,6 @@ class AddGateData : GateCommandPlugin() {
             for (gate in activatedGates) {
                 textPanel.addParagraph("${gate.systemName} at ${gate.distanceFromPlayer}")
             }
-        }
-
-        var count: Int = 0
-        val maxcount = 5
-        while (count < maxcount) {
-            mem.set("\$gate${count}exists", false, 0f)
-            count++
-        }
-        count = 0
-        for (gate in activatedGates.take(maxcount)) {
-            count++
-            if (debug) {
-                textPanel.addParagraph(count.toString() + "," + gate.distanceFromPlayer + "," + gate.systemName)
-            }
-            mem.set("\$gate${count}_exists", true, 0f)
-            mem.set("\$gate${count}_name", "${gate.systemName} (${(fuelCostPerLY * gate.distanceFromPlayer).roundToInt()} fuel)", 0f)
-            mem.set("\$gate${count}_id", gate.systemId, 0f)
         }
 
         return true

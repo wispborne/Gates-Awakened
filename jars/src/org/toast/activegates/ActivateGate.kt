@@ -10,6 +10,7 @@ class ActivateGate : GateCommandPlugin() {
     override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
                          params: List<Misc.Token>,
                          memoryMap: Map<String, MemoryAPI>): Boolean {
+        super.execute(ruleId, dialog, params, memoryMap)
 
         if (dialog == null) return false
 
@@ -21,6 +22,7 @@ class ActivateGate : GateCommandPlugin() {
                 if (canActivate()) {
                     payActivationCost()
                     gate.addTag(GateCommandPlugin.ACTIVATED)
+                    gate.memory
                     textPanel.addParagraph("The gate is activated.")
                 } else {
                     textPanel.addParagraph("You are unable to activate the gate. " +

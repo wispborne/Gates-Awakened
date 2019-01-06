@@ -1,11 +1,11 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
+import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
-abstract class GateCommandPlugin : BaseCommandPlugin() {
+abstract class GateCommandPlugin : PaginatedOptions() {
 
     val debug: Boolean
         get() = Global.getSettings().getBoolean("activeGates_Debug")
@@ -40,8 +40,8 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
     fun payActivationCost(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
         return if (canActivate()) {
-            activationCost.forEach { commodityAndcost ->
-                cargo.removeCommodity(commodityAndcost.key, commodityAndcost.value)
+            activationCost.forEach { commodityAndCost ->
+                cargo.removeCommodity(commodityAndCost.key, commodityAndCost.value)
             }
             true
         } else {
