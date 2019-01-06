@@ -4,15 +4,14 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.ids.Tags
+import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 
-class FlyThroughGate : GateCommandPlugin() {
+class FlyThroughGate : BaseCommandPlugin() {
 
     override fun execute(ruleId: String?, dialog: InteractionDialogAPI?,
                          params: List<Misc.Token>,
                          memoryMap: Map<String, MemoryAPI>): Boolean {
-        super.execute(ruleId, dialog, params, memoryMap)
-
         if (dialog == null) return false
 
         val textPanel = dialog.textPanel
@@ -21,6 +20,7 @@ class FlyThroughGate : GateCommandPlugin() {
         if (!dialog.interactionTarget.hasTag(GateCommandPlugin.ACTIVATED)) {
             textPanel.addParagraph("Your fleet passes through the inactive gate...")
             textPanel.addParagraph("and nothing happens.")
+            ShowGateDestinationOptions().execute(null, dialog, emptyList(), memoryMap)
             return false
         }
 
@@ -31,18 +31,20 @@ class FlyThroughGate : GateCommandPlugin() {
 
         if (newSys == null) {
             textPanel.addParagraph("Could not find $systemIdChosenByPlayer; aborting")
+            ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
 
         val playerFleet = Global.getSector().playerFleet
 
         val cargo = playerFleet.cargo
-        val fuelcost = fuelCostPerLY * Misc.getDistanceLY(playerFleet.locationInHyperspace, newSys.location)
+        val fuelcost = GateCommandPlugin.fuelCostPerLY * Misc.getDistanceLY(playerFleet.locationInHyperspace, newSys.location)
         if (cargo.fuel >= fuelcost) {
             cargo.removeFuel(fuelcost)
         } else {
             textPanel.addParagraph("Unfortunately, your fleet lacks the " + fuelcost +
                     " fuel necessary to use the gate.")
+            ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
 
@@ -58,6 +60,7 @@ class FlyThroughGate : GateCommandPlugin() {
         textPanel.addParagraph("Your fleet passes through the gate...")
         if (oldSys === newSys) {
             textPanel.addParagraph("and nothing happens.")
+            ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
         } else {
             dialog.dismiss()
         }

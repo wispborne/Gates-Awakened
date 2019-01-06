@@ -1,11 +1,10 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
-abstract class GateCommandPlugin : PaginatedOptions() {
+object GateCommandPlugin {
 
     val debug: Boolean
         get() = Global.getSettings().getBoolean("activeGates_Debug")
@@ -74,9 +73,7 @@ abstract class GateCommandPlugin : PaginatedOptions() {
 
     private fun getCommodityCost(commodity: String): Float = activationCost[commodity] ?: 0F
 
-    companion object {
-        val ACTIVATED = "gate_activated"
-    }
+    const val ACTIVATED = "gate_activated"
 }
 
 data class GateDestination(val systemId: String, val systemName: String, val distanceFromPlayer: Float)
