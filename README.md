@@ -8,7 +8,7 @@ The player may use fuel to travel between any two active gates.
 
 ## Changelog
 
-### 1.0 - 6 Jan, 2019 - New release from Wispborne
+### 1.0 - 6 Jan, 2019 - by *Wispborne*
 
 - May now jump to any activated gate.
 - Cost of activation changed to 500 metal, 250 heavy machinery, and 1 gamma core.
@@ -16,19 +16,19 @@ The player may use fuel to travel between any two active gates.
 - Now displays the fuel cost per jump.
 - General code refactoring. Added IntelliJ project, converted to Kotlin.
 
-### 0.2.0 - 29 July, 2017 - Last release by original author Toast
+### 0.2.0 - 29 July, 2017 - by *toast*
 
 - Fuel cost now dependent on distance.
 - Reduce fuel cost multiplier to 1.
 - Can select from up to 5 of the closest systems with activated gates.
 
-### 0.1.5
+### 0.1.5 by *toast*
 
 - General refactoring.
 - Add gate activation cost and gate fuel usage cost.
 - Costs can be changed by modifying data/config/settings.json.
 
-### 0.1.0
+### 0.1.0 by *toast*
 
 - Initial drop.
 
