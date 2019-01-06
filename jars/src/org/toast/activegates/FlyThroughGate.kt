@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
+import kotlin.math.roundToInt
 
 class FlyThroughGate : BaseCommandPlugin() {
 
@@ -42,7 +43,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         if (cargo.fuel >= fuelcost) {
             cargo.removeFuel(fuelcost)
         } else {
-            textPanel.addParagraph("Unfortunately, your fleet lacks the " + fuelcost +
+            textPanel.addParagraph("Unfortunately, your fleet lacks the " + fuelcost.roundToInt() +
                     " fuel necessary to use the gate.")
             ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false

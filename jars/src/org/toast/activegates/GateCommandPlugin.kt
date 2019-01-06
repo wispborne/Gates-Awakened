@@ -20,8 +20,8 @@ object GateCommandPlugin {
     val commodityCostString: String
         get() {
             val cargo = Global.getSector().playerFleet.cargo
-            return ("${getCommodityCost("metals").roundToInt()} (${cargo.getCommodityQuantity("metals")}) metals, " +
-                    "${getCommodityCost("heavy_machinery").roundToInt()} (${cargo.getCommodityQuantity("heavy_machinery")}) heavy machinery, " +
+            return ("${getCommodityCost("metals").roundToInt()} (${cargo.getCommodityQuantity("metals").roundToInt()}) metals, " +
+                    "${getCommodityCost("heavy_machinery").roundToInt()} (${cargo.getCommodityQuantity("heavy_machinery").roundToInt()}) heavy machinery, " +
                     "and some kind of basic processing core")
         }
 
