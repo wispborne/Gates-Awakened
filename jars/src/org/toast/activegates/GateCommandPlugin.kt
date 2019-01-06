@@ -3,7 +3,6 @@ package org.toast.activegates
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
-import java.util.*
 import kotlin.math.roundToInt
 
 abstract class GateCommandPlugin : BaseCommandPlugin() {
@@ -50,19 +49,27 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
         }
     }
 
-    fun getGateMap(tag: String): Map<Float, String> {
-        // returns map of systems with activated gates, keyed by distance
-        // https://stackoverflow.com/questions/571388/how-can-i-sort-the-keys-of-a-map-in-java
-        val map = TreeMap<Float, String>()
+    /**
+     * List of systems with activated gates, sorted by shortest distance from player first
+     */
+    fun getGateMap(tag: String, excludeCurrentGate: Boolean = true): List<GateDestination> {
         val playerLoc = Global.getSector().playerFleet.locationInHyperspace
-        for (system in Global.getSector().starSystems) {
-            val candidates = system.getEntitiesWithTag(tag)
-            if (candidates.size > 0) {
-                // FIXME find the right accessor: system.getName()???
-                map[Misc.getDistanceLY(playerLoc, system.location)] = system.baseName
-            }
-        }
-        return map
+
+        return Global.getSector().starSystems
+                .filter { it.getEntitiesWithTag(tag).any() }
+                .map {
+                    GateDestination(
+                            systemId = it.id,
+                            systemName = it.baseName,
+                            distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.location))
+                }
+                .filter {
+                    if (excludeCurrentGate)
+                        it.distanceFromPlayer > 0
+                    else
+                        true
+                }
+                .sortedBy { it.distanceFromPlayer }
     }
 
     private fun getCommodityCost(commodity: String): Float = activationCost[commodity] ?: 0F
@@ -71,3 +78,5 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
         val ACTIVATED = "gate_activated"
     }
 }
+
+data class GateDestination(val systemId: String, val systemName: String, val distanceFromPlayer: Float)

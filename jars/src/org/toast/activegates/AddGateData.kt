@@ -14,10 +14,10 @@ class AddGateData : GateCommandPlugin() {
         if (dialog == null) return false
 
         val textPanel = dialog.textPanel
-        val gate = dialog.interactionTarget
-        val mem = gate.memoryWithoutUpdate
+        val currentGate = dialog.interactionTarget
+        val mem = currentGate.memoryWithoutUpdate
 
-        if (!gate.hasTag(GateCommandPlugin.ACTIVATED)) {
+        if (!currentGate.hasTag(GateCommandPlugin.ACTIVATED)) {
             textPanel.addParagraph("It will take $commodityCostString to activate the gate.")
         }
         textPanel.addParagraph("It costs ${fuelCostPerLY.roundToInt()} fuel per light year to use the gate for travel.")
@@ -25,39 +25,35 @@ class AddGateData : GateCommandPlugin() {
         if (debug) {
             val allGates = getGateMap(Tags.GATE)
             textPanel.addParagraph("All gates:")
-            for (key in allGates.keys) {
-                textPanel.addParagraph(allGates[key] + " at " + key)
+            for (gate in allGates) {
+                textPanel.addParagraph(gate.systemName + " at " + gate.distanceFromPlayer)
             }
         }
 
-        val map = getGateMap(GateCommandPlugin.ACTIVATED)
-        val iter = map.keys.iterator()
+        val activatedGates = getGateMap(GateCommandPlugin.ACTIVATED)
 
         if (debug) {
             textPanel.addParagraph("All activated gates:")
-            for (key in map.keys) {
-                textPanel.addParagraph(map[key] + " at " + key)
+            for (gate in activatedGates) {
+                textPanel.addParagraph("${gate.systemName} at ${gate.distanceFromPlayer}")
             }
         }
 
         var count: Int = 0
         val maxcount = 5
         while (count < maxcount) {
-            mem.set("\$gate" + count + "exists", false, 0f)
+            mem.set("\$gate${count}exists", false, 0f)
             count++
         }
         count = 0
-        while (count < maxcount && iter.hasNext()) {
-            val key = iter.next()
-
-            if (key != 0F) {
-                count++
-                if (debug) {
-                    textPanel.addParagraph(count.toString() + "," + key + "," + map[key])
-                }
-                mem.set("\$gate${count}exists", true, 0f)
-                mem.set("\$gate$count", map[key], 0f)
+        for (gate in activatedGates.take(maxcount)) {
+            count++
+            if (debug) {
+                textPanel.addParagraph(count.toString() + "," + gate.distanceFromPlayer + "," + gate.systemName)
             }
+            mem.set("\$gate${count}_exists", true, 0f)
+            mem.set("\$gate${count}_name", "${gate.systemName} (${(fuelCostPerLY * gate.distanceFromPlayer).roundToInt()} fuel)", 0f)
+            mem.set("\$gate${count}_id", gate.systemId, 0f)
         }
 
         return true

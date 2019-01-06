@@ -18,18 +18,18 @@ class FlyThroughGate : GateCommandPlugin() {
 
         // can only fly through activated gates
         if (!dialog.interactionTarget.hasTag(GateCommandPlugin.ACTIVATED)) {
-            textPanel.addParagraph("The gate is not activated.")
-            textPanel.addParagraph("Nothing happens.")
+            textPanel.addParagraph("Your fleet passes through the inactive gate...")
+            textPanel.addParagraph("and nothing happens.")
             return false
         }
 
-        val target = params[0].getStringWithTokenReplacement(ruleId, dialog, memoryMap)
-        if (target == null || target.isEmpty()) return false
+        val systemIdChosenByPlayer = params[0].getStringWithTokenReplacement(ruleId, dialog, memoryMap)
+        if (systemIdChosenByPlayer == null || systemIdChosenByPlayer.isEmpty()) return false
 
-        val newSys = Global.getSector().getStarSystem(target)
-        textPanel.addParagraph("$target selected")
+        val newSys = Global.getSector().getStarSystem(systemIdChosenByPlayer)
+
         if (newSys == null) {
-            textPanel.addParagraph("Could not find $target; aborting")
+            textPanel.addParagraph("Could not find $systemIdChosenByPlayer; aborting")
             return false
         }
 
