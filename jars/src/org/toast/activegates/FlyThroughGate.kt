@@ -3,7 +3,6 @@ package org.toast.activegates
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
@@ -18,7 +17,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         // can only fly through activated gates
-        if (!dialog.interactionTarget.hasTag(GateCommandPlugin.ACTIVATED)) {
+        if (!dialog.interactionTarget.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
             textPanel.addParagraph("Your fleet passes through the inactive gate...")
             textPanel.addParagraph("and nothing happens.")
             ShowGateDestinationOptions().execute(null, dialog, emptyList(), memoryMap)
@@ -53,7 +52,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         oldSys.removeEntity(playerFleet)
         newSys.addEntity(playerFleet)
         Global.getSector().currentLocation = newSys
-        val gates = newSys.getEntitiesWithTag(Tags.GATE)
+        val gates = newSys.getEntitiesWithTag(GateCommandPlugin.TAG_GATE)
         val newVect = gates[0].location
         playerFleet.setLocation(newVect.x, newVect.y)
         playerFleet.clearAssignments()

@@ -1,10 +1,11 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
-object GateCommandPlugin {
+internal object GateCommandPlugin {
 
     val debug: Boolean
         get() = Global.getSettings().getBoolean("activeGates_Debug")
@@ -49,13 +50,19 @@ object GateCommandPlugin {
     }
 
     /**
-     * List of systems with activated gates, sorted by shortest distance from player first
+     * List of systems with gates (filterable), sorted by shortest distance from player first
      */
-    fun getGateMap(tag: String, excludeCurrentGate: Boolean = true): List<GateDestination> {
+    fun getGateMap(filter: GateFilter, excludeCurrentGate: Boolean = true): List<GateDestination> {
         val playerLoc = Global.getSector().playerFleet.locationInHyperspace
 
         return Global.getSector().starSystems
-                .filter { it.getEntitiesWithTag(tag).any() }
+                .filter {
+                    when (filter) {
+                        GateFilter.Active -> it.getEntitiesWithTag(TAG_GATE_ACTIVATED).any()
+                        GateFilter.Inactive -> it.getEntitiesWithTag(TAG_GATE).any() && it.getEntitiesWithTag(TAG_GATE_ACTIVATED).none()
+                        GateFilter.All -> it.getEntitiesWithTag(TAG_GATE).any()
+                    }
+                }
                 .map {
                     GateDestination(
                             systemId = it.id,
@@ -73,7 +80,14 @@ object GateCommandPlugin {
 
     private fun getCommodityCost(commodity: String): Float = activationCost[commodity] ?: 0F
 
-    const val ACTIVATED = "gate_activated"
+    const val TAG_GATE_ACTIVATED = "gate_activated"
+    const val TAG_GATE = Tags.GATE
 }
 
-data class GateDestination(val systemId: String, val systemName: String, val distanceFromPlayer: Float)
+internal data class GateDestination(val systemId: String, val systemName: String, val distanceFromPlayer: Float)
+
+internal enum class GateFilter {
+    Active,
+    Inactive,
+    All
+}

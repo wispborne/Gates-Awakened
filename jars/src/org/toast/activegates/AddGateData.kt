@@ -2,10 +2,8 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
-import kotlin.math.roundToInt
 
 class AddGateData : BaseCommandPlugin() {
     override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
@@ -16,24 +14,20 @@ class AddGateData : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
         val currentGate = dialog.interactionTarget
 
-        if (!currentGate.hasTag(GateCommandPlugin.ACTIVATED)) {
-            textPanel.addParagraph("It will take ${GateCommandPlugin.commodityCostString} to activate the gate.")
+        if (!currentGate.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
+            textPanel.addParagraph("Your engineers estimate with ${GateCommandPlugin.commodityCostString}, they can reactivate the gate.")
         }
-        textPanel.addParagraph("It costs ${GateCommandPlugin.fuelCostPerLY.roundToInt()} fuel per light year to use the gate for travel.")
 
         if (GateCommandPlugin.debug) {
-            val allGates = GateCommandPlugin.getGateMap(Tags.GATE)
             textPanel.addParagraph("All gates:")
-            for (gate in allGates) {
+
+            for (gate in GateCommandPlugin.getGateMap(GateFilter.All)) {
                 textPanel.addParagraph(gate.systemName + " at " + gate.distanceFromPlayer)
             }
-        }
 
-        val activatedGates = GateCommandPlugin.getGateMap(GateCommandPlugin.ACTIVATED)
-
-        if (GateCommandPlugin.debug) {
             textPanel.addParagraph("All activated gates:")
-            for (gate in activatedGates) {
+
+            for (gate in GateCommandPlugin.getGateMap(GateFilter.Active)) {
                 textPanel.addParagraph("${gate.systemName} at ${gate.distanceFromPlayer}")
             }
         }

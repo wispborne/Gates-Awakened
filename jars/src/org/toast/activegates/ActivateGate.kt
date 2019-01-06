@@ -2,7 +2,6 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 
@@ -17,19 +16,19 @@ class ActivateGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         val gate = dialog.interactionTarget
-        if (gate.hasTag(Tags.GATE)) {
-            if (!gate.hasTag(GateCommandPlugin.ACTIVATED)) {
+        if (gate.hasTag(GateCommandPlugin.TAG_GATE)) {
+            if (!gate.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
                 if (GateCommandPlugin.canActivate()) {
                     GateCommandPlugin.payActivationCost()
-                    gate.addTag(GateCommandPlugin.ACTIVATED)
+                    gate.addTag(GateCommandPlugin.TAG_GATE_ACTIVATED)
                     gate.memory
-                    textPanel.addParagraph("The gate is activated.")
+                    textPanel.addParagraph("Your crew offload the resources and, almost reverently, a single gamma core." +
+                            "They get to work and, in short order, the gate is active.")
                 } else {
-                    textPanel.addParagraph("You are unable to activate the gate. " +
-                            "Activation requires " + GateCommandPlugin.commodityCostString + ".")
+                    textPanel.addParagraph("You don't have the resources required to activate the gate.")
                 }
             } else {
-                textPanel.addParagraph("The gate is already activated.")
+                textPanel.addParagraph("The gate is already active.")
             }
             return true
         } else {

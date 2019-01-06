@@ -14,20 +14,16 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         if (dialog == null) return false
 
-        val textPanel = dialog.textPanel
-
-        val activatedGates = GateCommandPlugin.getGateMap(GateCommandPlugin.ACTIVATED)
-
-        val maxcount = 50
+        val activatedGates = GateCommandPlugin.getGateMap(GateFilter.Active)
 
         addOption("Reconsider", "AG_ChoiceAbort")
 
-        for ((index, gate) in activatedGates.take(maxcount).withIndex()) {
+        for ((index, gate) in activatedGates.withIndex()) {
             if (GateCommandPlugin.debug) {
-                textPanel.addParagraph(index.toString() + "," + gate.distanceFromPlayer + "," + gate.systemName)
+                dialog.textPanel.addParagraph(index.toString() + "," + gate.distanceFromPlayer + "," + gate.systemName)
             }
 
-            addOption("Warp to ${gate.systemName} (${(GateCommandPlugin.fuelCostPerLY * gate.distanceFromPlayer).roundToInt()} fuel)", gate.systemId)
+            addOption("Jump to ${gate.systemName} (${(GateCommandPlugin.fuelCostPerLY * gate.distanceFromPlayer).roundToInt()} fuel)", gate.systemId)
         }
 
         showOptions()
@@ -36,7 +32,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
         super.optionSelected(optionText, optionData)
-        val activatedGates = GateCommandPlugin.getGateMap(GateCommandPlugin.ACTIVATED)
+        val activatedGates = GateCommandPlugin.getGateMap(GateFilter.Active)
 
         if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             FlyThroughGate().execute(
