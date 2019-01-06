@@ -1,10 +1,10 @@
 {
     "id": "active_gates",
     "name": "Active Gates",
-    "author": "Toast",
+    "author": "Toast (Wispborne variant)",
     "utility": "false",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "Allows gates to teleport your fleet from one gate to another.",
-    "gameVersion": "0.8.1a",
-    "jars":["jars/Active_Gates.jar"],
+    "gameVersion": "0.9a",
+    "jars":["jars/Active_Gates.jar"]
 }
