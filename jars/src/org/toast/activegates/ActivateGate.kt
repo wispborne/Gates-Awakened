@@ -17,10 +17,10 @@ class ActivateGate : GateCommandPlugin() {
 
         val gate = dialog.interactionTarget
         if (gate.hasTag(Tags.GATE)) {
-            if (!gate.hasTag(GateCommandPlugin.Companion.ACTIVATED)) {
+            if (!gate.hasTag(GateCommandPlugin.ACTIVATED)) {
                 if (canActivate()) {
                     payActivationCost()
-                    gate.addTag(GateCommandPlugin.Companion.ACTIVATED)
+                    gate.addTag(GateCommandPlugin.ACTIVATED)
                     textPanel.addParagraph("The gate is activated.")
                 } else {
                     textPanel.addParagraph("You are unable to activate the gate. " +

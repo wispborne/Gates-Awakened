@@ -40,9 +40,8 @@ class AddGateData : GateCommandPlugin() {
             }
         }
 
-        var count: Int
+        var count: Int = 0
         val maxcount = 5
-        count = 0
         while (count < maxcount) {
             mem.set("\$gate" + count + "exists", false, 0f)
             count++
@@ -56,7 +55,7 @@ class AddGateData : GateCommandPlugin() {
                 if (debug) {
                     textPanel.addParagraph(count.toString() + "," + key + "," + map[key])
                 }
-                mem.set("\$gate" + count + "exists", true, 0f)
+                mem.set("\$gate${count}exists", true, 0f)
                 mem.set("\$gate$count", map[key], 0f)
             }
         }

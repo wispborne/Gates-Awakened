@@ -59,7 +59,7 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
             val candidates = system.getEntitiesWithTag(tag)
             if (candidates.size > 0) {
                 // FIXME find the right accessor: system.getName()???
-                map[Misc.getDistanceLY(playerLoc, system.location)] = system.id
+                map[Misc.getDistanceLY(playerLoc, system.location)] = system.baseName
             }
         }
         return map

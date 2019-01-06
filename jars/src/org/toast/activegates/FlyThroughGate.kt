@@ -57,6 +57,8 @@ class FlyThroughGate : GateCommandPlugin() {
         textPanel.addParagraph("Your fleet passes through the gate...")
         if (oldSys === newSys) {
             textPanel.addParagraph("and nothing happens.")
+        } else {
+            dialog.dismiss()
         }
 
         return true
