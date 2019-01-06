@@ -57,6 +57,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         val newVect = gates[0].location
         playerFleet.setLocation(newVect.x, newVect.y)
         playerFleet.clearAssignments()
+        playerFleet.setMoveDestination(playerFleet.location.x, playerFleet.location.y)
 
         textPanel.addParagraph("Your fleet passes through the gate...")
         if (oldSys === newSys) {
