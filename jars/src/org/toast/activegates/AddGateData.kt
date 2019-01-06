@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.util.Misc
+import kotlin.math.roundToInt
 
 class AddGateData : GateCommandPlugin() {
     override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
@@ -16,10 +17,10 @@ class AddGateData : GateCommandPlugin() {
         val gate = dialog.interactionTarget
         val mem = gate.memoryWithoutUpdate
 
-        if (!gate.hasTag(GateCommandPlugin.Companion.ACTIVATED)) {
-            textPanel.addParagraph("It costs $commodityCostString to activate the gate.")
+        if (!gate.hasTag(GateCommandPlugin.ACTIVATED)) {
+            textPanel.addParagraph("It will take $commodityCostString to activate the gate.")
         }
-        textPanel.addParagraph("It costs $fuelCostPerLY fuel per light year to use the gate for travel.")
+        textPanel.addParagraph("It costs ${fuelCostPerLY.roundToInt()} fuel per light year to use the gate for travel.")
 
         if (debug) {
             val allGates = getGateMap(Tags.GATE)
@@ -29,7 +30,7 @@ class AddGateData : GateCommandPlugin() {
             }
         }
 
-        val map = getGateMap(GateCommandPlugin.Companion.ACTIVATED)
+        val map = getGateMap(GateCommandPlugin.ACTIVATED)
         val iter = map.keys.iterator()
 
         if (debug) {

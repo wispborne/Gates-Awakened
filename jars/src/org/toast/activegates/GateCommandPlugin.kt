@@ -4,34 +4,34 @@ import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 import java.util.*
+import kotlin.math.roundToInt
 
 abstract class GateCommandPlugin : BaseCommandPlugin() {
 
     val debug: Boolean
-        get() = Global.getSettings().getBoolean("activeGatesDebug")
+        get() = Global.getSettings().getBoolean("activeGates_Debug")
 
     val fuelCostPerLY: Float
         get() {
-            val multiplier = Global.getSettings().getFloat("activeGatesFuelMultiplier")
+            val multiplier = Global.getSettings().getFloat("activeGates_FuelMultiplier")
             var cost = Global.getSector().playerFleet.logistics.fuelCostPerLightYear * multiplier
             if (cost < 1) cost = 1f
             return cost
         }
 
     val commodityCostString: String
-        get() = (getCommodityCost("metals").toString() + " metals, "
-                + getCommodityCost("machinery") + " heavy machinery, "
-                + getCommodityCost("transplutonics") + " transplutonics, "
-                + getCommodityCost("organics") + " organics, and "
-                + getCommodityCost("volatiles") + " volatiles")
+        get() {
+            val cargo = Global.getSector().playerFleet.cargo
+            return ("${getCommodityCost("metals").roundToInt()} (${cargo.getCommodityQuantity("metals")}) metals, " +
+                    "${getCommodityCost("heavy_machinery").roundToInt()} (${cargo.getCommodityQuantity("heavy_machinery")}) heavy machinery, " +
+                    "and some kind of basic processing core")
+        }
 
     private val activationCost: Map<String, Float> =
             mapOf(
-                    "metals" to Global.getSettings().getFloat("activeGatesMetals"),
-                    "machinery" to Global.getSettings().getFloat("activeGatesHeavyMachinery"),
-                    "transplutonics" to Global.getSettings().getFloat("activeGatesTransplutonics"),
-                    "organics" to Global.getSettings().getFloat("activeGatesOrganics"),
-                    "volatiles" to Global.getSettings().getFloat("activeGatesVolatiles"))
+                    "metals" to Global.getSettings().getFloat("activeGates_Metals"),
+                    "heavy_machinery" to Global.getSettings().getFloat("activeGates_HeavyMachinery"),
+                    "gamma_core" to Global.getSettings().getFloat("activeGates_GammaCores"))
 
     fun canActivate(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
@@ -41,8 +41,8 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
     fun payActivationCost(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
         return if (canActivate()) {
-            activationCost.forEach { commodity, cost ->
-                cargo.removeCommodity(commodity, cost)
+            activationCost.forEach { commodityAndcost ->
+                cargo.removeCommodity(commodityAndcost.key, commodityAndcost.value)
             }
             true
         } else {
@@ -65,7 +65,7 @@ abstract class GateCommandPlugin : BaseCommandPlugin() {
         return map
     }
 
-    private fun getCommodityCost(commodity: String) = activationCost[commodity] ?: 0F
+    private fun getCommodityCost(commodity: String): Float = activationCost[commodity] ?: 0F
 
     companion object {
         val ACTIVATED = "gate_activated"
