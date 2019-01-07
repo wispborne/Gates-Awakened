@@ -9,7 +9,7 @@
     #
     # Bitbucket, GitHub, and other online repositories make excellent hosts.
     #
-    "masterVersionFile":"https://raw.githubusercontent.com/davidwhitman/Active-Gates/master/active_gates.version",
+    "masterVersionFile":"https://raw.githubusercontent.com/ken-c/Active-Gates/master/active_gates.version",
 
     # The name that is displayed in-game for your mod
     "modName":"Active Gates",
