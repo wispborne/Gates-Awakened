@@ -10,6 +10,7 @@ The player may use fuel to travel between any two active gates.
 
 ### 1.0 - 6 Jan, 2019 - by *Wispborne*
 
+- Works with Starsector 0.9a (previous version did also).
 - May now jump to any activated gate.
 - Cost of activation changed to 500 metal, 250 heavy machinery, and 1 gamma core.
 - Smoothed numerous rough edges, such as wording and navigation within the dialog.
