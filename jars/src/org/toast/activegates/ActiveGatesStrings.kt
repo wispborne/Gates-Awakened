@@ -20,7 +20,7 @@ object ActiveGatesStrings {
     const val flyThroughActiveGate: String = "Your fleet passes through the gate..."
     const val resultWhenGateDoesNotWork: String = "and nothing happens."
     const val menuOptionReconsider: String = "Reconsider"
-    const val paidActivationCost: String = "Your crew offload the resources and, almost reverently, a single gamma core. " +
+    const val paidActivationCost: String = "Your crew offload the resources from your fleet. " +
             "They get to work and, in short order, the gate is active."
     const val insufficientResourcesToActivateGate: String = "You don't have the resources required to activate the gate."
     const val gateAlreadyActive: String = "The gate is already active."
