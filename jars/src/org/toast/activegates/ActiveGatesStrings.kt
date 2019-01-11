@@ -32,6 +32,7 @@ object ActiveGatesStrings {
         get() {
             val cargo = Global.getSector().playerFleet.cargo
             return ActiveGates.activationCost
+                    .filter { it.value > 0 }
                     .map { "• ${it.value.roundToInt()} ${Global.getSettings().getCommoditySpec(it.key).name}  (${cargo.getCommodityQuantity(it.key).roundToInt()} in cargo)" }
                     .joinToString(separator = "\n")
         }
