@@ -14,7 +14,7 @@ object ActiveGatesStrings {
     ///////////////////////////////
 
     val activationExplanation: String
-        get() = "Your engineers estimate with ${ActiveGatesStrings.activationCost}, they can reactivate the gate."
+        get() = "Your engineers produce a list of materials that, if procured, they think they can use to activate the gate."
 
     const val flyThroughInactiveGate: String = "Your fleet passes through the inactive gate..."
     const val flyThroughActiveGate: String = "Your fleet passes through the gate..."
@@ -28,12 +28,12 @@ object ActiveGatesStrings {
     fun notEnoughFuel(fuelCostOfJump: Int): String =
             "Unfortunately, your fleet lacks the $fuelCostOfJump fuel necessary to use the gate."
 
-    private val activationCost: String
+    val activationCost: String
         get() {
             val cargo = Global.getSector().playerFleet.cargo
-            return ("${ActiveGates.getCommodityCostOf("metals").roundToInt()} (${cargo.getCommodityQuantity("metals").roundToInt()}) metals, " +
-                    "${ActiveGates.getCommodityCostOf("heavy_machinery").roundToInt()} (${cargo.getCommodityQuantity("heavy_machinery").roundToInt()}) heavy machinery, " +
-                    "and some kind of basic processing core")
+            return ActiveGates.activationCost
+                    .map { "• ${it.value.roundToInt()} ${Global.getSettings().getCommoditySpec(it.key).name}  (${cargo.getCommodityQuantity(it.key).roundToInt()} in cargo)" }
+                    .joinToString(separator = "\n")
         }
 
     fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String = "Could not find $systemIdChosenByPlayer; aborting"

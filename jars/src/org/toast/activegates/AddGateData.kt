@@ -16,6 +16,7 @@ class AddGateData : BaseCommandPlugin() {
 
         if (!currentGate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
             textPanel.addParagraph(ActiveGatesStrings.activationExplanation)
+            textPanel.addParagraph(ActiveGatesStrings.activationCost)
         }
 
         if (ActiveGates.inDebugMode) {

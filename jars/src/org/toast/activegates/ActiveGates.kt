@@ -19,10 +19,12 @@ internal object ActiveGates {
             return Math.max(1F, (Global.getSector().playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings))
         }
 
-    private val activationCost: Map<String, Float> =
+    val activationCost: Map<String, Float> =
             mapOf(
                     "metals" to Global.getSettings().getFloat("activeGates_Metals"),
                     "heavy_machinery" to Global.getSettings().getFloat("activeGates_HeavyMachinery"),
+                    "rare_metals" to Global.getSettings().getFloat("activeGates_Transplutonics"),
+                    "volatiles" to Global.getSettings().getFloat("activeGates_Volatiles"),
                     "gamma_core" to Global.getSettings().getFloat("activeGates_GammaCores"))
 
     fun canActivate(): Boolean {
