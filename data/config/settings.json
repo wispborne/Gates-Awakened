@@ -6,7 +6,9 @@
 	],
         "activeGates_Debug": false,
         "activeGates_FuelMultiplier": 1,
-        "activeGates_Metals": 500,
-        "activeGates_HeavyMachinery": 250,
+        "activeGates_Metals": 2000,
+        "activeGates_HeavyMachinery": 500,
+        "activeGates_Transplutonics": 250,
+        "activeGates_Volatiles": 250,
         "activeGates_GammaCores": 1
 }

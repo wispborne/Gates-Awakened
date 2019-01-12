@@ -16,19 +16,18 @@ class ActivateGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         val gate = dialog.interactionTarget
-        if (gate.hasTag(GateCommandPlugin.TAG_GATE)) {
-            if (!gate.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
-                if (GateCommandPlugin.canActivate()) {
-                    GateCommandPlugin.payActivationCost()
-                    gate.addTag(GateCommandPlugin.TAG_GATE_ACTIVATED)
+        if (gate.hasTag(ActiveGates.TAG_GATE)) {
+            if (!gate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
+                if (ActiveGates.canActivate()) {
+                    ActiveGates.payActivationCost()
+                    gate.addTag(ActiveGates.TAG_GATE_ACTIVATED)
                     gate.memory
-                    textPanel.addParagraph("Your crew offload the resources and, almost reverently, a single gamma core." +
-                            "They get to work and, in short order, the gate is active.")
+                    textPanel.addParagraph(ActiveGatesStrings.paidActivationCost)
                 } else {
-                    textPanel.addParagraph("You don't have the resources required to activate the gate.")
+                    textPanel.addParagraph(ActiveGatesStrings.insufficientResourcesToActivateGate)
                 }
             } else {
-                textPanel.addParagraph("The gate is already active.")
+                textPanel.addParagraph(ActiveGatesStrings.gateAlreadyActive)
             }
             return true
         } else {

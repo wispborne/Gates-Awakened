@@ -14,21 +14,22 @@ class AddGateData : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
         val currentGate = dialog.interactionTarget
 
-        if (!currentGate.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
-            textPanel.addParagraph("Your engineers estimate with ${GateCommandPlugin.commodityCostString}, they can reactivate the gate.")
+        if (!currentGate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
+            textPanel.addParagraph(ActiveGatesStrings.activationExplanation)
+            textPanel.addParagraph(ActiveGatesStrings.activationCost)
         }
 
-        if (GateCommandPlugin.debug) {
-            textPanel.addParagraph("All gates:")
+        if (ActiveGates.inDebugMode) {
+            textPanel.addParagraph(ActiveGatesStrings.debugAllGates)
 
-            for (gate in GateCommandPlugin.getGateMap(GateFilter.All)) {
-                textPanel.addParagraph(gate.systemName + " at " + gate.distanceFromPlayer)
+            for (gate in ActiveGates.getGates(GateFilter.All)) {
+                textPanel.addParagraph(ActiveGatesStrings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
             }
 
-            textPanel.addParagraph("All activated gates:")
+            textPanel.addParagraph(ActiveGatesStrings.debugActiveGates)
 
-            for (gate in GateCommandPlugin.getGateMap(GateFilter.Active)) {
-                textPanel.addParagraph("${gate.systemName} at ${gate.distanceFromPlayer}")
+            for (gate in ActiveGates.getGates(GateFilter.Active)) {
+                textPanel.addParagraph(ActiveGatesStrings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
             }
         }
 

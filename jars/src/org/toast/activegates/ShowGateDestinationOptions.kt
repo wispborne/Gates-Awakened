@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.util.Misc
-import kotlin.math.roundToInt
 
 class ShowGateDestinationOptions : PaginatedOptions() {
     override fun doesCommandAddOptions(): Boolean = true
@@ -14,16 +13,16 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         if (dialog == null) return false
 
-        val activatedGates = GateCommandPlugin.getGateMap(GateFilter.Active)
+        val activatedGates = ActiveGates.getGates(GateFilter.Active)
 
-        addOption("Reconsider", "AG_ChoiceAbort")
+        addOption(ActiveGatesStrings.menuOptionReconsider, "AG_ChoiceAbort")
 
         for ((index, gate) in activatedGates.withIndex()) {
-            if (GateCommandPlugin.debug) {
-                dialog.textPanel.addParagraph(index.toString() + "," + gate.distanceFromPlayer + "," + gate.systemName)
+            if (ActiveGates.inDebugMode) {
+                dialog.textPanel.addParagraph(ActiveGatesStrings.debugJumpOptionsAndDistances(index.toString(), gate.distanceFromPlayer, gate.systemName))
             }
 
-            addOption("Jump to ${gate.systemName} (${(GateCommandPlugin.fuelCostPerLY * gate.distanceFromPlayer).roundToInt()} fuel)", gate.systemId)
+            addOption(ActiveGatesStrings.menuOptionJumpToSystem(gate.systemName, ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)), gate.systemId)
         }
 
         showOptions()
@@ -32,7 +31,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
         super.optionSelected(optionText, optionData)
-        val activatedGates = GateCommandPlugin.getGateMap(GateFilter.Active)
+        val activatedGates = ActiveGates.getGates(GateFilter.Active)
 
         if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             FlyThroughGate().execute(

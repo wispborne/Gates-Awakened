@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
-import kotlin.math.roundToInt
 
 class FlyThroughGate : BaseCommandPlugin() {
 
@@ -16,55 +15,58 @@ class FlyThroughGate : BaseCommandPlugin() {
 
         val textPanel = dialog.textPanel
 
-        // can only fly through activated gates
-        if (!dialog.interactionTarget.hasTag(GateCommandPlugin.TAG_GATE_ACTIVATED)) {
-            textPanel.addParagraph("Your fleet passes through the inactive gate...")
-            textPanel.addParagraph("and nothing happens.")
+        // Can only jump using activated gates
+        if (!dialog.interactionTarget.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
+            textPanel.addParagraph(ActiveGatesStrings.flyThroughInactiveGate)
+            textPanel.addParagraph(ActiveGatesStrings.resultWhenGateDoesNotWork)
             ShowGateDestinationOptions().execute(null, dialog, emptyList(), memoryMap)
             return false
         }
 
         val systemIdChosenByPlayer = params[0].getStringWithTokenReplacement(ruleId, dialog, memoryMap)
+
         if (systemIdChosenByPlayer == null || systemIdChosenByPlayer.isEmpty()) return false
 
-        val newSys = Global.getSector().getStarSystem(systemIdChosenByPlayer)
+        val newSystem = Global.getSector().getStarSystem(systemIdChosenByPlayer)
 
-        if (newSys == null) {
-            textPanel.addParagraph("Could not find $systemIdChosenByPlayer; aborting")
+        if (newSystem == null) {
+            textPanel.addParagraph(ActiveGatesStrings.errorCouldNotFindJumpSystem(systemIdChosenByPlayer))
             ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
 
         val playerFleet = Global.getSector().playerFleet
 
+        // Pay fuel cost (or show error if player lacks fuel)
         val cargo = playerFleet.cargo
-        val fuelcost = GateCommandPlugin.fuelCostPerLY * Misc.getDistanceLY(playerFleet.locationInHyperspace, newSys.location)
-        if (cargo.fuel >= fuelcost) {
-            cargo.removeFuel(fuelcost)
+        val fuelCostOfJump = ActiveGates.jumpCostInFuel(Misc.getDistanceLY(playerFleet.locationInHyperspace, newSystem.location))
+
+        if (cargo.fuel >= fuelCostOfJump) {
+            cargo.removeFuel(fuelCostOfJump.toFloat())
         } else {
-            textPanel.addParagraph("Unfortunately, your fleet lacks the " + fuelcost.roundToInt() +
-                    " fuel necessary to use the gate.")
+            textPanel.addParagraph(ActiveGatesStrings.notEnoughFuel(fuelCostOfJump))
             ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
 
-        val oldSys = playerFleet.containingLocation
-        oldSys.removeEntity(playerFleet)
-        newSys.addEntity(playerFleet)
-        Global.getSector().currentLocation = newSys
-        val gates = newSys.getEntitiesWithTag(GateCommandPlugin.TAG_GATE)
-        val newVect = gates[0].location
-        playerFleet.setLocation(newVect.x, newVect.y)
+        // Jump player fleet to new system
+        val oldSystem = playerFleet.containingLocation
+        oldSystem.removeEntity(playerFleet)
+        newSystem.addEntity(playerFleet)
+        Global.getSector().currentLocation = newSystem
+
+        // Move player fleet to the new gate's location
+        val gates = newSystem.getEntitiesWithTag(ActiveGates.TAG_GATE)
+        val locationOfFirstGateInNewSystem = gates.first().location
+        playerFleet.setLocation(locationOfFirstGateInNewSystem.x, locationOfFirstGateInNewSystem.y)
+
+        // Ensure that the player fleet's only action post-jump is to hang out around the gate
         playerFleet.clearAssignments()
         playerFleet.setMoveDestination(playerFleet.location.x, playerFleet.location.y)
 
-        textPanel.addParagraph("Your fleet passes through the gate...")
-        if (oldSys === newSys) {
-            textPanel.addParagraph("and nothing happens.")
-            ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
-        } else {
-            dialog.dismiss()
-        }
+        textPanel.addParagraph(ActiveGatesStrings.flyThroughActiveGate)
+
+        dialog.dismiss()
 
         return true
     }

@@ -5,31 +5,26 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
-internal object GateCommandPlugin {
+/**
+ * A collection of information and stateless utility methods for the Active Gates mod.
+ */
+internal object ActiveGates {
 
-    val debug: Boolean
+    val inDebugMode: Boolean
         get() = Global.getSettings().getBoolean("activeGates_Debug")
 
-    val fuelCostPerLY: Float
+    private val fuelCostPerLY: Float
         get() {
-            val multiplier = Global.getSettings().getFloat("activeGates_FuelMultiplier")
-            var cost = Global.getSector().playerFleet.logistics.fuelCostPerLightYear * multiplier
-            if (cost < 1) cost = 1f
-            return cost
+            val fuelMultiplierFromSettings = Global.getSettings().getFloat("activeGates_FuelMultiplier")
+            return Math.max(1F, (Global.getSector().playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings))
         }
 
-    val commodityCostString: String
-        get() {
-            val cargo = Global.getSector().playerFleet.cargo
-            return ("${getCommodityCost("metals").roundToInt()} (${cargo.getCommodityQuantity("metals").roundToInt()}) metals, " +
-                    "${getCommodityCost("heavy_machinery").roundToInt()} (${cargo.getCommodityQuantity("heavy_machinery").roundToInt()}) heavy machinery, " +
-                    "and some kind of basic processing core")
-        }
-
-    private val activationCost: Map<String, Float> =
+    val activationCost: Map<String, Float> =
             mapOf(
                     "metals" to Global.getSettings().getFloat("activeGates_Metals"),
                     "heavy_machinery" to Global.getSettings().getFloat("activeGates_HeavyMachinery"),
+                    "rare_metals" to Global.getSettings().getFloat("activeGates_Transplutonics"),
+                    "volatiles" to Global.getSettings().getFloat("activeGates_Volatiles"),
                     "gamma_core" to Global.getSettings().getFloat("activeGates_GammaCores"))
 
     fun canActivate(): Boolean {
@@ -39,6 +34,7 @@ internal object GateCommandPlugin {
 
     fun payActivationCost(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
+
         return if (canActivate()) {
             activationCost.forEach { commodityAndCost ->
                 cargo.removeCommodity(commodityAndCost.key, commodityAndCost.value)
@@ -49,10 +45,12 @@ internal object GateCommandPlugin {
         }
     }
 
+    fun jumpCostInFuel(distanceInLY: Float): Int = (fuelCostPerLY * distanceInLY).roundToInt()
+
     /**
      * List of systems with gates (filterable), sorted by shortest distance from player first
      */
-    fun getGateMap(filter: GateFilter, excludeCurrentGate: Boolean = true): List<GateDestination> {
+    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean = true): List<GateDestination> {
         val playerLoc = Global.getSector().playerFleet.locationInHyperspace
 
         return Global.getSector().starSystems
@@ -78,7 +76,7 @@ internal object GateCommandPlugin {
                 .sortedBy { it.distanceFromPlayer }
     }
 
-    private fun getCommodityCost(commodity: String): Float = activationCost[commodity] ?: 0F
+    fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F
 
     const val TAG_GATE_ACTIVATED = "gate_activated"
     const val TAG_GATE = Tags.GATE
