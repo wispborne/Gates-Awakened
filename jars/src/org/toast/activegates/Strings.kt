@@ -3,7 +3,7 @@ package org.toast.activegates
 import com.fs.starfarer.api.Global
 import kotlin.math.roundToInt
 
-object ActiveGatesStrings {
+object Strings {
     // Used for debug mode /////////
     fun debugGateAndDistance(systemName: String, distanceFromPlayer: Float): String =
             "$systemName at $distanceFromPlayer LY"
@@ -12,6 +12,7 @@ object ActiveGatesStrings {
     const val debugAllGates: String = "All gates:"
     const val debugActiveGates: String = "All activated gates:"
     ///////////////////////////////
+    const val modName = "active-gates"
 
     val activationExplanation: String
         get() = "Your engineers produce a list of materials that, if procured, they think they can use to activate the gate."

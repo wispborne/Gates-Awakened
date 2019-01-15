@@ -1,19 +1,19 @@
 id,trigger,conditions,script,text,options,notes
 # Add menu item to all gates,,,,,,
-AG_GateOpenDialog,OpenInteractionDialog,$tag:gate score:100,FireAll AG_ShowFirstScreen,,,
+AG_GateOpenDialog,OpenInteractionDialog,$tag:ag_gate_candidate score:100,FireAll AG_ShowFirstScreen,,,
 AG_FirstScreen,AG_ShowFirstScreen,,"ShowDefaultVisual
 PrintDescription 1
 AddText ""The gate awaits...""
 AddGateData
 $chooseDest = false 0
 FireAll GateOptions",,,
-AG_Activate,GateOptions,"$tag:gate
+AG_Activate,GateOptions,"$tag:ag_gate_candidate
 !$tag:gate_activated score:100",,,AG_Activate:Activate gate,
 AG_ActivateSelect,DialogOptionSelected,$option == AG_Activate,"ActivateGate
 FireAll GateOptions",,,
-AG_FlyThrough,GateOptions,$tag:gate score:100,,,AG_FlyThrough:Fly through the gate,
+AG_FlyThrough,GateOptions,$tag:ag_gate_candidate score:100,,,AG_FlyThrough:Fly through the gate,
 AG_FlyThroughSelect,DialogOptionSelected,$option == AG_FlyThrough,"$chooseDest = true 0
 ShowGateDestinationOptions",Choose a destination gate.,,
-AG_Leave,GateOptions,$tag:gate score:100,"SetShortcut AG_Leave ""ESCAPE""",,AG_Leave:Leave,
+AG_Leave,GateOptions,$tag:ag_gate_candidate score:100,"SetShortcut AG_Leave ""ESCAPE""",,AG_Leave:Leave,
 AG_LeaveSelect,DialogOptionSelected,$option == AG_Leave,DismissDialog,Departing gate vicinity.,,
 AG_ChoiceAbortSelect,DialogOptionSelected,$option == AG_ChoiceAbort,FireAll AG_ShowFirstScreen,Aborting gate jump,,

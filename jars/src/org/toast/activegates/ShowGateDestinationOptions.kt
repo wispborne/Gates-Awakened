@@ -15,14 +15,14 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         val activatedGates = ActiveGates.getGates(GateFilter.Active)
 
-        addOption(ActiveGatesStrings.menuOptionReconsider, "AG_ChoiceAbort")
+        addOption(Strings.menuOptionReconsider, "AG_ChoiceAbort")
 
         for ((index, gate) in activatedGates.withIndex()) {
             if (ActiveGates.inDebugMode) {
-                dialog.textPanel.addParagraph(ActiveGatesStrings.debugJumpOptionsAndDistances(index.toString(), gate.distanceFromPlayer, gate.systemName))
+                dialog.textPanel.addParagraph(Strings.debugJumpOptionsAndDistances(index.toString(), gate.distanceFromPlayer, gate.systemName))
             }
 
-            addOption(ActiveGatesStrings.menuOptionJumpToSystem(gate.systemName, ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)), gate.systemId)
+            addOption(Strings.menuOptionJumpToSystem(gate.systemName, ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)), gate.systemId)
         }
 
         showOptions()

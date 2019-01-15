@@ -16,18 +16,18 @@ class ActivateGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         val gate = dialog.interactionTarget
-        if (gate.hasTag(ActiveGates.TAG_GATE)) {
+        if (gate.hasTag(ActiveGates.TAG_GATE_CANDIDATE)) {
             if (!gate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
                 if (ActiveGates.canActivate()) {
                     ActiveGates.payActivationCost()
                     gate.addTag(ActiveGates.TAG_GATE_ACTIVATED)
                     gate.memory
-                    textPanel.addParagraph(ActiveGatesStrings.paidActivationCost)
+                    textPanel.addParagraph(Strings.paidActivationCost)
                 } else {
-                    textPanel.addParagraph(ActiveGatesStrings.insufficientResourcesToActivateGate)
+                    textPanel.addParagraph(Strings.insufficientResourcesToActivateGate)
                 }
             } else {
-                textPanel.addParagraph(ActiveGatesStrings.gateAlreadyActive)
+                textPanel.addParagraph(Strings.gateAlreadyActive)
             }
             return true
         } else {
