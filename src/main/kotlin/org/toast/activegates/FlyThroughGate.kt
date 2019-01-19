@@ -8,9 +8,11 @@ import com.fs.starfarer.api.util.Misc
 
 class FlyThroughGate : BaseCommandPlugin() {
 
-    override fun execute(ruleId: String?, dialog: InteractionDialogAPI?,
-                         params: List<Misc.Token>,
-                         memoryMap: Map<String, MemoryAPI>): Boolean {
+    override fun execute(
+        ruleId: String?, dialog: InteractionDialogAPI?,
+        params: List<Misc.Token>,
+        memoryMap: Map<String, MemoryAPI>
+    ): Boolean {
         if (dialog == null) return false
 
         val textPanel = dialog.textPanel

@@ -8,7 +8,12 @@ import com.fs.starfarer.api.util.Misc
 class ShowGateDestinationOptions : PaginatedOptions() {
     override fun doesCommandAddOptions(): Boolean = true
 
-    override fun execute(ruleId: String?, dialog: InteractionDialogAPI?, params: List<Misc.Token>, memoryMap: Map<String, MemoryAPI>?): Boolean {
+    override fun execute(
+        ruleId: String?,
+        dialog: InteractionDialogAPI?,
+        params: List<Misc.Token>,
+        memoryMap: Map<String, MemoryAPI>?
+    ): Boolean {
         super.execute(ruleId, dialog, params, memoryMap)
 
         if (dialog == null) return false
@@ -32,7 +37,8 @@ class ShowGateDestinationOptions : PaginatedOptions() {
                 Strings.menuOptionJumpToSystem(
                     gate.systemName,
                     ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)
-                ), gate.systemId)
+                ), gate.systemId
+            )
         }
 
         showOptions()
@@ -45,10 +51,13 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             FlyThroughGate().execute(
-                    ruleId = null,
-                    dialog = dialog,
-                    params = listOf(Misc.Token(optionData, Misc.TokenType.LITERAL), Misc.Token(optionText, Misc.TokenType.LITERAL)),
-                    memoryMap = memoryMap
+                ruleId = null,
+                dialog = dialog,
+                params = listOf(
+                    Misc.Token(optionData, Misc.TokenType.LITERAL),
+                    Misc.Token(optionText, Misc.TokenType.LITERAL)
+                ),
+                memoryMap = memoryMap
             )
         }
     }

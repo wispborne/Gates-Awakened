@@ -14,16 +14,20 @@ internal object ActiveGates {
     private val fuelCostPerLY: Float
         get() {
             val fuelMultiplierFromSettings = Global.getSettings().getFloat("activeGates_FuelMultiplier")
-            return Math.max(1F, (Global.getSector().playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings))
+            return Math.max(
+                1F,
+                (Global.getSector().playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
+            )
         }
 
     val activationCost: Map<String, Float> =
-            mapOf(
-                    "metals" to Global.getSettings().getFloat("activeGates_Metals"),
-                    "heavy_machinery" to Global.getSettings().getFloat("activeGates_HeavyMachinery"),
-                    "rare_metals" to Global.getSettings().getFloat("activeGates_Transplutonics"),
-                    "volatiles" to Global.getSettings().getFloat("activeGates_Volatiles"),
-                    "gamma_core" to Global.getSettings().getFloat("activeGates_GammaCores"))
+        mapOf(
+            "metals" to Global.getSettings().getFloat("activeGates_Metals"),
+            "heavy_machinery" to Global.getSettings().getFloat("activeGates_HeavyMachinery"),
+            "rare_metals" to Global.getSettings().getFloat("activeGates_Transplutonics"),
+            "volatiles" to Global.getSettings().getFloat("activeGates_Volatiles"),
+            "gamma_core" to Global.getSettings().getFloat("activeGates_GammaCores")
+        )
 
     fun canActivate(): Boolean {
         val cargo = Global.getSector().playerFleet.cargo
@@ -52,32 +56,30 @@ internal object ActiveGates {
         val playerLoc = Global.getSector().playerFleet.locationInHyperspace
 
         return Global.getSector().starSystems
-                .filter { system ->
-                    when (filter) {
-                        GateFilter.Active -> (system.getEntitiesWithTag(TAG_GATE_ACTIVATED).any { it.hasTag(
-                            TAG_GATE_CANDIDATE
-                        ) })
-                        GateFilter.Inactive -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any { it.hasTag(
-                            TAG_GATE_CANDIDATE
-                        ) }
+            .filter { system ->
+                when (filter) {
+                    GateFilter.Active ->
+                        (system.getEntitiesWithTag(TAG_GATE_ACTIVATED).any { it.hasTag(TAG_GATE_CANDIDATE) })
+                    GateFilter.Inactive ->
+                        system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any { it.hasTag(TAG_GATE_CANDIDATE) }
                                 && system.getEntitiesWithTag(TAG_GATE_ACTIVATED).none()
-                        GateFilter.All -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any()
-                    }
+                    GateFilter.All -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any()
                 }
-                .map {
-                    GateDestination(
-                        systemId = it.id,
-                        systemName = it.baseName,
-                        distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.location)
-                    )
-                }
-                .filter {
-                    if (excludeCurrentGate)
-                        it.distanceFromPlayer > 0
-                    else
-                        true
-                }
-                .sortedBy { it.distanceFromPlayer }
+            }
+            .map {
+                GateDestination(
+                    systemId = it.id,
+                    systemName = it.baseName,
+                    distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.location)
+                )
+            }
+            .filter {
+                if (excludeCurrentGate)
+                    it.distanceFromPlayer > 0
+                else
+                    true
+            }
+            .sortedBy { it.distanceFromPlayer }
     }
 
     fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F

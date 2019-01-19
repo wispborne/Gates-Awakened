@@ -6,9 +6,11 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 
 class AddGateData : BaseCommandPlugin() {
-    override fun execute(ruleId: String, dialog: InteractionDialogAPI?,
-                         params: List<Misc.Token>,
-                         memoryMap: Map<String, MemoryAPI>): Boolean {
+    override fun execute(
+        ruleId: String, dialog: InteractionDialogAPI?,
+        params: List<Misc.Token>,
+        memoryMap: Map<String, MemoryAPI>
+    ): Boolean {
         if (dialog == null) return false
 
         val textPanel = dialog.textPanel
@@ -25,8 +27,8 @@ class AddGateData : BaseCommandPlugin() {
             for (gate in ActiveGates.getGates(GateFilter.All)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
-                        gate.systemName,
-                        gate.distanceFromPlayer
+                        systemName = gate.systemName,
+                        distanceFromPlayer = gate.distanceFromPlayer
                     )
                 )
             }
@@ -36,8 +38,8 @@ class AddGateData : BaseCommandPlugin() {
             for (gate in ActiveGates.getGates(GateFilter.Active)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
-                        gate.systemName,
-                        gate.distanceFromPlayer
+                        systemName = gate.systemName,
+                        distanceFromPlayer = gate.distanceFromPlayer
                     )
                 )
             }
