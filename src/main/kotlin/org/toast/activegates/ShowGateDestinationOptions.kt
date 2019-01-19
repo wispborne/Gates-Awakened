@@ -19,10 +19,20 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         for ((index, gate) in activatedGates.withIndex()) {
             if (ActiveGates.inDebugMode) {
-                dialog.textPanel.addParagraph(Strings.debugJumpOptionsAndDistances(index.toString(), gate.distanceFromPlayer, gate.systemName))
+                dialog.textPanel.addParagraph(
+                    Strings.debugJumpOptionsAndDistances(
+                        index.toString(),
+                        gate.distanceFromPlayer,
+                        gate.systemName
+                    )
+                )
             }
 
-            addOption(Strings.menuOptionJumpToSystem(gate.systemName, ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)), gate.systemId)
+            addOption(
+                Strings.menuOptionJumpToSystem(
+                    gate.systemName,
+                    ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)
+                ), gate.systemId)
         }
 
         showOptions()

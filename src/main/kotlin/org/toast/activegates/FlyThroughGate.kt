@@ -39,7 +39,12 @@ class FlyThroughGate : BaseCommandPlugin() {
 
         // Pay fuel cost (or show error if player lacks fuel)
         val cargo = playerFleet.cargo
-        val fuelCostOfJump = ActiveGates.jumpCostInFuel(Misc.getDistanceLY(playerFleet.locationInHyperspace, newSystem.location))
+        val fuelCostOfJump = ActiveGates.jumpCostInFuel(
+            Misc.getDistanceLY(
+                playerFleet.locationInHyperspace,
+                newSystem.location
+            )
+        )
 
         if (cargo.fuel >= fuelCostOfJump) {
             cargo.removeFuel(fuelCostOfJump.toFloat())

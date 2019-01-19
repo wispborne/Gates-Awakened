@@ -21,17 +21,19 @@ class Startup : BaseModPlugin() {
     private fun tagPossibleGateDestinations() {
         val blacklistedSystems = try {
             val jsonArray = Global.getSettings()
-                    .getMergedSpreadsheetDataForMod("id", "data/active-gates/active-gates_system_blacklist.csv", Strings.modName)
+                    .getMergedSpreadsheetDataForMod("id", "data/active-gates/active-gates_system_blacklist.csv",
+                        Strings.modName
+                    )
             val blacklist = mutableListOf<BlacklistEntry>()
 
             for (i in 0 until jsonArray.length()) {
                 val jsonObj = jsonArray.getJSONObject(i)
 
                 blacklist += BlacklistEntry(
-                        id = jsonObj.getString("id"),
-                        systemId = jsonObj.getString("systemId"),
-                        isBlacklisted = jsonObj.optBoolean("isBlacklisted", true),
-                        priority = jsonObj.optInt("priority", 0)
+                    id = jsonObj.getString("id"),
+                    systemId = jsonObj.getString("systemId"),
+                    isBlacklisted = jsonObj.optBoolean("isBlacklisted", true),
+                    priority = jsonObj.optInt("priority", 0)
                 )
             }
 

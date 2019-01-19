@@ -4,6 +4,16 @@ Starsector mod that allows travel the player to activate gates, for a cost.
 
 The player may use fuel to travel between any two active gates.
 
+## Compiling this Mod
+
+1. Check out the source.
+2. Ensure you have java installed and accessible via system variable.
+3. Open up `build.gradle.kts` in a text editor and change `starsectorCoreDirectory` to point to your `starsector-core` directory.
+4. Open a terminal in the root directory of the mod and type
+   1. Unix: `./gradlew build jar`
+   2. Windows: `gradlew.bat build jar`
+5. You should now (eventually) have a jar built at `jars/Active-Gates.jar`.
+
 ![Screenshot](screenshot.png)
 
 ## Changelog

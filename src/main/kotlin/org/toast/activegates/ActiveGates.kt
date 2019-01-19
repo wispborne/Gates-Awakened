@@ -54,17 +54,22 @@ internal object ActiveGates {
         return Global.getSector().starSystems
                 .filter { system ->
                     when (filter) {
-                        GateFilter.Active -> (system.getEntitiesWithTag(TAG_GATE_ACTIVATED).any { it.hasTag(TAG_GATE_CANDIDATE) })
-                        GateFilter.Inactive -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any { it.hasTag(TAG_GATE_CANDIDATE) }
+                        GateFilter.Active -> (system.getEntitiesWithTag(TAG_GATE_ACTIVATED).any { it.hasTag(
+                            TAG_GATE_CANDIDATE
+                        ) })
+                        GateFilter.Inactive -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any { it.hasTag(
+                            TAG_GATE_CANDIDATE
+                        ) }
                                 && system.getEntitiesWithTag(TAG_GATE_ACTIVATED).none()
                         GateFilter.All -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any()
                     }
                 }
                 .map {
                     GateDestination(
-                            systemId = it.id,
-                            systemName = it.baseName,
-                            distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.location))
+                        systemId = it.id,
+                        systemName = it.baseName,
+                        distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.location)
+                    )
                 }
                 .filter {
                     if (excludeCurrentGate)

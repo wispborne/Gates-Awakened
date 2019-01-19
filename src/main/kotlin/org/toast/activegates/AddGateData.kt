@@ -23,13 +23,23 @@ class AddGateData : BaseCommandPlugin() {
             textPanel.addParagraph(Strings.debugAllGates)
 
             for (gate in ActiveGates.getGates(GateFilter.All)) {
-                textPanel.addParagraph(Strings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
+                textPanel.addParagraph(
+                    Strings.debugGateAndDistance(
+                        gate.systemName,
+                        gate.distanceFromPlayer
+                    )
+                )
             }
 
             textPanel.addParagraph(Strings.debugActiveGates)
 
             for (gate in ActiveGates.getGates(GateFilter.Active)) {
-                textPanel.addParagraph(Strings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
+                textPanel.addParagraph(
+                    Strings.debugGateAndDistance(
+                        gate.systemName,
+                        gate.distanceFromPlayer
+                    )
+                )
             }
         }
 
