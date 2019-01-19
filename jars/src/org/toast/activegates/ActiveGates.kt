@@ -1,7 +1,6 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
@@ -9,7 +8,6 @@ import kotlin.math.roundToInt
  * A collection of information and stateless utility methods for the Active Gates mod.
  */
 internal object ActiveGates {
-
     val inDebugMode: Boolean
         get() = Global.getSettings().getBoolean("activeGates_Debug")
 
@@ -54,11 +52,12 @@ internal object ActiveGates {
         val playerLoc = Global.getSector().playerFleet.locationInHyperspace
 
         return Global.getSector().starSystems
-                .filter {
+                .filter { system ->
                     when (filter) {
-                        GateFilter.Active -> it.getEntitiesWithTag(TAG_GATE_ACTIVATED).any()
-                        GateFilter.Inactive -> it.getEntitiesWithTag(TAG_GATE).any() && it.getEntitiesWithTag(TAG_GATE_ACTIVATED).none()
-                        GateFilter.All -> it.getEntitiesWithTag(TAG_GATE).any()
+                        GateFilter.Active -> (system.getEntitiesWithTag(TAG_GATE_ACTIVATED).any { it.hasTag(TAG_GATE_CANDIDATE) })
+                        GateFilter.Inactive -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any { it.hasTag(TAG_GATE_CANDIDATE) }
+                                && system.getEntitiesWithTag(TAG_GATE_ACTIVATED).none()
+                        GateFilter.All -> system.getEntitiesWithTag(TAG_GATE_CANDIDATE).any()
                     }
                 }
                 .map {
@@ -78,8 +77,11 @@ internal object ActiveGates {
 
     fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F
 
+    /** A gate that has been activated by the player **/
     const val TAG_GATE_ACTIVATED = "gate_activated"
-    const val TAG_GATE = Tags.GATE
+
+    /** A potential target for the player to activate **/
+    const val TAG_GATE_CANDIDATE = "ag_gate_candidate"
 }
 
 internal data class GateDestination(val systemId: String, val systemName: String, val distanceFromPlayer: Float)

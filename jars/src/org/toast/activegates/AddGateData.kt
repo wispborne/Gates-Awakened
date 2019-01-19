@@ -15,21 +15,21 @@ class AddGateData : BaseCommandPlugin() {
         val currentGate = dialog.interactionTarget
 
         if (!currentGate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
-            textPanel.addParagraph(ActiveGatesStrings.activationExplanation)
-            textPanel.addParagraph(ActiveGatesStrings.activationCost)
+            textPanel.addParagraph(Strings.activationExplanation)
+            textPanel.addParagraph(Strings.activationCost)
         }
 
         if (ActiveGates.inDebugMode) {
-            textPanel.addParagraph(ActiveGatesStrings.debugAllGates)
+            textPanel.addParagraph(Strings.debugAllGates)
 
             for (gate in ActiveGates.getGates(GateFilter.All)) {
-                textPanel.addParagraph(ActiveGatesStrings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
+                textPanel.addParagraph(Strings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
             }
 
-            textPanel.addParagraph(ActiveGatesStrings.debugActiveGates)
+            textPanel.addParagraph(Strings.debugActiveGates)
 
             for (gate in ActiveGates.getGates(GateFilter.Active)) {
-                textPanel.addParagraph(ActiveGatesStrings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
+                textPanel.addParagraph(Strings.debugGateAndDistance(gate.systemName, gate.distanceFromPlayer))
             }
         }
 

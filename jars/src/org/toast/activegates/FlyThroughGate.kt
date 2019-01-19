@@ -17,8 +17,8 @@ class FlyThroughGate : BaseCommandPlugin() {
 
         // Can only jump using activated gates
         if (!dialog.interactionTarget.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
-            textPanel.addParagraph(ActiveGatesStrings.flyThroughInactiveGate)
-            textPanel.addParagraph(ActiveGatesStrings.resultWhenGateDoesNotWork)
+            textPanel.addParagraph(Strings.flyThroughInactiveGate)
+            textPanel.addParagraph(Strings.resultWhenGateDoesNotWork)
             ShowGateDestinationOptions().execute(null, dialog, emptyList(), memoryMap)
             return false
         }
@@ -30,7 +30,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         val newSystem = Global.getSector().getStarSystem(systemIdChosenByPlayer)
 
         if (newSystem == null) {
-            textPanel.addParagraph(ActiveGatesStrings.errorCouldNotFindJumpSystem(systemIdChosenByPlayer))
+            textPanel.addParagraph(Strings.errorCouldNotFindJumpSystem(systemIdChosenByPlayer))
             ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
@@ -44,7 +44,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         if (cargo.fuel >= fuelCostOfJump) {
             cargo.removeFuel(fuelCostOfJump.toFloat())
         } else {
-            textPanel.addParagraph(ActiveGatesStrings.notEnoughFuel(fuelCostOfJump))
+            textPanel.addParagraph(Strings.notEnoughFuel(fuelCostOfJump))
             ShowGateDestinationOptions().execute(null, dialog, params, memoryMap)
             return false
         }
@@ -56,7 +56,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         Global.getSector().currentLocation = newSystem
 
         // Move player fleet to the new gate's location
-        val gates = newSystem.getEntitiesWithTag(ActiveGates.TAG_GATE)
+        val gates = newSystem.getEntitiesWithTag(ActiveGates.TAG_GATE_CANDIDATE)
         val locationOfFirstGateInNewSystem = gates.first().location
         playerFleet.setLocation(locationOfFirstGateInNewSystem.x, locationOfFirstGateInNewSystem.y)
 
@@ -64,7 +64,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         playerFleet.clearAssignments()
         playerFleet.setMoveDestination(playerFleet.location.x, playerFleet.location.y)
 
-        textPanel.addParagraph(ActiveGatesStrings.flyThroughActiveGate)
+        textPanel.addParagraph(Strings.flyThroughActiveGate)
 
         dialog.dismiss()
 
