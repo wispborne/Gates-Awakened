@@ -33,7 +33,7 @@ object Strings {
     val activationCost: String
         get() {
             val cargo = Global.getSector().playerFleet.cargo
-            return ActiveGates.activationCost
+            return Common.activationCost
                 .filter { it.value > 0 }
                 .map {
                     "• ${it.value.roundToInt()} ${Global.getSettings().getCommoditySpec(it.key).name}  (${cargo.getCommodityQuantity(

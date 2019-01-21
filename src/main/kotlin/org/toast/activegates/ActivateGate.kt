@@ -18,11 +18,12 @@ class ActivateGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         val gate = dialog.interactionTarget
-        if (gate.hasTag(ActiveGates.TAG_GATE_CANDIDATE)) {
-            if (!gate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
-                if (ActiveGates.canActivate()) {
-                    ActiveGates.payActivationCost()
-                    gate.addTag(ActiveGates.TAG_GATE_ACTIVATED)
+
+        if (gate.starSystem.isBlacklisted) {
+            if (!gate.hasTag(Common.TAG_GATE_ACTIVATED)) {
+                if (Common.canActivate()) {
+                    Common.payActivationCost()
+                    gate.addTag(Common.TAG_GATE_ACTIVATED)
                     gate.memory
                     textPanel.addParagraph(Strings.paidActivationCost)
                 } else {

@@ -1,26 +1,19 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.BaseModPlugin
-import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 
 class Startup : BaseModPlugin() {
 
-    /** Vanilla tag for a gate.
-     * We only want to touch gates that aren't blacklisted, so throughout this mod,
-     * only get references to gates via TAG_GATE_CANDIDATE.
-     **/
-    private val TAG_GATE = Tags.GATE
-
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
+        Di.inst = Di()
 
         tagPossibleGateDestinations()
     }
 
     private fun tagPossibleGateDestinations() {
         val blacklistedSystems = try {
-            val jsonArray = Global.getSettings()
+            val jsonArray = Di.inst.settings
                 .getMergedSpreadsheetDataForMod(
                     "id", "data/active-gates/active-gates_system_blacklist.csv",
                     Strings.modName
@@ -43,37 +36,29 @@ class Startup : BaseModPlugin() {
             blacklist
                 .sortedByDescending { it.priority }
                 .distinctBy { it.systemId }
+                .filter { it.isBlacklisted }
         } catch (e: Exception) {
-            Global.getLogger(this::class.java).error(e.message, e)
+            Di.inst.logger.error(e.message, e)
             emptyList<BlacklistEntry>()
         }
 
-        // Log the blacklist
-        blacklistedSystems
-            .filter { it.isBlacklisted == true }
-            .forEach {
-                Global.getLogger(this::class.java).debug("Blacklisting system: ${it.systemId}")
-            }
+        val systems = Di.inst.sector.starSystems
 
-        // Get all systems, then remove ones that are marked "true" on the blacklist.
-        // Then get all gates in the remaining systems and add the "gate candidate" tag to them.
-        Global.getSector().starSystems
-            .flatMap { it.getEntitiesWithTag(TAG_GATE) }
-            .forEach { gate ->
-                val blacklistEntryForGate = blacklistedSystems.singleOrNull { it.systemId == gate.starSystem.id }
-
-                if (blacklistEntryForGate?.isBlacklisted == true) {
-                    gate.removeTag(ActiveGates.TAG_GATE_CANDIDATE)
-                } else {
-                    gate.addTag(ActiveGates.TAG_GATE_CANDIDATE)
-                }
+        // Mark all blacklisted systems as blacklisted, remove tags from ones that aren't
+        for (system in systems) {
+            if (blacklistedSystems.any { it.systemId == system.id }) {
+                Di.inst.logger.debug("Blacklisting system: ${system.id}")
+                system.addTag(Common.TAG_BLACKLISTED_SYSTEM)
+            } else {
+                system.removeTag(Common.TAG_BLACKLISTED_SYSTEM)
             }
+        }
     }
 
     private data class BlacklistEntry(
         val id: String,
         val systemId: String,
-        val isBlacklisted: Boolean? = true,
+        val isBlacklisted: Boolean = true,
         val priority: Int? = 0
     )
 }

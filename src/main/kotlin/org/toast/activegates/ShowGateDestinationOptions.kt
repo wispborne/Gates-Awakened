@@ -18,12 +18,12 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         if (dialog == null) return false
 
-        val activatedGates = ActiveGates.getGates(GateFilter.Active)
+        val activatedGates = Common.getGates(GateFilter.Active)
 
         addOption(Strings.menuOptionReconsider, "AG_ChoiceAbort")
 
         for ((index, gate) in activatedGates.withIndex()) {
-            if (ActiveGates.inDebugMode) {
+            if (Common.isDebugModeEnabled) {
                 dialog.textPanel.addParagraph(
                     Strings.debugJumpOptionsAndDistances(
                         index.toString(),
@@ -36,7 +36,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
             addOption(
                 Strings.menuOptionJumpToSystem(
                     gate.systemName,
-                    ActiveGates.jumpCostInFuel(gate.distanceFromPlayer)
+                    Common.jumpCostInFuel(gate.distanceFromPlayer)
                 ), gate.systemId
             )
         }
@@ -47,7 +47,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
         super.optionSelected(optionText, optionData)
-        val activatedGates = ActiveGates.getGates(GateFilter.Active)
+        val activatedGates = Common.getGates(GateFilter.Active)
 
         if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             FlyThroughGate().execute(

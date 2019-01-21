@@ -16,15 +16,15 @@ class AddGateData : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
         val currentGate = dialog.interactionTarget
 
-        if (!currentGate.hasTag(ActiveGates.TAG_GATE_ACTIVATED)) {
+        if (!currentGate.hasTag(Common.TAG_GATE_ACTIVATED)) {
             textPanel.addParagraph(Strings.activationExplanation)
             textPanel.addParagraph(Strings.activationCost)
         }
 
-        if (ActiveGates.inDebugMode) {
+        if (Common.isDebugModeEnabled) {
             textPanel.addParagraph(Strings.debugAllGates)
 
-            for (gate in ActiveGates.getGates(GateFilter.All)) {
+            for (gate in Common.getGates(GateFilter.All)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
                         systemName = gate.systemName,
@@ -35,7 +35,7 @@ class AddGateData : BaseCommandPlugin() {
 
             textPanel.addParagraph(Strings.debugActiveGates)
 
-            for (gate in ActiveGates.getGates(GateFilter.Active)) {
+            for (gate in Common.getGates(GateFilter.Active)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
                         systemName = gate.systemName,

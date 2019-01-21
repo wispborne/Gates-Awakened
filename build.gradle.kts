@@ -3,8 +3,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /////////////////
 // CHANGE ME
-val starsectorCoreDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector/starsector-core"
+val starsectorDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector"
 /////////////////
+
+val starsectorCoreDirectory = "$starsectorDirectory/starsector-core"
+val starsectorModDirectory = "$starsectorDirectory/mods"
 
 plugins {
     kotlin("jvm") version "1.3.11"
@@ -18,8 +21,15 @@ repositories {
 }
 
 dependencies {
-    compile(fileTree(starsectorCoreDirectory) { include("*.jar")})
-    compile(kotlin("stdlib-jdk7"))
+    implementation(kotlin("stdlib-jdk7"))
+
+    implementation(fileTree(starsectorCoreDirectory) { include("*.jar") })
+    implementation(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+    testImplementation("org.assertj:assertj-core:3.11.1")
+    testImplementation("io.mockk:mockk:1.9")
 }
 
 tasks {
