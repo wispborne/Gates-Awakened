@@ -1,14 +1,34 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.BaseModPlugin
+import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
+import org.toast.activegates.intel.IntroBarEventCreator
 
-class Startup : BaseModPlugin() {
+class ActiveGatesLifecyclePlugin : BaseModPlugin() {
+
+    override fun onNewGameAfterTimePass() {
+        super.onNewGameAfterTimePass()
+
+        if (!Intro.haveGatesBeenTagged()) {
+            Intro.findAndTagIntroGatePair()
+        }
+    }
 
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
         Di.inst = Di()
 
         tagPossibleGateDestinations()
+
+        val bar = BarEventManager.getInstance()
+
+        if (Common.isDebugModeEnabled && !Intro.haveGatesBeenTagged()) {
+            Intro.findAndTagIntroGatePair()
+        }
+
+        if (Intro.haveGatesBeenTagged() && !bar.hasEventCreator(IntroBarEventCreator::class.java)) {
+            bar.addEventCreator(IntroBarEventCreator())
+        }
     }
 
     private fun tagPossibleGateDestinations() {
@@ -48,9 +68,9 @@ class Startup : BaseModPlugin() {
         for (system in systems) {
             if (blacklistedSystems.any { it.systemId == system.id }) {
                 Di.inst.logger.debug("Blacklisting system: ${system.id}")
-                system.addTag(Common.TAG_BLACKLISTED_SYSTEM)
+                system.addTag(Tags.TAG_BLACKLISTED_SYSTEM)
             } else {
-                system.removeTag(Common.TAG_BLACKLISTED_SYSTEM)
+                system.removeTag(Tags.TAG_BLACKLISTED_SYSTEM)
             }
         }
     }

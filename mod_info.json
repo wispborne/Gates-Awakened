@@ -3,9 +3,9 @@
     "name": "Active Gates",
     "author": "Toast, Wispborne",
     "utility": "false",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "description": "Allows gates to teleport your fleet from one gate to another.",
     "gameVersion": "0.9a",
     "jars":["jars/Active_Gates.jar"],
-    "modPlugin":"org.toast.activegates.Startup"
+    "modPlugin":"org.toast.activegates.ActiveGatesLifecyclePlugin"
 }

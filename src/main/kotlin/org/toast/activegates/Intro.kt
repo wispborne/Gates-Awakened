@@ -1,13 +1,20 @@
 package org.toast.activegates
 
 import com.fs.starfarer.api.util.Misc
+import org.lazywizard.lazylib.ext.logging.i
 
-internal class EarlyGame {
-    fun hasAlreadyOccurred(): Boolean =
-        Common.getGates(GateFilter.All)
-            .any { it.gate.hasTag(Common.TAG_GATE_INTRO_CORE) }
+internal object Intro {
+    fun haveGatesBeenTagged(): Boolean =
+        Common.getGates(GateFilter.IntroCore).any()
 
-    fun doIt() {
+    /**
+     * Finds a pair of gates, one in the core and one on the edge of the sector, and tags them for later use.
+     */
+    fun findAndTagIntroGatePair() {
+        if (haveGatesBeenTagged()) {
+            Di.inst.logger.i({ "Went to go tag intro gates, but it's already done!" })
+        }
+
         val coreGate = findClosestInactiveGateToCenter()
 
         if (coreGate == null) {
@@ -22,19 +29,19 @@ internal class EarlyGame {
             return
         }
 
-        coreGate.gate.addTag(Common.TAG_GATE_ACTIVATED)
-        coreGate.gate.addTag(Common.TAG_GATE_INTRO_CORE)
+        coreGate.gate.addTag(Tags.TAG_GATE_INTRO_CORE)
+        fringeGate.gate.addTag(Tags.TAG_GATE_INTRO_FRINGE)
     }
 
     private fun findClosestInactiveGateToCenter(): GateDestination? =
         Common.getGates(GateFilter.Inactive)
-            .filter { !it.gate.starSystem.hasTagToAvoidForCompatibility }
+            .filter { it.gate.starSystem.isValidSystemForRandomActivation }
             .sortedBy { Misc.getDistanceLY(it.gate.starSystem.location, Di.inst.sector.hyperspace.location) }
             .firstOrNull()
 
     private fun findRandomFringeGate(): GateDestination? =
         Common.getGates(GateFilter.Inactive)
-            .filter { !it.gate.starSystem.hasTagToAvoidForCompatibility }
+            .filter { it.gate.starSystem.isValidSystemForRandomActivation }
             .sortedByDescending { Misc.getDistanceLY(it.gate.starSystem.location, Di.inst.sector.hyperspace.location) }
             .take(5)
             .run {

@@ -20,10 +20,10 @@ class ActivateGate : BaseCommandPlugin() {
         val gate = dialog.interactionTarget
 
         if (gate.starSystem.isBlacklisted) {
-            if (!gate.hasTag(Common.TAG_GATE_ACTIVATED)) {
+            if (!gate.hasTag(Tags.TAG_GATE_ACTIVATED)) {
                 if (Common.canActivate()) {
                     Common.payActivationCost()
-                    gate.addTag(Common.TAG_GATE_ACTIVATED)
+                    gate.addTag(Tags.TAG_GATE_ACTIVATED)
                     gate.memory
                     textPanel.addParagraph(Strings.paidActivationCost)
                 } else {

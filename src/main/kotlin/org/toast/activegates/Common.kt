@@ -2,7 +2,6 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
-import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.util.Misc
 import kotlin.math.roundToInt
 
@@ -62,12 +61,14 @@ internal object Common {
         val playerLoc = Di.inst.sector.playerFleet.locationInHyperspace
 
         return getSystems()
-            .flatMap { system -> system.getEntitiesWithTag(TAG_GATE) }
+            .flatMap { system -> system.getEntitiesWithTag(Tags.TAG_GATE) }
             .filter { gate ->
                 when (filter) {
-                    GateFilter.Active -> gate.hasTag(TAG_GATE_ACTIVATED)
-                    GateFilter.Inactive -> !gate.hasTag(TAG_GATE_ACTIVATED)
                     GateFilter.All -> true
+                    GateFilter.Active -> gate.hasTag(Tags.TAG_GATE_ACTIVATED)
+                    GateFilter.Inactive -> !gate.hasTag(Tags.TAG_GATE_ACTIVATED)
+                    GateFilter.IntroCore -> gate.hasTag(Tags.TAG_GATE_INTRO_CORE)
+                    GateFilter.IntroFringe -> gate.hasTag(Tags.TAG_GATE_INTRO_FRINGE)
                 }
             }
             .map {
@@ -88,33 +89,26 @@ internal object Common {
     }
 
     fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F
-
-    /** A gate that has been activated by the player **/
-    const val TAG_GATE_ACTIVATED = "gate_activated"
-
-    /** The gate in the Core that is activated for the intro event **/
-    const val TAG_GATE_INTRO_CORE = "ag_gate_intro_core"
-
-    const val TAG_BLACKLISTED_SYSTEM = "ag_blacklisted_system"
-
-    /**
-     * Vanilla tag for a gate.
-     **/
-    private const val TAG_GATE = Tags.GATE
 }
 
 internal class GateDestination(
-    val gate: SectorEntityToken,
+    val gate: Gate,
     val systemId: String,
     val systemName: String,
     val distanceFromPlayer: Float
 )
 
 internal enum class GateFilter {
+    All,
     Active,
     Inactive,
-    All
+    IntroCore,
+    IntroFringe
 }
 
-internal val StarSystemAPI.isBlacklisted: Boolean
-    get() = this.hasTag(Common.TAG_BLACKLISTED_SYSTEM)
+fun Any?.equalsAny(vararg arg: Any?) = arg.any { this == it }
+
+val Any?.exhaustiveWhen: Unit?
+    get() = this?.run { }
+
+typealias Gate = SectorEntityToken

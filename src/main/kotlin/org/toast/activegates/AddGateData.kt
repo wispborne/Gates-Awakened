@@ -16,7 +16,7 @@ class AddGateData : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
         val currentGate = dialog.interactionTarget
 
-        if (!currentGate.hasTag(Common.TAG_GATE_ACTIVATED)) {
+        if (!currentGate.hasTag(Tags.TAG_GATE_ACTIVATED)) {
             textPanel.addParagraph(Strings.activationExplanation)
             textPanel.addParagraph(Strings.activationCost)
         }

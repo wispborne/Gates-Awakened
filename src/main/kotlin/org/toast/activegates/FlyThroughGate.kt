@@ -18,7 +18,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         val textPanel = dialog.textPanel
 
         // Can only jump using activated gates
-        if (!dialog.interactionTarget.hasTag(Common.TAG_GATE_ACTIVATED)) {
+        if (!dialog.interactionTarget.hasTag(Tags.TAG_GATE_ACTIVATED)) {
             textPanel.addParagraph(Strings.flyThroughInactiveGate)
             textPanel.addParagraph(Strings.resultWhenGateDoesNotWork)
             ShowGateDestinationOptions().execute(null, dialog, emptyList(), memoryMap)
@@ -63,7 +63,7 @@ class FlyThroughGate : BaseCommandPlugin() {
         Global.getSector().currentLocation = newSystem
 
         // Move player fleet to the new gate's location
-        val gates = newSystem.getEntitiesWithTag(Common.TAG_GATE_ACTIVATED)
+        val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
         val locationOfFirstGateInNewSystem = gates.first().location
         playerFleet.setLocation(locationOfFirstGateInNewSystem.x, locationOfFirstGateInNewSystem.y)
 

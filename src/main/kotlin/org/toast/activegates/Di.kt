@@ -10,6 +10,7 @@ class Di(
     val settings: SettingsAPI = Global.getSettings(),
     val logger: Logger = Global.getLogger(Di::class.java)
 ) {
+
     companion object {
         /**
          * Singleton instance of the service locator. Set a new one of these for unit tests.
