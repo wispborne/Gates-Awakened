@@ -3,6 +3,8 @@ package org.toast.activegates
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.util.Misc
+import org.toast.activegates.constants.Tags
+import org.toast.activegates.constants.isBlacklisted
 import kotlin.math.roundToInt
 
 /**

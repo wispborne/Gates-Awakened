@@ -2,15 +2,15 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
+import com.thoughtworks.xstream.XStream
+import org.toast.activegates.constants.Strings
+import org.toast.activegates.constants.Tags
 import org.toast.activegates.intro.Intro
+import org.toast.activegates.intro.IntroBarEvent
 import org.toast.activegates.intro.IntroBarEventCreator
 import org.toast.activegates.intro.IntroIntel
 
 class ActiveGatesLifecyclePlugin : BaseModPlugin() {
-
-    init {
-//        configureXStream()
-    }
 
     override fun onNewGameAfterTimePass() {
         super.onNewGameAfterTimePass()
@@ -88,6 +88,22 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
                 system.removeTag(Tags.TAG_BLACKLISTED_SYSTEM)
             }
         }
+    }
+
+    /**
+     * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
+     */
+    override fun configureXStream(x: XStream) {
+        super.configureXStream(x)
+
+        val aliases = listOf(
+            IntroIntel::class to "IntroIntel",
+            IntroBarEvent::class to "IntroBarEvent",
+            IntroBarEventCreator::class to "IntroBarEventCreator"
+        )
+
+        // Prepend "g8_" so the classes don't conflict with anything else getting serialized
+        aliases.forEach { x.alias("g8_${it.second}", it.first.java) }
     }
 
     private data class BlacklistEntry(

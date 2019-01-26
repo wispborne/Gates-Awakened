@@ -1,4 +1,4 @@
-package org.toast.activegates
+package org.toast.activegates.constants
 
 import com.fs.starfarer.api.campaign.StarSystemAPI
 

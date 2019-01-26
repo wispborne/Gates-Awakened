@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
+import org.toast.activegates.constants.Strings
+import org.toast.activegates.constants.Tags
 
 class AddGateData : BaseCommandPlugin() {
     override fun execute(

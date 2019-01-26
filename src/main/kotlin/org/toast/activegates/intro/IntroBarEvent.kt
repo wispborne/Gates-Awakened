@@ -7,6 +7,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
 import org.toast.activegates.*
+import org.toast.activegates.constants.Memory
 
 
 class IntroBarEvent : BaseBarEventWithPerson() {

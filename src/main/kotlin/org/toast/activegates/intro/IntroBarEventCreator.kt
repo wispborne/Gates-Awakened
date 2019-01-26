@@ -3,7 +3,7 @@ package org.toast.activegates.intro
 import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import org.toast.activegates.Di
-import org.toast.activegates.Memory
+import org.toast.activegates.constants.Memory
 import org.toast.activegates.equalsAny
 
 class IntroBarEventCreator : BaseBarEventCreator() {

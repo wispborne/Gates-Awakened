@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.util.Misc
+import org.toast.activegates.constants.Strings
 
 class ShowGateDestinationOptions : PaginatedOptions() {
     override fun doesCommandAddOptions(): Boolean = true

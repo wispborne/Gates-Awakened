@@ -1,6 +1,7 @@
-package org.toast.activegates
+package org.toast.activegates.constants
 
 import com.fs.starfarer.api.Global
+import org.toast.activegates.Common
 import kotlin.math.roundToInt
 
 object Strings {
