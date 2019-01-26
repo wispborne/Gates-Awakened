@@ -2,9 +2,15 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
-import org.toast.activegates.intel.IntroBarEventCreator
+import org.toast.activegates.intro.Intro
+import org.toast.activegates.intro.IntroBarEventCreator
+import org.toast.activegates.intro.IntroIntel
 
 class ActiveGatesLifecyclePlugin : BaseModPlugin() {
+
+    init {
+//        configureXStream()
+    }
 
     override fun onNewGameAfterTimePass() {
         super.onNewGameAfterTimePass()
@@ -16,7 +22,6 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
 
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
-        Di.inst = Di()
 
         tagPossibleGateDestinations()
 
@@ -29,6 +34,16 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
         if (Intro.haveGatesBeenTagged() && !bar.hasEventCreator(IntroBarEventCreator::class.java)) {
             bar.addEventCreator(IntroBarEventCreator())
         }
+    }
+
+    override fun beforeGameSave() {
+        val intel = Di.inst.sector.intelManager.getIntel(IntroIntel::class.java)
+
+        if (intel != null) {
+//            Di.inst.sector.intelManager.removeIntel(IntroIntel::class.java)
+        }
+
+        super.beforeGameSave()
     }
 
     private fun tagPossibleGateDestinations() {

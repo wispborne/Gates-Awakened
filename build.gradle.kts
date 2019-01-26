@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.com.intellij.openapi.vfs.StandardFileSystems.jar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /////////////////
@@ -17,13 +16,19 @@ plugins {
 version = "1.0.0"
 
 repositories {
+    maven(url = uri("$projectDir/libs"))
     jcenter()
 }
 
 dependencies {
     implementation(kotlin("stdlib-jdk7"))
 
-    implementation(fileTree(starsectorCoreDirectory) { include("*.jar") })
+    implementation("starfarer:starfarer-api:1.0")
+    implementation(fileTree(starsectorCoreDirectory) {
+        include("*.jar")
+        exclude("starfarer.api.jar")
+    })
+
     implementation(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")

@@ -2,6 +2,7 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.util.Misc
 import org.lazywizard.lazylib.ext.logging.i
+import kotlin.random.Random
 
 internal object Intro {
     fun haveGatesBeenTagged(): Boolean =
@@ -48,6 +49,6 @@ internal object Intro {
                 if (this.isEmpty())
                     null
                 else
-                    this.random()
+                    this.random(Random(Di.inst.sector.seedString.hashCode()))
             }
 }

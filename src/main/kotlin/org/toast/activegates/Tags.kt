@@ -9,15 +9,15 @@ internal object Tags {
     const val TAG_GATE = com.fs.starfarer.api.impl.campaign.ids.Tags.GATE
 
     /** A gate that has been activated by the player **/
-    const val TAG_GATE_ACTIVATED = "ag_gate_activated"
+    const val TAG_GATE_ACTIVATED = "g8_gate_activated"
 
     /** The gate in the Core that is activated for the intro event **/
-    const val TAG_GATE_INTRO_CORE = "ag_gate_intro_core"
+    const val TAG_GATE_INTRO_CORE = "g8_gate_intro_core"
 
     /** The gate near the edge of the sector that is activated for the intro event **/
-    const val TAG_GATE_INTRO_FRINGE = "ag_gate_intro_fringe"
+    const val TAG_GATE_INTRO_FRINGE = "g8_gate_intro_fringe"
 
-    const val TAG_BLACKLISTED_SYSTEM = "ag_blacklisted_system"
+    const val TAG_BLACKLISTED_SYSTEM = "g8_blacklisted_system"
 
 
     val Dme = listOf(

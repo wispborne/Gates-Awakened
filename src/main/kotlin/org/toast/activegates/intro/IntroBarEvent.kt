@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.characters.FullName
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
+import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
 import org.toast.activegates.*
 
@@ -54,6 +55,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
                 OptionId.INIT -> {
                     dialog.textPanel.addPara("You try to act naturally, but as soon as you get close, $heOrShe flips off $hisOrHer tripad and quickly rushes out, almost deliberately not looking at you.")
                     dialog.textPanel.addPara("However, just before $hisOrHer tripad goes dark, you catch one line: ${destinationSystem?.name}")
+                    Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_MISSION_IN_PROGRESS] = true
                     addIntel()
                     dialog.optionPanel.addOption(
                         "Watch the $manOrWoman hurry down the street and consider what could be at ${destinationSystem?.baseName}.",
@@ -63,6 +65,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
                 OptionId.LEAVE -> {
                     noContinue = true
                     done = true
+                    BarEventManager.getInstance().notifyWasInteractedWith(this)
                 }
             }.exhaustiveWhen
         }
@@ -77,6 +80,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
 
             if (!intel.isDone) {
                 success = true
+                Di.inst.sector.intelManager.addIntel(intel)
             }
         }
 
@@ -86,7 +90,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
     }
 
     private val boyOrGirl
-        get() = if (personGender == FullName.Gender.MALE) "boy" else "girl"
+        get() = if (personGender == FullName.Gender.FEMALE) "girl" else "boy"
 
     override fun getPersonRank(): String {
         return Ranks.SPACE_SAILOR

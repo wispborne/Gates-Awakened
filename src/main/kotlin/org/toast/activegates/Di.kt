@@ -15,6 +15,6 @@ class Di(
         /**
          * Singleton instance of the service locator. Set a new one of these for unit tests.
          */
-        lateinit var inst: Di
+        var inst: Di = Di()
     }
 }
