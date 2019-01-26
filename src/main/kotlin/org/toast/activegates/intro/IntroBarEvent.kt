@@ -1,4 +1,4 @@
-package org.toast.activegates.intel
+package org.toast.activegates.intro
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
@@ -65,7 +65,6 @@ class IntroBarEvent : BaseBarEventWithPerson() {
                 OptionId.LEAVE -> {
                     noContinue = true
                     done = true
-                    BarEventManager.getInstance().notifyWasInteractedWith(this)
                 }
             }.exhaustiveWhen
         }
@@ -80,6 +79,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
 
             if (!intel.isDone) {
                 success = true
+                BarEventManager.getInstance().notifyWasInteractedWith(this)
                 Di.inst.sector.intelManager.addIntel(intel)
             }
         }

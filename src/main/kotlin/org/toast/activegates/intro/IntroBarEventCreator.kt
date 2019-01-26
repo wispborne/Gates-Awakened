@@ -1,4 +1,4 @@
-package org.toast.activegates.intel
+package org.toast.activegates.intro
 
 import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator

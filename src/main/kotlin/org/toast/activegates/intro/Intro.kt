@@ -1,7 +1,8 @@
-package org.toast.activegates
+package org.toast.activegates.intro
 
 import com.fs.starfarer.api.util.Misc
 import org.lazywizard.lazylib.ext.logging.i
+import org.toast.activegates.*
 import kotlin.random.Random
 
 internal object Intro {
