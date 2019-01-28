@@ -7,5 +7,5 @@
     "description": "Allows gates to teleport your fleet from one gate to another.",
     "gameVersion": "0.9a",
     "jars":["jars/Active_Gates.jar"],
-    "modPlugin":"org.toast.activegates.ActiveGatesLifecyclePlugin"
+    "modPlugin":"org.toast.activegates.LifecyclePlugin"
 }

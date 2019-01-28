@@ -59,19 +59,8 @@ class FlyThroughGate : BaseCommandPlugin() {
         }
 
         // Jump player fleet to new system
-        val oldSystem = playerFleet.containingLocation
-        oldSystem.removeEntity(playerFleet)
-        newSystem.addEntity(playerFleet)
-        Global.getSector().currentLocation = newSystem
-
-        // Move player fleet to the new gate's location
         val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
-        val locationOfFirstGateInNewSystem = gates.first().location
-        playerFleet.setLocation(locationOfFirstGateInNewSystem.x, locationOfFirstGateInNewSystem.y)
-
-        // Ensure that the player fleet's only action post-jump is to hang out around the gate
-        playerFleet.clearAssignments()
-        playerFleet.setMoveDestination(playerFleet.location.x, playerFleet.location.y)
+        Common.jumpPlayerToGate(gates.first())
 
         textPanel.addParagraph(Strings.flyThroughActiveGate)
 

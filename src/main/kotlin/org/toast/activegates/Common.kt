@@ -59,7 +59,7 @@ internal object Common {
     /**
      * List of non-blacklisted gates (filterable), sorted by shortest distance from player first
      */
-    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean = true): List<GateDestination> {
+    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean): List<GateDestination> {
         val playerLoc = Di.inst.sector.playerFleet.locationInHyperspace
 
         return getSystems()
@@ -88,6 +88,23 @@ internal object Common {
                     true
             }
             .sortedBy { it.distanceFromPlayer }
+    }
+
+    fun jumpPlayerToGate(gate: Gate) {
+        val playerFleet = Di.inst.sector.playerFleet
+        val newSystem = gate.starSystem
+
+        // Jump player fleet to new system
+        playerFleet.containingLocation.removeEntity(playerFleet)
+        newSystem.addEntity(playerFleet)
+        Di.inst.sector.currentLocation = newSystem
+
+        // Move player fleet to the new gate's location
+        playerFleet.setLocation(gate.location.x, gate.location.y)
+
+        // Ensure that the player fleet's only action post-jump is to hang out around the gate
+        playerFleet.clearAssignments()
+        playerFleet.setMoveDestination(playerFleet.location.x, playerFleet.location.y)
     }
 
     fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F

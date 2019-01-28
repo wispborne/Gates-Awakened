@@ -19,7 +19,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
         if (dialog == null) return false
 
-        val activatedGates = Common.getGates(GateFilter.Active)
+        val activatedGates = Common.getGates(GateFilter.Active, excludeCurrentGate = true)
 
         addOption(Strings.menuOptionReconsider, "AG_ChoiceAbort")
 
@@ -48,7 +48,7 @@ class ShowGateDestinationOptions : PaginatedOptions() {
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
         super.optionSelected(optionText, optionData)
-        val activatedGates = Common.getGates(GateFilter.Active)
+        val activatedGates = Common.getGates(GateFilter.Active, excludeCurrentGate = true)
 
         if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             FlyThroughGate().execute(

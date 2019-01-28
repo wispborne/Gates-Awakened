@@ -26,7 +26,7 @@ class AddGateData : BaseCommandPlugin() {
         if (Common.isDebugModeEnabled) {
             textPanel.addParagraph(Strings.debugAllGates)
 
-            for (gate in Common.getGates(GateFilter.All)) {
+            for (gate in Common.getGates(GateFilter.All, excludeCurrentGate = true)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
                         systemName = gate.systemName,
@@ -37,7 +37,7 @@ class AddGateData : BaseCommandPlugin() {
 
             textPanel.addParagraph(Strings.debugActiveGates)
 
-            for (gate in Common.getGates(GateFilter.Active)) {
+            for (gate in Common.getGates(GateFilter.Active, excludeCurrentGate = true)) {
                 textPanel.addParagraph(
                     Strings.debugGateAndDistance(
                         systemName = gate.systemName,

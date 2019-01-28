@@ -13,8 +13,8 @@ class IntroBarEventCreator : BaseBarEventCreator() {
 
     override fun getBarEventFrequencyWeight(): Float {
         return if (true.equalsAny(
-                Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_MISSION_IN_PROGRESS] as? Boolean,
-                Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_MISSION_DONE] as? Boolean
+                Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_IN_PROGRESS] as? Boolean,
+                Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_DONE] as? Boolean
             )
         ) {
             0f

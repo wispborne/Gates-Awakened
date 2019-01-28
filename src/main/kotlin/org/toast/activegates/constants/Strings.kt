@@ -5,30 +5,33 @@ import org.toast.activegates.Common
 import kotlin.math.roundToInt
 
 object Strings {
+
     // Used for debug mode /////////
     fun debugGateAndDistance(systemName: String, distanceFromPlayer: Float): String =
         "$systemName at $distanceFromPlayer LY"
 
 
-    const val debugAllGates: String = "All gates:"
-    const val debugActiveGates: String = "All activated gates:"
+    const val debugAllGates = "All gates:"
+    const val debugActiveGates = "All activated gates:"
     ///////////////////////////////
     const val modName = "active-gates"
 
-    val activationExplanation: String
+    const val activeGateName = "Active Gate"
+
+    val activationExplanation
         get() = "Your engineers produce a list of materials that, if procured, they think they can use to activate the gate."
 
-    const val flyThroughInactiveGate: String = "Your fleet passes through the inactive gate..."
-    const val flyThroughActiveGate: String = "Your fleet passes through the gate..."
-    const val resultWhenGateDoesNotWork: String = "and nothing happens."
-    const val menuOptionReconsider: String = "Reconsider"
-    const val paidActivationCost: String = "Your crew offload the resources from your fleet. " +
+    const val flyThroughInactiveGate = "Your fleet passes through the inactive gate..."
+    const val flyThroughActiveGate = "Your fleet passes through the gate..."
+    const val resultWhenGateDoesNotWork = "and nothing happens."
+    const val menuOptionReconsider = "Reconsider"
+    const val paidActivationCost = "Your crew offload the resources from your fleet. " +
             "They get to work and, in short order, the gate is active."
-    const val insufficientResourcesToActivateGate: String =
+    const val insufficientResourcesToActivateGate =
         "You don't have the resources required to activate the gate."
-    const val gateAlreadyActive: String = "The gate is already active."
+    const val gateAlreadyActive = "The gate is already active."
 
-    fun notEnoughFuel(fuelCostOfJump: Int): String =
+    fun notEnoughFuel(fuelCostOfJump: Int) =
         "Unfortunately, your fleet lacks the $fuelCostOfJump fuel necessary to use the gate."
 
     val activationCost: String

@@ -10,7 +10,7 @@ import org.toast.activegates.intro.IntroBarEvent
 import org.toast.activegates.intro.IntroBarEventCreator
 import org.toast.activegates.intro.IntroIntel
 
-class ActiveGatesLifecyclePlugin : BaseModPlugin() {
+class LifecyclePlugin : BaseModPlugin() {
 
     override fun onNewGameAfterTimePass() {
         super.onNewGameAfterTimePass()
@@ -23,6 +23,8 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
 
+        // Keep track of what gates this mod can interact with
+        // Other mods may blacklist systems at will.
         tagPossibleGateDestinations()
 
         val bar = BarEventManager.getInstance()
@@ -31,9 +33,12 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
             Intro.findAndTagIntroGatePair()
         }
 
-        if (Intro.haveGatesBeenTagged() && !bar.hasEventCreator(IntroBarEventCreator::class.java)) {
+        if (Intro.haveGatesBeenTagged() && !Intro.wasIntroQuestStarted && !bar.hasEventCreator(IntroBarEventCreator::class.java)) {
             bar.addEventCreator(IntroBarEventCreator())
         }
+
+        // Register this so we can intercept and replace interactions, such as with a gate
+        Di.inst.sector.registerPlugin(CampaignPlugin())
     }
 
     override fun beforeGameSave() {
@@ -99,7 +104,8 @@ class ActiveGatesLifecyclePlugin : BaseModPlugin() {
         val aliases = listOf(
             IntroIntel::class to "IntroIntel",
             IntroBarEvent::class to "IntroBarEvent",
-            IntroBarEventCreator::class to "IntroBarEventCreator"
+            IntroBarEventCreator::class to "IntroBarEventCreator",
+            CampaignPlugin::class to "CampaignPlugin"
         )
 
         // Prepend "g8_" so the classes don't conflict with anything else getting serialized

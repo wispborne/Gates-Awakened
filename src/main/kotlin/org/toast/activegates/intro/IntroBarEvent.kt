@@ -6,18 +6,17 @@ import com.fs.starfarer.api.characters.FullName
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
-import org.toast.activegates.*
-import org.toast.activegates.constants.Memory
+import com.fs.starfarer.api.util.Misc
+import org.toast.activegates.equalsAny
+import org.toast.activegates.exhaustiveWhen
 
 
 class IntroBarEvent : BaseBarEventWithPerson() {
 
-    private fun destinationGate(): Gate? = Common.getGates(GateFilter.IntroFringe).firstOrNull()?.gate
-
     override fun shouldShowAtMarket(market: MarketAPI): Boolean =
         when {
             !super.shouldShowAtMarket(market) -> false
-            destinationGate() == null -> false
+            Intro.fringeGate == null -> false
             else -> !market.factionId.equalsAny("luddic_church", "luddic_path")
         }
 
@@ -49,15 +48,18 @@ class IntroBarEvent : BaseBarEventWithPerson() {
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
         if (optionData is OptionId) {
-            val destinationSystem = destinationGate()?.starSystem
+            val destinationSystem = Intro.fringeGate?.starSystem
             dialog.optionPanel.clearOptions()
 
             when (optionData) {
                 OptionId.INIT -> {
                     dialog.textPanel.addPara("You try to act naturally, but as soon as you get close, $heOrShe flips off $hisOrHer tripad and quickly rushes out, almost deliberately not looking at you.")
-                    dialog.textPanel.addPara("However, just before $hisOrHer tripad goes dark, you catch one line: ${destinationSystem?.name}")
-                    Di.inst.sector.memoryWithoutUpdate[Memory.INTRO_MISSION_IN_PROGRESS] = true
-                    addIntel()
+                    dialog.textPanel.addPara(
+                        "However, just before $hisOrHer tripad goes dark, you catch one line: %s",
+                        Misc.getHighlightColor(),
+                        destinationSystem?.name
+                    )
+                    startIntroQuest()
                     dialog.optionPanel.addOption(
                         "Watch the $manOrWoman hurry down the street and consider what could be at ${destinationSystem?.baseName}.",
                         OptionId.LEAVE
@@ -71,21 +73,12 @@ class IntroBarEvent : BaseBarEventWithPerson() {
         }
     }
 
-    private fun addIntel() {
-        var success = false
-        val destinationGate = destinationGate()
+    private fun startIntroQuest() {
+        val wasQuestStarted = Intro.startIntroQuest(dialog.interactionTarget)
 
-        if (destinationGate != null) {
-            val intel = IntroIntel(dialog.interactionTarget, destinationGate)
-
-            if (!intel.isDone) {
-                success = true
-                BarEventManager.getInstance().notifyWasInteractedWith(this)
-                Di.inst.sector.intelManager.addIntel(intel)
-            }
-        }
-
-        if (!success) {
+        if (wasQuestStarted) {
+            BarEventManager.getInstance().notifyWasInteractedWith(this)
+        } else {
             dialog.textPanel.addPara("After a moment's consideration, you decide that there's nothing out there after all.")
         }
     }
