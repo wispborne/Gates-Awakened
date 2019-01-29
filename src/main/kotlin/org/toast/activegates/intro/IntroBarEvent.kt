@@ -84,7 +84,7 @@ class IntroBarEvent : BaseBarEventWithPerson() {
     }
 
     private val boyOrGirl
-        get() = if (personGender == FullName.Gender.FEMALE) "girl" else "boy"
+        get() = if (person.gender == FullName.Gender.FEMALE) "girl" else "boy"
 
     override fun getPersonRank(): String {
         return Ranks.SPACE_SAILOR

@@ -94,6 +94,9 @@ internal object Common {
         val playerFleet = Di.inst.sector.playerFleet
         val newSystem = gate.starSystem
 
+        // Usable in the future?
+        // Global.getSector().doHyperspaceTransition(playerFleet, jumpPoint, dest);
+
         // Jump player fleet to new system
         playerFleet.containingLocation.removeEntity(playerFleet)
         newSystem.addEntity(playerFleet)

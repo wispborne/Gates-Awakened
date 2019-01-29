@@ -1,10 +1,14 @@
-package org.toast.activegates
+package org.toast.activegates.intro
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.combat.EngagementResultAPI
-import org.toast.activegates.intro.Intro
+import org.toast.activegates.Common
+import org.toast.activegates.Di
+import org.toast.activegates.addPara
+import java.util.*
+import kotlin.concurrent.schedule
 
 class IntroQuestCompletedDialog : InteractionDialogPlugin {
     private lateinit var dialog: InteractionDialogAPI
@@ -14,7 +18,10 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
 
         dialog.visualPanel.showImagePortion("illustrations", "dead_gate", 640f, 400f, 0f, 0f, 480f, 300f)
 
-        dialog.setOptionOnEscape(Option.LEAVE.text, Option.LEAVE)
+        dialog.setOptionOnEscape(
+            Option.LEAVE.text,
+            Option.LEAVE
+        )
         optionSelected(null as String?, Option.INIT)
     }
 
@@ -36,7 +43,10 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
                             "It seems to be emanating from %s.",
                     "energy signature", "a specific area"
                 )
-                dialog.optionPanel.addOption(Option.CONTINUE.text, Option.CONTINUE)
+                dialog.optionPanel.addOption(
+                    Option.CONTINUE.text,
+                    Option.CONTINUE
+                )
             }
             Option.CONTINUE -> {
                 text.addPara(
@@ -51,8 +61,14 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
                 )
                 text.addPara("Your crew looks to you. It seems there's only one thing to do.")
 
-                dialog.optionPanel.addOption(Option.FLY_THROUGH.text, Option.FLY_THROUGH)
-                dialog.optionPanel.addOption(Option.LEAVE.text, Option.LEAVE)
+                dialog.optionPanel.addOption(
+                    Option.FLY_THROUGH.text,
+                    Option.FLY_THROUGH
+                )
+                dialog.optionPanel.addOption(
+                    Option.LEAVE.text,
+                    Option.LEAVE
+                )
             }
             Option.FLY_THROUGH -> {
                 val coreGate = Intro.coreGate
@@ -60,11 +76,17 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
                 if (coreGate != null) {
                     dialog.dismiss()
                     Common.jumpPlayerToGate(coreGate)
+                    Di.inst.sector.isPaused = false
+
+                    Timer().schedule(2000) {
+                        Di.inst.sector.isPaused = true
+                        Intro.introQuestEpilogue()
+                    }
                 }
             }
 
             Option.LEAVE -> {
-                Di.inst.sector.isPaused = true
+                Di.inst.sector.isPaused = false
                 dialog.dismiss()
             }
         }

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignPlugin
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import org.toast.activegates.intro.Intro
+import org.toast.activegates.intro.IntroQuestCompletedDialog
 
 /**
  * Instead of using `rules.csv`, use this plugin to trigger dialog choices and conversations.

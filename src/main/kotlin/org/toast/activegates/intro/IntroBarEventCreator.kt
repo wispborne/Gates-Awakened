@@ -2,6 +2,7 @@ package org.toast.activegates.intro
 
 import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
+import org.toast.activegates.Common
 import org.toast.activegates.Di
 import org.toast.activegates.constants.Memory
 import org.toast.activegates.equalsAny
@@ -19,7 +20,11 @@ class IntroBarEventCreator : BaseBarEventCreator() {
         ) {
             0f
         } else {
-            super.getBarEventFrequencyWeight()
+            if (Common.isDebugModeEnabled) {
+                100f
+            } else {
+                super.getBarEventFrequencyWeight()
+            }
         }
     }
 }

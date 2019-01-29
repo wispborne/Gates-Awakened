@@ -3,6 +3,7 @@ package org.toast.activegates
 import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
+import org.lazywizard.lazylib.ext.logging.i
 import org.toast.activegates.constants.Strings
 import org.toast.activegates.constants.Tags
 import org.toast.activegates.intro.Intro
@@ -29,7 +30,7 @@ class LifecyclePlugin : BaseModPlugin() {
 
         val bar = BarEventManager.getInstance()
 
-        if (Common.isDebugModeEnabled && !Intro.haveGatesBeenTagged()) {
+        if (Common.isDebugModeEnabled) {
             Intro.findAndTagIntroGatePair()
         }
 
@@ -87,7 +88,7 @@ class LifecyclePlugin : BaseModPlugin() {
         // Mark all blacklisted systems as blacklisted, remove tags from ones that aren't
         for (system in systems) {
             if (blacklistedSystems.any { it.systemId == system.id }) {
-                Di.inst.logger.debug("Blacklisting system: ${system.id}")
+                Di.inst.logger.i({ "Blacklisting system: ${system.id}" })
                 system.addTag(Tags.TAG_BLACKLISTED_SYSTEM)
             } else {
                 system.removeTag(Tags.TAG_BLACKLISTED_SYSTEM)
