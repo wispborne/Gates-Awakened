@@ -2,18 +2,16 @@ package org.toast.activegates.jumping
 
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
+import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.TextPanelAPI
 import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.loading.Description
 import com.fs.starfarer.api.util.Misc
 import org.lwjgl.input.Keyboard
-import org.toast.activegates.Common
-import org.toast.activegates.Di
-import org.toast.activegates.GateFilter
+import org.toast.activegates.*
 import org.toast.activegates.constants.MOD_PREFIX
 import org.toast.activegates.constants.Strings
 import org.toast.activegates.constants.Tags
-import org.toast.activegates.isActive
 
 class JumpDialog : PaginatedOptions() {
 
@@ -28,6 +26,18 @@ class JumpDialog : PaginatedOptions() {
                 Description.Type.CUSTOM
             ).text1
         )
+
+        if (isPlayerBeingWatched()) {
+            dialog.textPanel.addPara(
+                "A nearby fleet is %s your movements, making it %s to use the Gate.",
+                "tracking",
+                "unwise"
+            )
+            addOption(Option.LEAVE.text, Option.LEAVE.id)
+            showOptions()
+            dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
+            return
+        }
 
         // Show the initial dialog options
         optionSelected(null, Option.INIT.id)
@@ -85,6 +95,26 @@ class JumpDialog : PaginatedOptions() {
         dialog.optionPanel.setShortcut(Option.RECONSIDER.id, Keyboard.KEY_ESCAPE, false, false, false, true)
         dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
 
+    }
+
+    /**
+     * Whether there are any nearby fleets watching the player's movements. If so, then they shouldn't be allowed to use the gate.
+     * Logic adapted from [com.fs.starfarer.api.impl.campaign.rulecmd.salvage.HostileFleetNearbyAndAware].
+     */
+    private fun isPlayerBeingWatched(): Boolean {
+        val playerFleet = Di.inst.sector.playerFleet
+
+        val fleetsWatchingPlayer = playerFleet.containingLocation.fleets
+            .filter { nearbyFleet ->
+                nearbyFleet.ai != null
+                        && !nearbyFleet.faction.isPlayerFaction
+                        && nearbyFleet.battle == null
+                        && playerFleet.getVisibilityLevelTo(nearbyFleet) != SectorEntityToken.VisibilityLevel.NONE
+                        && nearbyFleet.fleetData.membersListCopy.isNotEmpty()
+                        && Misc.getDistance(playerFleet.location, nearbyFleet.location) <= 750f
+            }
+
+        return fleetsWatchingPlayer.isNotEmpty()
     }
 
     private fun jumpToGate(
