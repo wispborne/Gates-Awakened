@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.EngagementResultAPI
 import org.toast.activegates.Common
 import org.toast.activegates.Di
 import org.toast.activegates.addPara
+import org.toast.activegates.jumping.Jump
 import java.util.*
 import kotlin.concurrent.schedule
 
@@ -75,10 +76,10 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
 
                 if (coreGate != null) {
                     dialog.dismiss()
-                    Common.jumpPlayerToGate(coreGate)
+                    Jump.jumpPlayer(coreGate, isFuelRequired = false)
                     Di.inst.sector.isPaused = false
 
-                    Timer().schedule(2000) {
+                    Timer().schedule(1000) {
                         Di.inst.sector.isPaused = true
                         Intro.introQuestEpilogue()
                     }

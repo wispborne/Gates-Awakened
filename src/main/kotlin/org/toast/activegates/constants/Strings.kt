@@ -24,7 +24,6 @@ object Strings {
     const val flyThroughInactiveGate = "Your fleet passes through the inactive gate..."
     const val flyThroughActiveGate = "Your fleet passes through the gate..."
     const val resultWhenGateDoesNotWork = "and nothing happens."
-    const val menuOptionReconsider = "Reconsider"
     const val paidActivationCost = "Your crew offload the resources from your fleet. " +
             "They get to work and, in short order, the gate is active."
     const val insufficientResourcesToActivateGate =
@@ -49,9 +48,6 @@ object Strings {
 
     fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String =
         "Could not find $systemIdChosenByPlayer; aborting"
-
-    fun debugJumpOptionsAndDistances(optionNumber: String, distanceFromPlayer: Float, systemName: String): String =
-        "$optionNumber, $distanceFromPlayer, $systemName"
 
     fun menuOptionJumpToSystem(systemName: String, jumpCostInFuel: Int): String =
         "Jump to $systemName ($jumpCostInFuel fuel)"

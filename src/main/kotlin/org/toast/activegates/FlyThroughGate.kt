@@ -7,7 +7,10 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.BaseCommandPlugin
 import com.fs.starfarer.api.util.Misc
 import org.toast.activegates.constants.Strings
 import org.toast.activegates.constants.Tags
+import org.toast.activegates.jumping.Jump
+import org.toast.activegates.jumping.ShowGateDestinationOptions
 
+@Deprecated("Use JumpDialog")
 class FlyThroughGate : BaseCommandPlugin() {
 
     override fun execute(
@@ -60,7 +63,7 @@ class FlyThroughGate : BaseCommandPlugin() {
 
         // Jump player fleet to new system
         val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
-        Common.jumpPlayerToGate(gates.first())
+        Jump.jumpPlayer(gates.first())
 
         textPanel.addParagraph(Strings.flyThroughActiveGate)
 

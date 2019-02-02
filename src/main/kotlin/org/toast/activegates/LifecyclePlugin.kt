@@ -24,6 +24,9 @@ class LifecyclePlugin : BaseModPlugin() {
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
 
+        // When the game (re)loads, we want to grab the new instances of everything, especially the new sector.
+        Di.inst = Di()
+
         // Keep track of what gates this mod can interact with
         // Other mods may blacklist systems at will.
         tagPossibleGateDestinations()
