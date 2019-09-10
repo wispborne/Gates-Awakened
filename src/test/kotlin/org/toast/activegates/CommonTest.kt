@@ -14,7 +14,7 @@ internal class CommonTest {
 
     @BeforeEach
     fun setUp() {
-        Di.inst = Di(
+        di = Di(
             sector = sector,
             settings = settings
         )

@@ -17,6 +17,8 @@ internal object Tags {
     /** The gate near the edge of the sector that is activated for the intro event **/
     const val TAG_GATE_INTRO_FRINGE = "g8_gate_intro_fringe"
 
+    const val TAG_PLANET_WITH_CACHE = "g8_planet_with_cache"
+
     const val TAG_BLACKLISTED_SYSTEM = "g8_blacklisted_system"
 
     private val Dme = listOf(
@@ -32,7 +34,7 @@ internal object Tags {
     /**
      * These tags mark systems that we don't want to drop the player into, eg systems with remnants.
      */
-    val systemTagsToAvoidRandomlyChoosing =
+    val systemTagsToAvoidRandomlyChoosing: List<String> =
         listOf(TAG_BLACKLISTED_SYSTEM)
             .plus(Vanilla)
             .plus(Dme)

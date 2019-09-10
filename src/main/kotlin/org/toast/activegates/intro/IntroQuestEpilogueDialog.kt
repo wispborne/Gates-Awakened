@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.combat.EngagementResultAPI
-import org.toast.activegates.Di
-import org.toast.activegates.addPara
+import org.toast.activegates.appendPara
+import org.toast.activegates.di
 import org.toast.activegates.empty
 
 class IntroQuestEpilogueDialog : InteractionDialogPlugin {
@@ -31,9 +31,9 @@ class IntroQuestEpilogueDialog : InteractionDialogPlugin {
             null -> return
             Option.INIT -> {
                 text.addPara("A stunned silence falls over your crew. Despite the signs, nobody had expected the Gate to work.")
-                text.addPara(
+                text.appendPara(
                     "Your Second Officer recovers first. \"Sir, this is monumental...but I recommend %s. " +
-                            "If any others in the Sector witness us utilizing a working gate, they will believe that we know " +
+                            "If any others in the Sector witness us using a working gate, they will believe that we know " +
                             "how to activate the rest and surely resort to violent measures.\"",
                     "caution"
                 )
@@ -41,20 +41,21 @@ class IntroQuestEpilogueDialog : InteractionDialogPlugin {
             }
             Option.AGREE -> {
                 text.addPara("")
-                text.addPara(
+                text.appendPara(
                     "You may now jump instantly between %s and %s.",
                     Intro.fringeGate?.starSystem?.baseName ?: String.empty,
                     Intro.coreGate?.starSystem?.baseName ?: String.empty
                 )
-                text.addPara(
+                text.appendPara(
                     "Each jump will incur a %s to power the Gate equal to the cost of a direct flight.",
                     "fuel cost"
                 )
-                text.addPara("You may only use a Gate when you are not being %s by any other fleet.", "tracked")
+                text.appendPara("You may only use a Gate when you are not being %s by any other fleet.",
+                    "tracked")
                 dialog.optionPanel.addOption(Option.LEAVE.text, Option.LEAVE)
             }
             Option.LEAVE -> {
-                Di.inst.sector.isPaused = false
+                di.sector.isPaused = false
                 dialog.dismiss()
             }
         }

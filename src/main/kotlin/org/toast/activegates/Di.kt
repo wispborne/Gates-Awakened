@@ -9,12 +9,9 @@ class Di(
     val sector: SectorAPI = Global.getSector(),
     val settings: SettingsAPI = Global.getSettings(),
     val logger: DebugLogger = Global.getLogger(Di::class.java)
-) {
+)
 
-    companion object {
-        /**
-         * Singleton instance of the service locator. Set a new one of these for unit tests.
-         */
-        var inst: Di = Di()
-    }
-}
+/**
+ * Singleton instance of the service locator. Set a new one of these for unit tests.
+ */
+var di: Di = Di()

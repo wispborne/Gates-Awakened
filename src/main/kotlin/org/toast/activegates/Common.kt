@@ -2,7 +2,7 @@ package org.toast.activegates
 
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
-import com.fs.starfarer.api.util.Misc
+import org.toast.activegates.constants.Memory
 import org.toast.activegates.constants.Tags
 import org.toast.activegates.constants.isBlacklisted
 import kotlin.math.roundToInt
@@ -12,33 +12,33 @@ import kotlin.math.roundToInt
  */
 internal object Common {
     val isDebugModeEnabled: Boolean
-        get() = Di.inst.settings.getBoolean("activeGates_Debug")
+        get() = di.settings.getBoolean("activeGates_Debug")
 
     private val fuelCostPerLY: Float
         get() {
-            val fuelMultiplierFromSettings = Di.inst.settings.getFloat("activeGates_FuelMultiplier")
+            val fuelMultiplierFromSettings = di.settings.getFloat("activeGates_FuelMultiplier")
             return Math.max(
                 1F,
-                (Di.inst.sector.playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
+                (di.sector.playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
             )
         }
 
     val activationCost: Map<String, Float>
         get() = mapOf(
-            "metals" to Di.inst.settings.getFloat("activeGates_Metals"),
-            "heavy_machinery" to Di.inst.settings.getFloat("activeGates_HeavyMachinery"),
-            "rare_metals" to Di.inst.settings.getFloat("activeGates_Transplutonics"),
-            "volatiles" to Di.inst.settings.getFloat("activeGates_Volatiles"),
-            "gamma_core" to Di.inst.settings.getFloat("activeGates_GammaCores")
+            "metals" to di.settings.getFloat("activeGates_Metals"),
+            "heavy_machinery" to di.settings.getFloat("activeGates_HeavyMachinery"),
+            "rare_metals" to di.settings.getFloat("activeGates_Transplutonics"),
+            "volatiles" to di.settings.getFloat("activeGates_Volatiles"),
+            "gamma_core" to di.settings.getFloat("activeGates_GammaCores")
         )
 
     fun canActivate(): Boolean {
-        val cargo = Di.inst.sector.playerFleet.cargo
+        val cargo = di.sector.playerFleet.cargo
         return activationCost.all { commodityAndCost -> cargo.getCommodityQuantity(commodityAndCost.key) >= commodityAndCost.value }
     }
 
     fun payActivationCost(): Boolean {
-        val cargo = Di.inst.sector.playerFleet.cargo
+        val cargo = di.sector.playerFleet.cargo
 
         return if (canActivate()) {
             activationCost.forEach { commodityAndCost ->
@@ -50,20 +50,25 @@ internal object Common {
         }
     }
 
+    var remainingActivationCodes: Int
+        get() = di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
+        set(value) {
+            di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
+        }
+
     fun jumpCostInFuel(distanceInLY: Float): Int = (fuelCostPerLY * distanceInLY).roundToInt()
 
     fun getSystems(): List<StarSystemAPI> =
-        Di.inst.sector.starSystems
+        di.sector.starSystems
             .filterNot { it.isBlacklisted }
 
     /**
      * List of non-blacklisted gates (filterable), sorted by shortest distance from player first
      */
-    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean): List<GateDestination> {
-        val playerLoc = Di.inst.sector.playerFleet.locationInHyperspace
-
+    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean): List<GateInfo> {
         return getSystems()
             .flatMap { system -> system.getEntitiesWithTag(Tags.TAG_GATE) }
+            .asSequence()
             .filter { gate ->
                 when (filter) {
                     GateFilter.All -> true
@@ -74,30 +79,29 @@ internal object Common {
                 }
             }
             .map {
-                GateDestination(
+                GateInfo(
                     gate = it,
                     systemId = it.starSystem.id,
-                    systemName = it.starSystem.baseName,
-                    distanceFromPlayer = Misc.getDistanceLY(playerLoc, it.locationInHyperspace)
+                    systemName = it.starSystem.baseName
                 )
             }
             .filter {
                 if (excludeCurrentGate)
-                    it.distanceFromPlayer > 0
+                    it.gate.distanceFromPlayer > 0
                 else
                     true
             }
-            .sortedBy { it.distanceFromPlayer }
+            .sortedBy { it.gate.distanceFromPlayer }
+            .toList()
     }
 
     fun getCommodityCostOf(commodity: String): Float = activationCost[commodity] ?: 0F
 }
 
-internal class GateDestination(
+internal data class GateInfo(
     val gate: Gate,
     val systemId: String,
-    val systemName: String,
-    val distanceFromPlayer: Float
+    val systemName: String
 )
 
 internal enum class GateFilter {

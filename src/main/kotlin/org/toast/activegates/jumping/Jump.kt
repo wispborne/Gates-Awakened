@@ -2,15 +2,15 @@ package org.toast.activegates.jumping
 
 import com.fs.starfarer.api.util.Misc
 import org.toast.activegates.Common
-import org.toast.activegates.Di
 import org.toast.activegates.Gate
+import org.toast.activegates.di
 
 internal object Jump {
     /**
      * @return whether jump was successful
      */
     fun jumpPlayer(destinationGate: Gate, isFuelRequired: Boolean = true): JumpResult {
-        val playerFleet = Di.inst.sector.playerFleet
+        val playerFleet = di.sector.playerFleet
 
         // Pay fuel cost (or show error if player lacks fuel)
         val cargo = playerFleet.cargo
@@ -25,18 +25,18 @@ internal object Jump {
             if (cargo.fuel >= fuelCostOfJump) {
                 cargo.removeFuel(fuelCostOfJump.toFloat())
             } else {
-                return Jump.JumpResult.FuelRequired
+                return JumpResult.FuelRequired
             }
         }
 
         // Jump player fleet to new system
         jumpPlayerToGate(destinationGate)
-        return Jump.JumpResult.Success
+        return JumpResult.Success
     }
 
 
     private fun jumpPlayerToGate(gate: Gate) {
-        val playerFleet = Di.inst.sector.playerFleet
+        val playerFleet = di.sector.playerFleet
         val newSystem = gate.starSystem
 
         // Usable in the future?
@@ -45,7 +45,7 @@ internal object Jump {
         // Jump player fleet to new system
         playerFleet.containingLocation.removeEntity(playerFleet)
         newSystem.addEntity(playerFleet)
-        Di.inst.sector.currentLocation = newSystem
+        di.sector.currentLocation = newSystem
 
         // Move player fleet to the new gate's location
         playerFleet.setLocation(gate.location.x, gate.location.y)

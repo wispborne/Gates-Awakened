@@ -1,6 +1,8 @@
 package org.toast.activegates.constants
 
 import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.characters.FullName
+import com.fs.starfarer.api.characters.PersonAPI
 import org.toast.activegates.Common
 import kotlin.math.roundToInt
 
@@ -49,6 +51,6 @@ object Strings {
     fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String =
         "Could not find $systemIdChosenByPlayer; aborting"
 
-    fun menuOptionJumpToSystem(systemName: String, jumpCostInFuel: Int): String =
-        "Jump to $systemName ($jumpCostInFuel fuel)"
+    fun boyOrGirl(person: PersonAPI): String =
+        if (person.gender == FullName.Gender.FEMALE) "girl" else "boy"
 }

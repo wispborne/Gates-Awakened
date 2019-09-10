@@ -4,14 +4,13 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.combat.EngagementResultAPI
-import org.toast.activegates.Common
-import org.toast.activegates.Di
-import org.toast.activegates.addPara
+import org.toast.activegates.appendPara
+import org.toast.activegates.di
 import org.toast.activegates.jumping.Jump
 import java.util.*
 import kotlin.concurrent.schedule
 
-class IntroQuestCompletedDialog : InteractionDialogPlugin {
+class IntroQuestFinishedDialog : InteractionDialogPlugin {
     private lateinit var dialog: InteractionDialogAPI
 
     override fun init(dialog: InteractionDialogAPI) {
@@ -34,11 +33,11 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
             null -> return
             Option.INIT -> {
                 text.addPara(
-                    "The gate looks derelict, the same as any other, but it is still a sight to behold. " +
+                    "The Gate looks derelict, the same as any other, but it is still a sight to behold. " +
                             "The Domain had many triumphs and created many wonders, " +
                             "but the Gates represented the pinnacle of the technology of Man - and now represent how far it has fallen."
                 )
-                text.addPara(
+                text.appendPara(
                     "However, as your fleet moves closer, sensors pick up a faint %s on the ring; " +
                             "only perceptible to those close enough and specifically looking for something. " +
                             "It seems to be emanating from %s.",
@@ -50,13 +49,13 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
                 )
             }
             Option.CONTINUE -> {
-                text.addPara(
+                text.appendPara(
                     "The source of the energy is a small, but clearly labeled, connector to supply %s to the gate. " +
-                            "In the ${Di.inst.sector.clock.cycle} cycles since the Collapse, " +
+                            "In the ${di.sector.clock.cycle} cycles since the Collapse, " +
                             "it seems the adapter design has had no reason to change.",
                     "fuel"
                 )
-                text.addPara(
+                text.appendPara(
                     "A readout indicates that the gate is %s - perhaps left over from the time of the Domain.",
                     "already fueled"
                 )
@@ -77,17 +76,17 @@ class IntroQuestCompletedDialog : InteractionDialogPlugin {
                 if (coreGate != null) {
                     dialog.dismiss()
                     Jump.jumpPlayer(coreGate, isFuelRequired = false)
-                    Di.inst.sector.isPaused = false
+                    di.sector.isPaused = false
 
                     Timer().schedule(1000) {
-                        Di.inst.sector.isPaused = true
-                        Intro.introQuestEpilogue()
+                        di.sector.isPaused = true
+                        Intro.displayIntroQuestEpilogueWindow()
                     }
                 }
             }
 
             Option.LEAVE -> {
-                Di.inst.sector.isPaused = false
+                di.sector.isPaused = false
                 dialog.dismiss()
             }
         }

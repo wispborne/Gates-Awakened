@@ -3,13 +3,16 @@ package org.toast.activegates
 import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
-import org.lazywizard.lazylib.ext.logging.i
 import org.toast.activegates.constants.Strings
 import org.toast.activegates.constants.Tags
 import org.toast.activegates.intro.Intro
-import org.toast.activegates.intro.IntroBarEvent
 import org.toast.activegates.intro.IntroBarEventCreator
 import org.toast.activegates.intro.IntroIntel
+import org.toast.activegates.intro.IntroQuestBeginning
+import org.toast.activegates.logging.i
+import org.toast.activegates.midgame.Midgame
+import org.toast.activegates.midgame.MidgameBarEventCreator
+import org.toast.activegates.midgame.MidgameQuestBeginning
 
 class LifecyclePlugin : BaseModPlugin() {
 
@@ -19,34 +22,54 @@ class LifecyclePlugin : BaseModPlugin() {
         if (!Intro.haveGatesBeenTagged()) {
             Intro.findAndTagIntroGatePair()
         }
+
+        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
+            Midgame.findAndTagMidgameCacheLocation()
+        }
     }
 
     override fun onGameLoad(newGame: Boolean) {
         super.onGameLoad(newGame)
 
         // When the game (re)loads, we want to grab the new instances of everything, especially the new sector.
-        Di.inst = Di()
+        di = Di()
 
         // Keep track of what gates this mod can interact with
         // Other mods may blacklist systems at will.
-        tagPossibleGateDestinations()
+        applyBlacklistTagsToSystems()
 
         val bar = BarEventManager.getInstance()
 
-        if (Common.isDebugModeEnabled) {
+        // Intro quest
+        if (!Intro.haveGatesBeenTagged()) {
             Intro.findAndTagIntroGatePair()
         }
 
-        if (Intro.haveGatesBeenTagged() && !Intro.wasIntroQuestStarted && !bar.hasEventCreator(IntroBarEventCreator::class.java)) {
+        if (Intro.haveGatesBeenTagged()
+            && !Intro.hasQuestBeenStarted
+            && !bar.hasEventCreator(IntroBarEventCreator::class.java)
+        ) {
             bar.addEventCreator(IntroBarEventCreator())
         }
 
+        // Midgame quest
+        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
+            Midgame.findAndTagMidgameCacheLocation()
+        }
+
+        if (Midgame.hasPlanetWithCacheBeenTagged()
+            && !Midgame.hasQuestBeenStarted
+            && !bar.hasEventCreator(MidgameBarEventCreator::class.java)
+        ) {
+            bar.addEventCreator(MidgameBarEventCreator())
+        }
+
         // Register this so we can intercept and replace interactions, such as with a gate
-        Di.inst.sector.registerPlugin(CampaignPlugin())
+        di.sector.registerPlugin(CampaignPlugin())
     }
 
     override fun beforeGameSave() {
-        val intel = Di.inst.sector.intelManager.getIntel(IntroIntel::class.java)
+        val intel = di.sector.intelManager.getIntel(IntroIntel::class.java)
 
         if (intel != null) {
 //            Di.inst.sector.intelManager.removeIntel(IntroIntel::class.java)
@@ -55,9 +78,9 @@ class LifecyclePlugin : BaseModPlugin() {
         super.beforeGameSave()
     }
 
-    private fun tagPossibleGateDestinations() {
+    private fun applyBlacklistTagsToSystems() {
         val blacklistedSystems = try {
-            val jsonArray = Di.inst.settings
+            val jsonArray = di.settings
                 .getMergedSpreadsheetDataForMod(
                     "id", "data/active-gates/active-gates_system_blacklist.csv",
                     Strings.modName
@@ -82,16 +105,16 @@ class LifecyclePlugin : BaseModPlugin() {
                 .distinctBy { it.systemId }
                 .filter { it.isBlacklisted }
         } catch (e: Exception) {
-            Di.inst.logger.error(e.message, e)
+            di.logger.error(e.message, e)
             emptyList<BlacklistEntry>()
         }
 
-        val systems = Di.inst.sector.starSystems
+        val systems = di.sector.starSystems
 
         // Mark all blacklisted systems as blacklisted, remove tags from ones that aren't
         for (system in systems) {
             if (blacklistedSystems.any { it.systemId == system.id }) {
-                Di.inst.logger.i({ "Blacklisting system: ${system.id}" })
+                di.logger.i { "Blacklisting system: ${system.id}" }
                 system.addTag(Tags.TAG_BLACKLISTED_SYSTEM)
             } else {
                 system.removeTag(Tags.TAG_BLACKLISTED_SYSTEM)
@@ -105,10 +128,13 @@ class LifecyclePlugin : BaseModPlugin() {
     override fun configureXStream(x: XStream) {
         super.configureXStream(x)
 
+        // DO NOT CHANGE THESE STRINGS, DOING SO WILL BREAK SAVE GAMES
         val aliases = listOf(
             IntroIntel::class to "IntroIntel",
-            IntroBarEvent::class to "IntroBarEvent",
+            IntroQuestBeginning::class to "IntroBarEvent",
             IntroBarEventCreator::class to "IntroBarEventCreator",
+            MidgameQuestBeginning::class to "MidgameQuestBeginning",
+            MidgameBarEventCreator::class to "MidgameBarEventCreator",
             CampaignPlugin::class to "CampaignPlugin"
         )
 

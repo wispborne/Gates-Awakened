@@ -19,17 +19,20 @@ class JumpDialog : PaginatedOptions() {
         this.dialog = dialog
 
         // Show the image and "The adamantine ring awaits..." text
-        dialog.visualPanel.showImagePortion("illustrations", "dead_gate", 640f, 400f, 0f, 0f, 480f, 300f)
+        dialog.visualPanel.showImagePortion(
+            "illustrations", "dead_gate",
+            640f, 400f, 0f, 0f, 480f, 300f
+        )
         dialog.textPanel.addPara(
-            Di.inst.settings.getDescription(
+            di.settings.getDescription(
                 dialog.interactionTarget.customDescriptionId,
                 Description.Type.CUSTOM
             ).text1
         )
 
         if (isPlayerBeingWatched()) {
-            dialog.textPanel.addPara(
-                "A nearby fleet is %s your movements, making it %s to use the Gate.",
+            dialog.textPanel.appendPara(
+                "A nearby fleet is %s your movements, making it %s to approach the Gate.",
                 "tracking",
                 "unwise"
             )
@@ -37,10 +40,10 @@ class JumpDialog : PaginatedOptions() {
             showOptions()
             dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
             return
+        } else {
+            // Show the initial dialog options
+            optionSelected(null, Option.INIT.id)
         }
-
-        // Show the initial dialog options
-        optionSelected(null, Option.INIT.id)
     }
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
@@ -57,16 +60,39 @@ class JumpDialog : PaginatedOptions() {
             when (Option.values().single { it.id == optionData }) {
                 Option.INIT,
                 Option.RECONSIDER -> {
-                    addOption(Option.FLY_THROUGH.text, Option.FLY_THROUGH.id)
+                    if (dialog.interactionTarget.isActive) {
+                        addOption(Option.FLY_THROUGH.text, Option.FLY_THROUGH.id)
+                    } else if (Common.remainingActivationCodes > 0) {
+                        addOption(
+                            Option.ACTIVATE.text.replace("%d", Common.remainingActivationCodes.toString()),
+                            Option.ACTIVATE.id
+                        )
+                    }
+
                     addOption(Option.LEAVE.text, Option.LEAVE.id)
+                }
+                Option.ACTIVATE -> {
+                    val wasNewGateActivated = dialog.interactionTarget.activate()
+
+                    if (wasNewGateActivated) {
+                        Common.remainingActivationCodes--
+                        dialog.textPanel.appendPara(
+                            "You follow the activation instructions carefully. " +
+                                    "A barely perceptible energy signature is the only indication that it worked."
+                        )
+                    } else {
+                        dialog.textPanel.appendPara(
+                            "Hmm...it didn't work."
+                        )
+                    }
+
+                    optionSelected(null, Option.INIT.id)
                 }
                 Option.FLY_THROUGH -> {
                     activatedGates.forEach { gate ->
                         addOption(
-                            Strings.menuOptionJumpToSystem(
-                                systemName = gate.systemName,
-                                jumpCostInFuel = Common.jumpCostInFuel(gate.distanceFromPlayer)
-                            ), gate.systemId
+                            "Jump to ${gate.systemName} (${Common.jumpCostInFuel(gate.gate.distanceFromPlayer)} fuel)"
+                            , gate.systemId
                         )
                     }
 
@@ -102,7 +128,7 @@ class JumpDialog : PaginatedOptions() {
      * Logic adapted from [com.fs.starfarer.api.impl.campaign.rulecmd.salvage.HostileFleetNearbyAndAware].
      */
     private fun isPlayerBeingWatched(): Boolean {
-        val playerFleet = Di.inst.sector.playerFleet
+        val playerFleet = di.sector.playerFleet
 
         val fleetsWatchingPlayer = playerFleet.containingLocation.fleets
             .filter { nearbyFleet ->
@@ -138,7 +164,7 @@ class JumpDialog : PaginatedOptions() {
             return false
         }
 
-        val playerFleet = Di.inst.sector.playerFleet
+        val playerFleet = di.sector.playerFleet
 
         // Pay fuel cost (or show error if player lacks fuel)
         val cargo = playerFleet.cargo
@@ -173,6 +199,7 @@ class JumpDialog : PaginatedOptions() {
     enum class Option(val text: String, val id: String) {
         INIT("", "${MOD_PREFIX}init"),
         FLY_THROUGH("Fly through the gate", "${MOD_PREFIX}fly_through"),
+        ACTIVATE("Use an activation code (%d left)", "${MOD_PREFIX}activate_gate"),
         RECONSIDER("Reconsider", "${MOD_PREFIX}reconsider"),
         LEAVE("Leave", "${MOD_PREFIX}leave")
     }
