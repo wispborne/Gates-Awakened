@@ -149,3 +149,4 @@ gradle-app.setting
 # Let's NOT commit Starsector's jar files...
 starfarer-api-1.0.jar
 starfarer-api-1.0-sources.jar
+*.iml
