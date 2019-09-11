@@ -41,7 +41,7 @@ tasks {
     named<Jar>("jar")
     {
         destinationDir = file("$rootDir/jars")
-        archiveName = "Active_Gates.jar"
+        archiveName = "Gates_Awakened.jar"
     }
 
     register("debug-starsector", Exec::class) {

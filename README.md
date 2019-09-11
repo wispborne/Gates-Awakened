@@ -20,7 +20,7 @@ Massive thanks to _toast_ for his inspirational mod, [Active Gates](https://frac
 4. Open a terminal to the root directory of the mod and type
    1. Unix: `./gradlew build jar`
    2. Windows: `gradlew.bat build jar`
-5. You should now (eventually) have a jar built at `jars/Active-Gates.jar`.
+5. You should now (eventually) have a jar built at `jars/Gates_Awakened.jar`.
 
 ## Changelog
 

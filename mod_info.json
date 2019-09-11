@@ -1,11 +1,11 @@
 {
-    "id": "active_gates",
-    "name": "Active Gates",
-    "author": "Toast, Wispborne",
+    "id": "gates_awakened",
+    "name": "Gates Awakened",
+    "author": "Wispborne",
     "utility": "false",
-    "version": "2.0.0",
-    "description": "Allows gates to teleport your fleet from one gate to another.",
-    "gameVersion": "0.9a",
-    "jars":["jars/Active_Gates.jar"],
-    "modPlugin":"org.toast.activegates.LifecyclePlugin"
+    "version": "1.0.0",
+    "description": "Adds a short series of missions that open up instantaneous travel between Gates.",
+    "gameVersion": "0.9.1a",
+    "jars":["jars/Gates_Awakened.jar"],
+    "modPlugin":"org.wisp.gatesawakened.LifecyclePlugin"
 }
