@@ -41,8 +41,7 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
                     "Universal Access Chip"
                 )
                 text.appendPara(
-                    """It contains detailed, but slightly foreboding, instructions on how to 
-                        |reactivate "carefully considered %s", "should my mission be successful".""".trimMargin(),
+                    """It contains detailed, but slightly foreboding, instructions on how to reactivate "carefully considered %s", "should my mission be successful".""",
                     "Gates"
                 )
 
@@ -58,10 +57,10 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
 
                 Common.remainingActivationCodes = 2
 
-                (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as MidgameIntel)
-                    .endImmediately()
-
                 di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] = true
+
+                (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as MidgameIntel)
+                    .run { di.sector.intelManager.removeIntel(this) }
 
                 dialog.optionPanel.addOption(
                     Option.LEAVE.text,

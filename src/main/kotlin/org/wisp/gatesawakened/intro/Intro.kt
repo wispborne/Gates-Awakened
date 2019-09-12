@@ -99,7 +99,7 @@ internal object Intro {
         coreGate?.activate()
         di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_DONE] = true
         (di.sector.intelManager.getFirstIntel(IntroIntel::class.java) as IntroIntel)
-            .endImmediately()
+            .run { di.sector.intelManager.removeIntel(this) }
 
         // Pop up a dialog explaining how gates work
         di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog(), di.sector.playerFleet)
