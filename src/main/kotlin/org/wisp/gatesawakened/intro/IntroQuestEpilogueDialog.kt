@@ -30,11 +30,12 @@ class IntroQuestEpilogueDialog : InteractionDialogPlugin {
         when (optionData as? Option) {
             null -> return
             Option.INIT -> {
-                text.addPara("A stunned silence falls over your crew. Despite the signs, nobody had expected the Gate to work.")
+                text.addPara("A stunned silence falls over your crew. Despite the signs, nobody had expected the %s to work.")
                 text.appendPara(
                     "Your Second Officer recovers first. \"Sir, this is monumental...but I recommend %s. " +
                             "If any others in the Sector witness us using a working gate, they will believe that we know " +
                             "how to activate the rest and surely resort to violent measures.\"",
+                    "Gate",
                     "caution"
                 )
                 dialog.optionPanel.addOption(Option.AGREE.text, Option.AGREE)

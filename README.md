@@ -1,5 +1,7 @@
 # Gates Awakened
 
+![Header, taken from Starsector](screenshot2.jpg)
+
 Gates Awakened is a mod for the excellent game [Starsector](https://fractalsoftworks.com/).
 
 It adds a short series of missions that open up instantaneous travel between Gates from the ancient Domain of Man - but you are limited to only a small number of Gates, so adjust accordingly.
@@ -10,7 +12,7 @@ Once a Gate is activated, the player may use fuel, based on distance, to travel 
 
 Massive thanks to _toast_ for his inspirational mod, [Active Gates](https://fractalsoftworks.com/forum/index.php?topic=12791.0), without which this mod would not exist.
 
-![Screenshot](screenshot.jpg)
+![Intro story screenshot](screenshot.jpg)
 
 ## Compiling this Mod
 
