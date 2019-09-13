@@ -25,7 +25,7 @@ internal object Jump {
             if (cargo.fuel >= fuelCostOfJump) {
                 cargo.removeFuel(fuelCostOfJump.toFloat())
             } else {
-                return JumpResult.FuelRequired
+                return JumpResult.FuelRequired(fuelCostOfJump.toString())
             }
         }
 
@@ -57,6 +57,6 @@ internal object Jump {
 
     sealed class JumpResult {
         object Success : JumpResult()
-        object FuelRequired : JumpResult()
+        data class FuelRequired(val fuelCost: String) : JumpResult()
     }
 }

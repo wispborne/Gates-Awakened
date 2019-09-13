@@ -164,31 +164,19 @@ class JumpDialog : PaginatedOptions() {
             return false
         }
 
-        val playerFleet = di.sector.playerFleet
-
-        // Pay fuel cost (or show error if player lacks fuel)
-        val cargo = playerFleet.cargo
-        val fuelCostOfJump = Common.jumpCostInFuel(
-            Misc.getDistanceLY(
-                playerFleet.locationInHyperspace,
-                newSystem.location
-            )
-        )
-
-        if (cargo.fuel >= fuelCostOfJump) {
-            cargo.removeFuel(fuelCostOfJump.toFloat())
-        } else {
-            text.addPara(Strings.notEnoughFuel(fuelCostOfJump))
-            return false
-        }
-
         // Jump player fleet to new system
         val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
-        Jump.jumpPlayer(gates.first())
 
-        text.addPara(Strings.flyThroughActiveGate)
-
-        return true
+        return when (val result = Jump.jumpPlayer(gates.first())) {
+            is Jump.JumpResult.Success -> {
+                text.addPara(Strings.flyThroughActiveGate)
+                true
+            }
+            is Jump.JumpResult.FuelRequired -> {
+                text.addPara(Strings.notEnoughFuel(result.fuelCost))
+                false
+            }
+        }
     }
 
     override fun doesCommandAddOptions(): Boolean = true

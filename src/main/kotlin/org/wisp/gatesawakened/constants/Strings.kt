@@ -24,7 +24,7 @@ object Strings {
     const val flyThroughActiveGate = "Your fleet passes through the gate..."
     const val resultWhenGateDoesNotWork = "and nothing happens."
 
-    fun notEnoughFuel(fuelCostOfJump: Int) =
+    fun notEnoughFuel(fuelCostOfJump: String) =
         "Unfortunately, your fleet lacks the $fuelCostOfJump fuel necessary to use the gate."
 
     fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String =
