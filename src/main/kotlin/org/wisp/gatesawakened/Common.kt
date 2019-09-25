@@ -73,9 +73,18 @@ internal object Common {
     fun updateActiveGateIntel() {
         val activeGates = getGates(GateFilter.Active, excludeCurrentGate = false).map { it.gate }
 
-        di.intelManager.getIntel(ActiveGateIntel::class.java)
+        val currentGateIntels = di.intelManager.getIntel(ActiveGateIntel::class.java)
+            .filterIsInstance(ActiveGateIntel::class.java)
+
+        // Add intel for gates that don't have any
+        activeGates
+            .filter { it !in currentGateIntels.map { activeIntel -> activeIntel.activeGate } }
+            .forEach { di.intelManager.addIntel(ActiveGateIntel(it)) }
+
+        // Remove intel for gates that aren't in the active list
+        currentGateIntels
+            .filter { it.activeGate !in activeGates }
             .forEach { di.intelManager.removeIntel(it) }
-        activeGates.forEach { di.intelManager.addIntel(ActiveGateIntel(it)) }
     }
 }
 
