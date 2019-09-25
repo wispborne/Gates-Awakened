@@ -4,7 +4,7 @@
 
 Gates Awakened is a mod for the excellent game [Starsector](https://fractalsoftworks.com/).
 
-It adds a short series of missions that open up instantaneous travel between Gates from the ancient Domain of Man - but you are limited to only a small number of Gates, so adjust accordingly.
+It adds two short missions that open up instantaneous travel between Gates from the ancient Domain of Man - but you are limited to only a small number of Gates, so adjust accordingly.
 
 Gates Awakened tries to encourage early exploration and ease later-game traveling, without feeling like a cheat. While it is, of course, not canon, it fits smoothly into lore of the game.
 
@@ -33,9 +33,3 @@ The code that drives this logic is around [here](https://github.com/davidwhitman
    1. Unix: `./gradlew build jar`
    1. Windows: `gradlew.bat build jar`
 1. You should now (eventually) have a jar built at `jars/Gates_Awakened.jar`.
-
-## Changelog
-
-### 1.0
-
-- Initial release
