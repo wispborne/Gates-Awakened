@@ -18,8 +18,6 @@ class IntroBarEventCreator : BaseBarEventCreator() {
     override fun createBarEvent(): PortsideBarEvent =
         IntroQuestBeginning()
 
-    override fun getBarEventTimeoutDuration(): Float = Float.MAX_VALUE
-
     override fun getBarEventFrequencyWeight(): Float =
         if (Common.isDebugModeEnabled) {
             100f

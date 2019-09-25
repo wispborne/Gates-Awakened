@@ -18,8 +18,6 @@ class MidgameBarEventCreator : BaseBarEventCreator() {
     override fun createBarEvent(): PortsideBarEvent =
         MidgameQuestBeginning()
 
-    override fun getBarEventTimeoutDuration(): Float = Float.MAX_VALUE
-
     override fun getBarEventFrequencyWeight(): Float =
         if (Common.isDebugModeEnabled) {
             100f

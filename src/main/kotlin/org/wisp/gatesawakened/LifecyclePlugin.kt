@@ -3,6 +3,7 @@ package org.wisp.gatesawakened
 import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
+import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.intro.Intro
@@ -12,6 +13,7 @@ import org.wisp.gatesawakened.intro.IntroQuestBeginning
 import org.wisp.gatesawakened.logging.i
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameBarEventCreator
+import org.wisp.gatesawakened.midgame.MidgameIntel
 import org.wisp.gatesawakened.midgame.MidgameQuestBeginning
 
 class LifecyclePlugin : BaseModPlugin() {
@@ -40,6 +42,8 @@ class LifecyclePlugin : BaseModPlugin() {
 
         val bar = BarEventManager.getInstance()
 
+        fixBugWithBarCreatorDurationTooHigh(bar)
+
         // Intro quest
         if (!Intro.haveGatesBeenTagged()) {
             Intro.findAndTagIntroGatePair()
@@ -64,18 +68,10 @@ class LifecyclePlugin : BaseModPlugin() {
             bar.addEventCreator(MidgameBarEventCreator())
         }
 
+        Common.updateActiveGateIntel()
+
         // Register this so we can intercept and replace interactions, such as with a gate
-        di.sector.registerPlugin(org.wisp.gatesawakened.CampaignPlugin())
-    }
-
-    override fun beforeGameSave() {
-        val intel = di.sector.intelManager.getIntel(IntroIntel::class.java)
-
-        if (intel != null) {
-//            Di.inst.sector.intelManager.removeIntel(IntroIntel::class.java)
-        }
-
-        super.beforeGameSave()
+        di.sector.registerPlugin(CampaignPlugin())
     }
 
     private fun applyBlacklistTagsToSystems() {
@@ -135,11 +131,35 @@ class LifecyclePlugin : BaseModPlugin() {
             IntroBarEventCreator::class to "IntroBarEventCreator",
             MidgameQuestBeginning::class to "MidgameQuestBeginning",
             MidgameBarEventCreator::class to "MidgameBarEventCreator",
-            org.wisp.gatesawakened.CampaignPlugin::class to "CampaignPlugin"
+            MidgameIntel::class to "MidgameIntel",
+            ActiveGateIntel::class to "ActiveGateIntel",
+            CampaignPlugin::class to "CampaignPlugin"
         )
 
         // Prepend "g8_" so the classes don't conflict with anything else getting serialized
         aliases.forEach { x.alias("g8_${it.second}", it.first.java) }
+    }
+
+    /**
+     * Fixed in 1.1.
+     *
+     * Early and Mid quests originally had a super long duration so they never respawned after you initially saw them.
+     * Fix by causing them to expire after a day, then they'll be re-added on the next load.
+     */
+    private fun fixBugWithBarCreatorDurationTooHigh(bar: BarEventManager) {
+        if (bar.creators
+                .filterIsInstance(IntroBarEventCreator::class.java)
+                .any()
+        ) {
+            bar.setTimeout(IntroBarEventCreator::class.java, 1f)
+        }
+
+        if (bar.creators
+                .filterIsInstance(MidgameBarEventCreator::class.java)
+                .any()
+        ) {
+            bar.setTimeout(MidgameBarEventCreator::class.java, 1f)
+        }
     }
 
     private data class BlacklistEntry(

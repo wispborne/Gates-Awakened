@@ -5,6 +5,10 @@ import org.wisp.gatesawakened.Common
 
 typealias DebugLogger = Logger
 
+internal fun DebugLogger.w(message: () -> String) {
+    this.warn(message())
+}
+
 internal fun DebugLogger.i(message: () -> String) {
     if (Common.isDebugModeEnabled) {
         this.info(message())

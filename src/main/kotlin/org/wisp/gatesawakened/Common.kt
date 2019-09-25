@@ -2,6 +2,7 @@ package org.wisp.gatesawakened
 
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
+import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
@@ -67,6 +68,14 @@ internal object Common {
             }
             .sortedBy { it.gate.distanceFromPlayer }
             .toList()
+    }
+
+    fun updateActiveGateIntel() {
+        val activeGates = getGates(GateFilter.Active, excludeCurrentGate = false).map { it.gate }
+
+        di.intelManager.getIntel(ActiveGateIntel::class.java)
+            .forEach { di.intelManager.removeIntel(it) }
+        activeGates.forEach { di.intelManager.addIntel(ActiveGateIntel(it)) }
     }
 }
 

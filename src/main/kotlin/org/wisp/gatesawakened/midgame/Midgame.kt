@@ -43,7 +43,7 @@ object Midgame {
         val cacheSystem = findRandomCacheSystemInRemnantSpace()
 
         if (cacheSystem == null) {
-            di.logger.warn("No planet to put cache on, cannot start AG midgame quest")
+            di.logger.warn("No planet to put cache on, cannot start Gates Awakened midgame quest")
             return
         }
 
@@ -52,13 +52,13 @@ object Midgame {
 
     /**
      * We are defining midgame as either:
-     * - Player has a large enough fleet size, or
+     * - Player has a large enough fleet, or
      * - Player has an established colony.
      */
     fun isMidgame(): Boolean {
-        val fleetSize = di.sector.playerFleet.fleetPoints
+        val fleetPoints = di.sector.playerFleet.fleetPoints
 
-        if (fleetSize >= 65) {
+        if (fleetPoints >= 65) {
             return true
         }
 

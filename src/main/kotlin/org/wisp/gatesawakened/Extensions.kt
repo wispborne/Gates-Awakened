@@ -21,6 +21,7 @@ internal fun Gate.activate(): Boolean {
 
     if (this.isGate && Tags.TAG_GATE_ACTIVATED !in this.tags) {
         this.tags += Tags.TAG_GATE_ACTIVATED
+        Common.updateActiveGateIntel()
         return true
     }
 
