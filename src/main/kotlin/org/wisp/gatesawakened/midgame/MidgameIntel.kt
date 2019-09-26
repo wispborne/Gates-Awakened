@@ -59,5 +59,6 @@ class MidgameIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Brea
         super.getIntelTags(map)
             .apply {
                 add(Tags.INTEL_EXPLORATION)
+                add(Tags.INTEL_STORY)
             }
 }

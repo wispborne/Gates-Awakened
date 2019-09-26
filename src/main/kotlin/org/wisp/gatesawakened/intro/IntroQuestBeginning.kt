@@ -66,7 +66,7 @@ class IntroQuestBeginning : BaseBarEventWithPerson() {
         super.init(dialog)
         this.done = false
         dialog.visualPanel.showPersonInfo(this.person, true)
-        this.optionSelected(null as String?, OptionId.INIT)
+        this.optionSelected(null, OptionId.INIT)
     }
 
     override fun optionSelected(optionText: String?, optionData: Any?) {

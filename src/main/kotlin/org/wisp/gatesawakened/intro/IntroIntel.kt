@@ -60,5 +60,6 @@ class IntroIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Breadc
         super.getIntelTags(map)
             .apply {
                 add(Tags.INTEL_EXPLORATION)
+                add(Tags.INTEL_STORY)
             }
 }
