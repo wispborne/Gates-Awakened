@@ -11,6 +11,9 @@ internal object Tags {
     /** A gate that has been activated by the player **/
     const val TAG_GATE_ACTIVATED = "g8_gate_activated"
 
+    /** The tag used by the Active Gates mod, added so those gates may be used as well **/
+    const val TAG_ACTIVE_GATES_GATE_ACTIVATED = "gate_activated"
+
     /** Displays as a tag in the Intel Manager screen */
     const val INTEL_ACTIVE_GATE = "Active Gates"
 

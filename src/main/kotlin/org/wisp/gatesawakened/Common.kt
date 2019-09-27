@@ -47,8 +47,8 @@ internal object Common {
             .filter { gate ->
                 when (filter) {
                     GateFilter.All -> true
-                    GateFilter.Active -> gate.hasTag(Tags.TAG_GATE_ACTIVATED)
-                    GateFilter.Inactive -> !gate.hasTag(Tags.TAG_GATE_ACTIVATED)
+                    GateFilter.Active -> gate.isActive
+                    GateFilter.Inactive -> !gate.isActive
                     GateFilter.IntroCore -> gate.hasTag(Tags.TAG_GATE_INTRO_CORE)
                     GateFilter.IntroFringe -> gate.hasTag(Tags.TAG_GATE_INTRO_FRINGE)
                 }

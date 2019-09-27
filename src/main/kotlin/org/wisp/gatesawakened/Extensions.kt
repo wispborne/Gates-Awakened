@@ -14,7 +14,7 @@ val SectorEntityToken.isGate: Boolean
     get() = com.fs.starfarer.api.impl.campaign.ids.Tags.GATE in this.tags
 
 internal val Gate.isActive: Boolean
-    get() = Tags.TAG_GATE_ACTIVATED in this.tags
+    get() = Tags.TAG_GATE_ACTIVATED in this.tags || Tags.TAG_ACTIVE_GATES_GATE_ACTIVATED in this.tags
 
 internal fun Gate.activate(): Boolean {
     this.name = Strings.activeGateName

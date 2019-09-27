@@ -26,8 +26,8 @@ class CampaignPlugin : BaseCampaignPlugin() {
     override fun pickInteractionDialogPlugin(interactionTarget: SectorEntityToken): PluginPick<InteractionDialogPlugin>? {
         return when {
             // Interacting with a gate
-            interactionTarget in org.wisp.gatesawakened.Common.getGates(
-                org.wisp.gatesawakened.GateFilter.All,
+            interactionTarget in Common.getGates(
+                GateFilter.All,
                 excludeCurrentGate = false
             )
                 .map { it.gate } -> {
