@@ -1,5 +1,7 @@
 package org.wisp.gatesawakened.jumping
 
+import com.fs.starfarer.api.campaign.JumpPointAPI
+import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.Gate
@@ -9,7 +11,7 @@ internal object Jump {
     /**
      * @return whether jump was successful
      */
-    fun jumpPlayer(destinationGate: Gate, isFuelRequired: Boolean = true): JumpResult {
+    fun jumpPlayer(sourceLocation: SectorEntityToken?, destinationGate: Gate, isFuelRequired: Boolean = true): JumpResult {
         val playerFleet = di.sector.playerFleet
 
         // Pay fuel cost (or show error if player lacks fuel)
@@ -30,7 +32,8 @@ internal object Jump {
         }
 
         // Jump player fleet to new system
-        jumpPlayerToGate(destinationGate)
+//        jumpPlayerToGate(destinationGate)
+        di.sector.doHyperspaceTransition(di.sector.playerFleet, sourceLocation, JumpPointAPI.JumpDestination(destinationGate, null))
         return JumpResult.Success
     }
 

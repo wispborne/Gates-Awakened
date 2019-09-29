@@ -56,11 +56,12 @@ class JumpDialog : PaginatedOptions() {
             // doesn't clear itself because the user may change pages without changing the total available options
             // so we want to clear it manually if we recognize a selection that is not a page change.
             options.clear()
+            val gate = dialog.interactionTarget
 
             when (Option.values().single { it.id == optionData }) {
                 Option.INIT,
                 Option.RECONSIDER -> {
-                    if (dialog.interactionTarget.isActive) {
+                    if (gate.isActive) {
                         addOption(Option.FLY_THROUGH.text, Option.FLY_THROUGH.id)
                     } else if (Common.remainingActivationCodes > 0) {
                         addOption(
@@ -69,10 +70,14 @@ class JumpDialog : PaginatedOptions() {
                         )
                     }
 
+                    if (gate.canBeDeactivated) {
+                        addOption(Option.DEACTIVATE.text, Option.DEACTIVATE.id)
+                    }
+
                     addOption(Option.LEAVE.text, Option.LEAVE.id)
                 }
                 Option.ACTIVATE -> {
-                    val wasNewGateActivated = dialog.interactionTarget.activate()
+                    val wasNewGateActivated = gate.activate()
 
                     if (wasNewGateActivated) {
                         Common.remainingActivationCodes--
@@ -86,17 +91,41 @@ class JumpDialog : PaginatedOptions() {
                         )
                     }
 
+                    printRemainingActivationCodes()
+
                     optionSelected(null, Option.INIT.id)
                 }
                 Option.FLY_THROUGH -> {
                     activatedGates.forEach { gate ->
                         addOption(
-                            "Jump to ${gate.systemName} (${Common.jumpCostInFuel(gate.gate.distanceFromPlayer)} fuel)"
-                            , gate.systemId
+                            "Jump to ${gate.systemName} (${Common.jumpCostInFuel(gate.gate.distanceFromPlayer)} fuel)",
+                            gate.systemId
                         )
                     }
 
                     addOption(Option.RECONSIDER.text, Option.RECONSIDER.id)
+                }
+                Option.DEACTIVATE -> {
+                    if (gate.canBeDeactivated) {
+                        dialog.textPanel.appendPara(
+                            "Carefully, you follow the deactivation instructions you found in the cave."
+                        )
+
+                        if (gate.deactivate()) {
+                            Common.remainingActivationCodes++
+
+                            dialog.textPanel.appendPara(
+                                "The Gate quietly loses power."
+                            )
+                        } else {
+                            dialog.textPanel.appendPara(
+                                "However, the deactivation doesn't seem to work."
+                            )
+                        }
+                    }
+
+                    printRemainingActivationCodes()
+                    optionSelected(null, Option.INIT.id)
                 }
                 Option.LEAVE -> dialog.dismiss()
             }
@@ -121,6 +150,13 @@ class JumpDialog : PaginatedOptions() {
         dialog.optionPanel.setShortcut(Option.RECONSIDER.id, Keyboard.KEY_ESCAPE, false, false, false, true)
         dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
 
+    }
+
+    private fun printRemainingActivationCodes() {
+        dialog.textPanel.appendPara(
+            "You have %s activation ${if (Common.remainingActivationCodes == 1) "code" else "codes"} left.",
+            Common.remainingActivationCodes.toString()
+        )
     }
 
     /**
@@ -150,8 +186,8 @@ class JumpDialog : PaginatedOptions() {
         // Can only jump using activated gates
         // We shouldn't even see this dialog if the gate isn't activated, but still.
         if (!dialog.interactionTarget.isActive) {
-            text.addPara(Strings.flyThroughInactiveGate)
-            text.addPara(Strings.resultWhenGateDoesNotWork)
+            text.addPara("Your fleet passes through the inactive gate...")
+            text.addPara("and nothing happens.")
             return false
         }
 
@@ -167,13 +203,16 @@ class JumpDialog : PaginatedOptions() {
         // Jump player fleet to new system
         val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
 
-        return when (val result = Jump.jumpPlayer(gates.first())) {
+        return when (val result = Jump.jumpPlayer(
+            sourceLocation = dialog.interactionTarget,
+            destinationGate = gates.first()
+        )) {
             is Jump.JumpResult.Success -> {
-                text.addPara(Strings.flyThroughActiveGate)
+                text.addPara("Your fleet passes through the gate...")
                 true
             }
             is Jump.JumpResult.FuelRequired -> {
-                text.addPara(Strings.notEnoughFuel(result.fuelCost))
+                text.appendPara("You lack the %s fuel necessary to use the gate.", result.fuelCost)
                 false
             }
         }
@@ -188,6 +227,7 @@ class JumpDialog : PaginatedOptions() {
         INIT("", "${MOD_PREFIX}init"),
         FLY_THROUGH("Fly through the gate", "${MOD_PREFIX}fly_through"),
         ACTIVATE("Use an activation code (%d left)", "${MOD_PREFIX}activate_gate"),
+        DEACTIVATE("Deactivate to reclaim an activation code", "${MOD_PREFIX}deactivate_gate"),
         RECONSIDER("Reconsider", "${MOD_PREFIX}reconsider"),
         LEAVE("Leave", "${MOD_PREFIX}leave")
     }

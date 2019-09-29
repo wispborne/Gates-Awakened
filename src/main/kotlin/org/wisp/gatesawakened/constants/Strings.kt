@@ -1,10 +1,7 @@
 package org.wisp.gatesawakened.constants
 
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.characters.FullName
 import com.fs.starfarer.api.characters.PersonAPI
-import org.wisp.gatesawakened.Common
-import kotlin.math.roundToInt
 
 object Strings {
 
@@ -19,13 +16,7 @@ object Strings {
     const val modName = "gates-awakened"
 
     const val activeGateName = "Active Gate"
-
-    const val flyThroughInactiveGate = "Your fleet passes through the inactive gate..."
-    const val flyThroughActiveGate = "Your fleet passes through the gate..."
-    const val resultWhenGateDoesNotWork = "and nothing happens."
-
-    fun notEnoughFuel(fuelCostOfJump: String) =
-        "Unfortunately, your fleet lacks the $fuelCostOfJump fuel necessary to use the gate."
+    const val inactiveGateName = "Inactive Gate"
 
     fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String =
         "Could not find $systemIdChosenByPlayer; aborting"

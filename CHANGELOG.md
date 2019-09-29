@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Gates may now be deactivated to reclaim an activation code
+- Added hyperspace transition animation
+- Gates Awakened quests are now marked with the Story intel tag.
+
 ## 1.1.1 (2019-9-25)
 - Fixed crash that could occur when updating gate intel (thanks to Sunflare on Discord for the report)
 
