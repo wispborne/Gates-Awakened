@@ -52,10 +52,10 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
 
                 text.appendPara(
                     """At the very end are %s and the writer's signature: "Ludd".""",
-                    "two activation codes"
+                    "three activation codes"
                 )
 
-                Common.remainingActivationCodes = 2
+                Common.remainingActivationCodes = Common.midgameRewardActivationCodeCount
 
                 di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] = true
 

@@ -68,6 +68,8 @@ class LifecyclePlugin : BaseModPlugin() {
             bar.addEventCreator(MidgameBarEventCreator())
         }
 
+        migrationAddActivationCodeIfNeeded()
+
         Common.updateActiveGateIntel()
 
         // Register this so we can intercept and replace interactions, such as with a gate
@@ -138,6 +140,24 @@ class LifecyclePlugin : BaseModPlugin() {
 
         // Prepend "g8_" so the classes don't conflict with anything else getting serialized
         aliases.forEach { x.alias("g8_${it.second}", it.first.java) }
+    }
+
+    /**
+     * In 1.2, number of reward activation codes increased to 3 from 2.
+     * If you have fewer used + unused codes than 5 (3 codes + 2 from intro quest), then increase your remaining code count
+     * (if you've already done the midgame quest).
+     */
+    private fun migrationAddActivationCodeIfNeeded() {
+        val numberOfEarlyQuestGates = 2
+        val usedActivationCodeCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
+            .filter { it.gate.canBeDeactivated }
+            .count()
+
+        if (Midgame.wasQuestCompleted && (usedActivationCodeCount + Common.remainingActivationCodes) < (Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates)
+        ) {
+            Common.remainingActivationCodes =
+                Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates - usedActivationCodeCount
+        }
     }
 
     /**

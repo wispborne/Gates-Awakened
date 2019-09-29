@@ -25,6 +25,8 @@ internal object Common {
             )
         }
 
+    val midgameRewardActivationCodeCount = 3
+
     var remainingActivationCodes: Int
         get() = di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
         set(value) {

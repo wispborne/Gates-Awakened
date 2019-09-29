@@ -50,7 +50,7 @@ class IntroQuestEpilogueDialog : InteractionDialogPlugin {
                     Intro.coreGate?.starSystem?.baseName ?: String.empty
                 )
                 text.appendPara(
-                    "Each jump will incur a %s to power the Gate equal to the cost of a direct flight.",
+                    "Each jump will incur a %s to power the Gate relative to the cost of a direct flight.",
                     "fuel cost"
                 )
                 text.appendPara(

@@ -3,9 +3,10 @@
 ## 1.2.0
 
 - Gates may now be deactivated to reclaim an activation code
+- Number of reward activation codes increased to 3 from 2
 - Now prompts player to enable transponder when needed
 - Added hyperspace transition animation
-- Gates Awakened quests are now marked with the Story intel tag.
+- Gates Awakened quests are now marked with the Story intel tag
 
 ## 1.1.1 (2019-9-25)
 - Fixed crash that could occur when updating gate intel (thanks to Sunflare on Discord for the report)
@@ -20,8 +21,8 @@
 
 ## 1.0.1 (2019-9-12)
 
-- Fixed jump using double the stated fuel price.
-- Fixed typo in the second mission opening.
+- Fixed jump using double the stated fuel price
+- Fixed typo in the second mission opening
 
 ## 1.0.0 (2019-9-12)
 

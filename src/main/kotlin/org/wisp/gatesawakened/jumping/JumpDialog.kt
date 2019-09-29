@@ -16,6 +16,7 @@ import org.lwjgl.input.Keyboard
 import org.wisp.gatesawakened.*
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.midgame.Midgame
 
 class JumpDialog : PaginatedOptions() {
     private var selectedOptionBeingConfirmed: String? = null
@@ -76,7 +77,7 @@ class JumpDialog : PaginatedOptions() {
                         )
                     }
 
-                    if (gate.canBeDeactivated) {
+                    if (gate.canBeDeactivated && Midgame.wasQuestCompleted) {
                         addOption(Option.DEACTIVATE.text, Option.DEACTIVATE.id)
                     }
 
@@ -166,6 +167,8 @@ class JumpDialog : PaginatedOptions() {
 
                 if (jumpSuccessful) {
                     dialog.dismiss()
+                } else {
+                    optionSelected(null, Option.INIT.id)
                 }
             }
         } else {
