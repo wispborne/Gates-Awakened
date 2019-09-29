@@ -3,6 +3,7 @@
 ## 1.2.0
 
 - Gates may now be deactivated to reclaim an activation code
+- Now prompts player to enable transponder when needed
 - Added hyperspace transition animation
 - Gates Awakened quests are now marked with the Story intel tag.
 

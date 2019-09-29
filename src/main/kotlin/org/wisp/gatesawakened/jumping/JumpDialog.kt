@@ -1,19 +1,25 @@
 package org.wisp.gatesawakened.jumping
 
 
+import ch.tutteli.kbox.joinToString
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
+import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.campaign.TextPanelAPI
+import com.fs.starfarer.api.impl.campaign.abilities.TransponderAbility
+import com.fs.starfarer.api.impl.campaign.ids.Abilities
+import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.loading.Description
 import com.fs.starfarer.api.util.Misc
 import org.lwjgl.input.Keyboard
 import org.wisp.gatesawakened.*
 import org.wisp.gatesawakened.constants.MOD_PREFIX
-import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
 
 class JumpDialog : PaginatedOptions() {
+    private var selectedOptionBeingConfirmed: String? = null
+    private var isShowingTransponderConfirmation = false
 
     override fun init(dialog: InteractionDialogAPI) {
         this.dialog = dialog
@@ -96,10 +102,10 @@ class JumpDialog : PaginatedOptions() {
                     optionSelected(null, Option.INIT.id)
                 }
                 Option.FLY_THROUGH -> {
-                    activatedGates.forEach { gate ->
+                    activatedGates.forEach { activatedGate ->
                         addOption(
-                            "Jump to ${gate.systemName} (${Common.jumpCostInFuel(gate.gate.distanceFromPlayer)} fuel)",
-                            gate.systemId
+                            "Jump to ${activatedGate.systemName} (${Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayer)} fuel)",
+                            activatedGate.systemId
                         )
                     }
 
@@ -127,14 +133,40 @@ class JumpDialog : PaginatedOptions() {
                     printRemainingActivationCodes()
                     optionSelected(null, Option.INIT.id)
                 }
+                Option.JUMP_CONFIRM_TURN_TRANSPONDER_ON -> {
+                    val transponder = di.sector.playerFleet.getAbility(Abilities.TRANSPONDER)
+
+                    if (transponder != null && !transponder.isActive) {
+                        transponder.activate()
+                    }
+
+                    optionSelected(null, selectedOptionBeingConfirmed)
+                }
+                Option.JUMP_CONFIRM ->
+                    optionSelected(null, selectedOptionBeingConfirmed)
                 Option.LEAVE -> dialog.dismiss()
             }
         } else if (optionData is String && optionData in activatedGates.map { it.systemId }) {
             // Player chose to jump!
-            val jumpSuccessful = jumpToGate(text = dialog.textPanel, systemId = optionData)
+            val newSystem = Common.getSystems().firstOrNull { it.id == optionData }
 
-            if (jumpSuccessful) {
+            if (newSystem == null) {
                 dialog.dismiss()
+                return
+            }
+
+            // Check to see if we should delay jumping and ask user if they want to turn their transponder on first.
+            val isPromptingUserToTurnOnTransponder = confirmTransponderIfNeeded(
+                selectedOptionId = optionData,
+                newSystem = newSystem
+            )
+
+            if (!isPromptingUserToTurnOnTransponder) {
+                val jumpSuccessful = jumpToGate(text = dialog.textPanel, newSystem = newSystem)
+
+                if (jumpSuccessful) {
+                    dialog.dismiss()
+                }
             }
         } else {
             // If we don't recognize the selection, let [PaginatedOptions] deal with it.
@@ -150,6 +182,85 @@ class JumpDialog : PaginatedOptions() {
         dialog.optionPanel.setShortcut(Option.RECONSIDER.id, Keyboard.KEY_ESCAPE, false, false, false, true)
         dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
 
+    }
+
+    /**
+     * Show transponder warning if needed.
+     * Logic ripped directly from [com.fs.starfarer.api.impl.campaign.JumpPointInteractionDialogPluginImpl].
+     *
+     * @return true if confirmation is needed before jumping
+     */
+    private fun confirmTransponderIfNeeded(
+        selectedOptionId: String,
+        newSystem: StarSystemAPI
+    ): Boolean {
+        if (!isShowingTransponderConfirmation) {
+            val player = di.sector.playerFleet
+            if (!newSystem.isHyperspace && !player.isTransponderOn
+            ) {
+                val wouldBecomeHostile = TransponderAbility.getFactionsThatWouldBecomeHostile(player)
+                var wouldMindTransponderOff = false
+                var isPopulated = false
+                for (market in di.sector.economy.getMarkets(newSystem)) {
+                    if (market.isHidden) continue
+                    if (market.faction.isPlayerFaction) continue
+
+                    isPopulated = true
+                    if (!market.faction.isHostileTo(Factions.PLAYER) &&
+                        !market.isFreePort &&
+                        !market.faction.getCustomBoolean(Factions.CUSTOM_ALLOWS_TRANSPONDER_OFF_TRADE)
+                    ) {
+                        wouldMindTransponderOff = true
+                    }
+                }
+
+                if (isPopulated) {
+                    if (wouldMindTransponderOff) {
+                        dialog.textPanel.addPara(
+                            "Your transponder is off, and patrols " +
+                                    "in the " +
+                                    newSystem.nameWithLowercaseType +
+                                    " are likely to give you trouble over the fact, if you're spotted."
+                        )
+                    } else {
+                        dialog.textPanel.addPara(
+                            ("Your transponder is off, but any patrols in the " +
+                                    newSystem.nameWithLowercaseType +
+                                    " are unlikely to raise the issue.")
+                        )
+                    }
+
+                    if (wouldBecomeHostile.isNotEmpty()) {
+                        var str = "Turning the transponder on now would reveal your hostile actions to "
+                        str += wouldBecomeHostile.joinToString(
+                            separator = ", ",
+                            lastSeparator = ", and ",
+                            append = { faction, sb -> sb.append(faction.displayNameWithArticle) })
+                        dialog.textPanel.addPara(str, Misc.getNegativeHighlightColor())
+                    }
+
+                    options.clear()
+
+                    addOption(
+                        Option.JUMP_CONFIRM_TURN_TRANSPONDER_ON.text,
+                        Option.JUMP_CONFIRM_TURN_TRANSPONDER_ON.id
+                    )
+                    addOption(
+                        Option.JUMP_CONFIRM.text,
+                        Option.JUMP_CONFIRM.id
+                    )
+                    selectedOptionBeingConfirmed = selectedOptionId
+
+                    addOption(Option.LEAVE.text, Option.LEAVE.id)
+                    dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
+
+                    isShowingTransponderConfirmation = true
+                    return true
+                }
+            }
+        }
+
+        return false
     }
 
     private fun printRemainingActivationCodes() {
@@ -181,22 +292,13 @@ class JumpDialog : PaginatedOptions() {
 
     private fun jumpToGate(
         text: TextPanelAPI,
-        systemId: String
+        newSystem: StarSystemAPI
     ): Boolean {
         // Can only jump using activated gates
         // We shouldn't even see this dialog if the gate isn't activated, but still.
         if (!dialog.interactionTarget.isActive) {
             text.addPara("Your fleet passes through the inactive gate...")
             text.addPara("and nothing happens.")
-            return false
-        }
-
-        if (systemId.isBlank()) return false
-
-        val newSystem = Common.getSystems().firstOrNull { it.id == systemId }
-
-        if (newSystem == null) {
-            text.addPara(Strings.errorCouldNotFindJumpSystem(systemId))
             return false
         }
 
@@ -226,6 +328,11 @@ class JumpDialog : PaginatedOptions() {
     enum class Option(val text: String, val id: String) {
         INIT("", "${MOD_PREFIX}init"),
         FLY_THROUGH("Fly through the gate", "${MOD_PREFIX}fly_through"),
+        JUMP_CONFIRM_TURN_TRANSPONDER_ON(
+            "Turn the transponder on and then jump",
+            "${MOD_PREFIX}jump_after_turning_on_transponder"
+        ),
+        JUMP_CONFIRM("Jump, keeping the transponder off", "${MOD_PREFIX}jump_without_changing_transponder"),
         ACTIVATE("Use an activation code (%d left)", "${MOD_PREFIX}activate_gate"),
         DEACTIVATE("Deactivate to reclaim an activation code", "${MOD_PREFIX}deactivate_gate"),
         RECONSIDER("Reconsider", "${MOD_PREFIX}reconsider"),

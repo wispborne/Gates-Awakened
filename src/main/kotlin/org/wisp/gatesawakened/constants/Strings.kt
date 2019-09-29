@@ -18,9 +18,6 @@ object Strings {
     const val activeGateName = "Active Gate"
     const val inactiveGateName = "Inactive Gate"
 
-    fun errorCouldNotFindJumpSystem(systemIdChosenByPlayer: String): String =
-        "Could not find $systemIdChosenByPlayer; aborting"
-
     fun boyOrGirl(person: PersonAPI): String =
         if (person.gender == FullName.Gender.FEMALE) "girl" else "boy"
 }
