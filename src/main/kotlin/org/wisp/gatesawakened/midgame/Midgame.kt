@@ -29,11 +29,11 @@ object Midgame {
             .singleOrNull { it.hasTag(Tags.TAG_PLANET_WITH_CACHE) }
 
     val hasQuestBeenStarted: Boolean
-        get() = di.sector.memoryWithoutUpdate[Memory.MID_QUEST_IN_PROGRESS] == true
-                || di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] == true
+        get() = di.memory[Memory.MID_QUEST_IN_PROGRESS] == true
+                || di.memory[Memory.MID_QUEST_DONE] == true
 
     val wasQuestCompleted: Boolean
-        get() = di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] == true
+        get() = di.memory[Memory.MID_QUEST_DONE] == true
 
     fun findAndTagMidgameCacheLocation() {
         if (!Common.isDebugModeEnabled && hasPlanetWithCacheBeenTagged()) {
@@ -86,7 +86,7 @@ object Midgame {
             val intel = MidgameIntel(foundAt, destination)
 
             if (!intel.isDone) {
-                di.sector.memoryWithoutUpdate[Memory.MID_QUEST_IN_PROGRESS] = true
+                di.memory[Memory.MID_QUEST_IN_PROGRESS] = true
                 di.sector.intelManager.addIntel(intel)
 
                 success = true

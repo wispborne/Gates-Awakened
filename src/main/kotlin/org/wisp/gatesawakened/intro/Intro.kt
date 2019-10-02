@@ -33,11 +33,11 @@ internal object Intro {
         get() = Common.getGates(GateFilter.IntroCore, excludeCurrentGate = false).firstOrNull()?.gate
 
     val hasQuestBeenStarted: Boolean
-        get() = di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_IN_PROGRESS] == true
-                || di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_DONE] == true
+        get() = di.memory[Memory.INTRO_QUEST_IN_PROGRESS] == true
+                || di.memory[Memory.INTRO_QUEST_DONE] == true
 
     val wasQuestCompleted: Boolean
-        get() = di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_DONE] == true
+        get() = di.memory[Memory.INTRO_QUEST_DONE] == true
 
     /**
      * Finds a pair of gates, one in the core and one on the edge of the sector, and tags them for later use.
@@ -79,7 +79,7 @@ internal object Intro {
             val intel = IntroIntel(foundAt, destination)
 
             if (!intel.isDone) {
-                di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_IN_PROGRESS] = true
+                di.memory[Memory.INTRO_QUEST_IN_PROGRESS] = true
                 di.sector.intelManager.addIntel(intel)
                 destination.name = Strings.activeGateName
 
@@ -97,7 +97,7 @@ internal object Intro {
     fun displayIntroQuestEpilogueWindow() {
         fringeGate?.activate()
         coreGate?.activate()
-        di.sector.memoryWithoutUpdate[Memory.INTRO_QUEST_DONE] = true
+        di.memory[Memory.INTRO_QUEST_DONE] = true
         (di.sector.intelManager.getFirstIntel(IntroIntel::class.java) as IntroIntel)
             .run { di.sector.intelManager.removeIntel(this) }
 

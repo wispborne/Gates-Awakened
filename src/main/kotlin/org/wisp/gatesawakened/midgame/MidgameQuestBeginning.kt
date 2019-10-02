@@ -88,7 +88,7 @@ class MidgameQuestBeginning : BaseBarEventWithPerson() {
                                     "so there is no rush, but when possible, please retrieve the cache. " +
                                     "It is located on %s at 56.4314° N, 6.3414° W in %s.\""),
                             "transmission",
-                            "activation codes for any two Gates",
+                            "Gate activation codes",
                             planetWithCache.name,
                             planetWithCache.starSystem.baseName
                         )

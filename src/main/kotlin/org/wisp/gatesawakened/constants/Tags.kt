@@ -15,7 +15,7 @@ internal object Tags {
     const val TAG_ACTIVE_GATES_GATE_ACTIVATED = "gate_activated"
 
     /** Displays as a tag in the Intel Manager screen */
-    const val INTEL_ACTIVE_GATE = "Active Gates"
+    const val INTEL_ACTIVE_GATE = "Gates"
 
     /** The gate in the Core that is activated for the intro event **/
     const val TAG_GATE_INTRO_CORE = "g8_gate_intro_core"

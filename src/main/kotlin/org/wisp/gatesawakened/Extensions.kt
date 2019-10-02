@@ -3,12 +3,15 @@ package org.wisp.gatesawakened
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.campaign.TextPanelAPI
+import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
-import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
 
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
     this.addPara(text, Misc.getHighlightColor(), *highlights)
+
+internal fun TooltipMakerAPI.appendPara(text: String, padding: Float = 0f, vararg highlights: String) =
+    this.addPara(text, padding, Misc.getHighlightColor(), *highlights)
 
 internal val SectorEntityToken.isGate: Boolean
     get() = com.fs.starfarer.api.impl.campaign.ids.Tags.GATE in this.tags
@@ -25,30 +28,12 @@ internal val Gate.canBeDeactivated: Boolean
 /**
  * Activate a gate. Does not affect activation codes.
  */
-internal fun Gate.activate(): Boolean {
-    if (this.isGate && Tags.TAG_GATE_ACTIVATED !in this.tags) {
-        this.tags += Tags.TAG_GATE_ACTIVATED
-        this.name = Strings.activeGateName
-        Common.updateActiveGateIntel()
-        return true
-    }
-
-    return false
-}
+internal fun Gate.activate(): Boolean = GateActivation.activate(this)
 
 /**
  * Deactivate a gate. Does not affect activation codes.
  */
-internal fun Gate.deactivate(): Boolean {
-    if (this.isGate && this.canBeDeactivated) {
-        this.tags -= Tags.TAG_GATE_ACTIVATED
-        this.name = Strings.inactiveGateName
-        Common.updateActiveGateIntel()
-        return true
-    }
-
-    return false
-}
+internal fun Gate.deactivate(): Boolean = GateActivation.deactivate(this)
 
 internal val SectorEntityToken.distanceFromCenter: Float
     get() = this.starSystem.distanceFromCenter

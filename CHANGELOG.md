@@ -1,6 +1,12 @@
 # Changelog
 
-## 1.2.0
+## 1.3.0
+
+- Gates now get their original name back after being deactivated
+- Slightly improved gate intel formatting
+- _Balance is for gymnasts._ Added configuration for # of activation codes
+
+## 1.2.0 (2019-9-29)
 
 - Gates may now be deactivated to reclaim an activation code
 - Number of reward activation codes increased to 3 from 2

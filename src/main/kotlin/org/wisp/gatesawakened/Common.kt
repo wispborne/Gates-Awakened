@@ -25,12 +25,12 @@ internal object Common {
             )
         }
 
-    val midgameRewardActivationCodeCount = 3
+    val midgameRewardActivationCodeCount = di.settings.getInt("gatesAwakened_midgameQuestRewardCodeCount")
 
     var remainingActivationCodes: Int
-        get() = di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
+        get() = di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
         set(value) {
-            di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
+            di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
         }
 
     fun jumpCostInFuel(distanceInLY: Float): Int = (fuelCostPerLY * distanceInLY).roundToInt()

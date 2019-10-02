@@ -49,7 +49,7 @@ class CampaignPlugin : BaseCampaignPlugin() {
                         )
                     }
                     !interactionTarget.isActive
-                            && (org.wisp.gatesawakened.di.sector.memoryWithoutUpdate[Memory.GATE_ACTIVATION_CODES_REMAINING]
+                            && (org.wisp.gatesawakened.di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING]
                             as? Int ?: 0) > 0 -> {
                         // Show dialog to activate a new gate
                         PluginPick<InteractionDialogPlugin>(
@@ -61,8 +61,8 @@ class CampaignPlugin : BaseCampaignPlugin() {
                 }
             }
             interactionTarget is PlanetAPI
-                    && org.wisp.gatesawakened.di.sector.memoryWithoutUpdate[Memory.MID_QUEST_IN_PROGRESS] == true
-                    && org.wisp.gatesawakened.di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] != true
+                    && org.wisp.gatesawakened.di.memory[Memory.MID_QUEST_IN_PROGRESS] == true
+                    && org.wisp.gatesawakened.di.memory[Memory.MID_QUEST_DONE] != true
                     && interactionTarget == Midgame.planetWithCache -> {
                 // Show dialog to finish the midgame quest
                 PluginPick(

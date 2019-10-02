@@ -68,7 +68,7 @@ class LifecyclePlugin : BaseModPlugin() {
             bar.addEventCreator(MidgameBarEventCreator())
         }
 
-        migrationAddActivationCodeIfNeeded()
+        adjustPlayerActivationCodesToMatchSettings()
 
         Common.updateActiveGateIntel()
 
@@ -143,20 +143,22 @@ class LifecyclePlugin : BaseModPlugin() {
     }
 
     /**
-     * In 1.2, number of reward activation codes increased to 3 from 2.
-     * If you have fewer used + unused codes than 5 (3 codes + 2 from intro quest), then increase your remaining code count
-     * (if you've already done the midgame quest).
+     * The player may choose how many activates codes they want as a reward, so we should add/remove
+     * codes to match that, subtracting ones they've already used to activate gates.
      */
-    private fun migrationAddActivationCodeIfNeeded() {
+    private fun adjustPlayerActivationCodesToMatchSettings() {
         val numberOfEarlyQuestGates = 2
-        val usedActivationCodeCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
+        val activeGateCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
             .filter { it.gate.canBeDeactivated }
             .count()
+        val currentTotalActivateCodeCount = activeGateCount + Common.remainingActivationCodes
+        val expectedTotalActivationCodeCount = Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
 
-        if (Midgame.wasQuestCompleted && (usedActivationCodeCount + Common.remainingActivationCodes) < (Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates)
+        if (Midgame.wasQuestCompleted && currentTotalActivateCodeCount != expectedTotalActivationCodeCount
         ) {
             Common.remainingActivationCodes =
-                Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates - usedActivationCodeCount
+                (expectedTotalActivationCodeCount - activeGateCount)
+                    .coerceAtLeast(minimumValue = 0)
         }
     }
 

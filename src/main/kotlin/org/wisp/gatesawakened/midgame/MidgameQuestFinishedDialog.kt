@@ -41,7 +41,7 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
                     "Universal Access Chip"
                 )
                 text.appendPara(
-                    """It contains detailed, but slightly foreboding, instructions on how to reactivate "carefully considered %s", "should my mission be successful".""",
+                    """It contains detailed, but slightly foreboding, instructions on how to reactivate and deactivate "carefully considered %s", "should my mission be successful".""",
                     "Gates"
                 )
 
@@ -51,13 +51,13 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
                 )
 
                 text.appendPara(
-                    """At the very end are %s and the writer's signature: "Ludd".""",
-                    "three activation codes"
+                    """At the very end is a list of %s and the writer's signature: "Ludd".""",
+                    "${Common.midgameRewardActivationCodeCount} activation codes"
                 )
 
                 Common.remainingActivationCodes = Common.midgameRewardActivationCodeCount
 
-                di.sector.memoryWithoutUpdate[Memory.MID_QUEST_DONE] = true
+                di.memory[Memory.MID_QUEST_DONE] = true
 
                 (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as MidgameIntel)
                     .run { di.sector.intelManager.removeIntel(this) }
