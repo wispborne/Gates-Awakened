@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1 (2019-10-9)
+
+- Fix for crash when completing a question after the intel has timed out
+    - Thanks to Liork on Discord for the report
+- Known issue: intel can time out, apparently :(
+
 ## 1.3.0 (2019-10-02)
 
 - Gates now get their original name back after being deactivated
@@ -15,7 +21,8 @@
 - Gates Awakened quests are now marked with the Story intel tag
 
 ## 1.1.1 (2019-09-25)
-- Fixed crash that could occur when updating gate intel (thanks to Sunflare on Discord for the report)
+- Fixed crash that could occur when updating gate intel 
+    - Thanks to Sunflare on Discord for the report
 
 ## 1.1.0 (2019-09-24)
 

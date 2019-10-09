@@ -59,8 +59,8 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
 
                 di.memory[Memory.MID_QUEST_DONE] = true
 
-                (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as MidgameIntel)
-                    .run { di.sector.intelManager.removeIntel(this) }
+                (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as? MidgameIntel?)
+                    ?.run { di.sector.intelManager.removeIntel(this) }
 
                 dialog.optionPanel.addOption(
                     Option.LEAVE.text,

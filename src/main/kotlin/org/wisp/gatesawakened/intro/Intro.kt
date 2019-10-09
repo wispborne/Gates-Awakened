@@ -98,8 +98,8 @@ internal object Intro {
         fringeGate?.activate()
         coreGate?.activate()
         di.memory[Memory.INTRO_QUEST_DONE] = true
-        (di.sector.intelManager.getFirstIntel(IntroIntel::class.java) as IntroIntel)
-            .run { di.sector.intelManager.removeIntel(this) }
+        (di.sector.intelManager.getFirstIntel(IntroIntel::class.java) as? IntroIntel?)
+            ?.run { di.sector.intelManager.removeIntel(this) }
 
         // Pop up a dialog explaining how gates work
         di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog(), di.sector.playerFleet)
