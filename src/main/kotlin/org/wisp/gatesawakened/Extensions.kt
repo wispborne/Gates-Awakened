@@ -7,6 +7,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.constants.Tags
 
+@Deprecated("Replace with the one in WispText")
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
     this.addPara(text, Misc.getHighlightColor(), *highlights)
 

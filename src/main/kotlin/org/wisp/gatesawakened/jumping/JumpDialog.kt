@@ -39,9 +39,8 @@ class JumpDialog : PaginatedOptions() {
 
         if (isPlayerBeingWatched()) {
             dialog.textPanel.appendPara(
-                "A nearby fleet is %s your movements, making it %s to approach the Gate.",
-                "tracking",
-                "unwise"
+                "A nearby fleet is %s, making it unwise to approach the Gate.",
+                "tracking your movements"
             )
             addOption(Option.LEAVE.text, Option.LEAVE.id)
             showOptions()

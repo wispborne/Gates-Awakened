@@ -8,9 +8,10 @@ import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.questLib.addPara
 
 
-class MidgameIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : BreadcrumbIntel(foundAt, target) {
+class MidgameIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
 
     companion object {
         private val iconSpritePath: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -18,6 +19,10 @@ class MidgameIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Brea
             di.settings.loadTexture(path)
             path
         }
+    }
+
+    init {
+        setShowSpecificEntity(true)
     }
 
     override fun getName(): String = getTitle()
@@ -28,16 +33,14 @@ class MidgameIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Brea
 
     override fun createSmallDescription(info: TooltipMakerAPI, width: Float, height: Float) {
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
-        info.addPara(
-            "You saw a decoded transmission detailing Gate activation codes.",
-            10f
-        )
-        info.addPara(
-            "Perhaps it's worth a visit to %s.",
-            10f,
-            Misc.getHighlightColor(),
-            target.starSystem.baseName
-        )
+        info.addPara {
+            "You saw a decoded transmission detailing Gate activation codes."
+        }
+        info.addPara {
+            "Perhaps it's worth a visit to " +
+                    mark(target.starSystem.baseName) +
+                    " in " + mark(target.name) + "."
+        }
 
         val days = daysSincePlayerVisible
 
@@ -53,6 +56,7 @@ class MidgameIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Brea
 
     override fun hasSmallDescription() = true
 
+    override fun isDone(): Boolean = Midgame.wasQuestCompleted
     override fun isEnded(): Boolean = Midgame.wasQuestCompleted
 
     override fun getIntelTags(map: SectorMapAPI?): MutableSet<String> =

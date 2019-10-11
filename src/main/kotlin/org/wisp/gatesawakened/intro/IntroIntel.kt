@@ -8,9 +8,10 @@ import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.questLib.addPara
 
 
-class IntroIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : BreadcrumbIntel(foundAt, target) {
+class IntroIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
 
     companion object {
         private val iconSpritePath: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -28,16 +29,9 @@ class IntroIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Breadc
 
     override fun createSmallDescription(info: TooltipMakerAPI, width: Float, height: Float) {
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
-        info.addPara(
-            "You saw an image of a Gate and the name of a system on a tripad in a bar.",
-            10f
-        )
-        info.addPara(
-            "Perhaps it's worth a visit to %s to search for a Gate.",
-            10f,
-            Misc.getHighlightColor(),
-            target.starSystem.baseName
-        )
+
+        info.addPara { "You saw an image of a Gate and the name of a system on a tripad in a bar." }
+        info.addPara { "Perhaps it's worth a visit to " + mark(target.starSystem.baseName) + " to search for a Gate." }
 
         val days = daysSincePlayerVisible
 
@@ -48,7 +42,7 @@ class IntroIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : Breadc
 
     override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
         super.createIntelInfo(info, mode)
-        info.addPara("Investigate a possible gate at %s", 0f, Misc.getHighlightColor(), target.starSystem.baseName)
+        info.addPara(padding = 0f) { "Investigate a possible gate at " + mark(target.starSystem.baseName) }
     }
 
     override fun hasSmallDescription() = true

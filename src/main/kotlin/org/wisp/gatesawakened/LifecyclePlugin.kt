@@ -49,16 +49,47 @@ class LifecyclePlugin : BaseModPlugin() {
             Intro.findAndTagIntroGatePair()
         }
 
+        // Midgame quest
+        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
+            Midgame.findAndTagMidgameCacheLocation()
+        }
+
+        addQuestStarts()
+
+        adjustPlayerActivationCodesToMatchSettings()
+
+        Common.updateActiveGateIntel()
+
+        // Register this so we can intercept and replace interactions, such as with a gate
+        di.sector.registerPlugin(CampaignPlugin())
+    }
+
+    override fun afterGameSave() {
+        super.afterGameSave()
+        addQuestStarts()
+    }
+
+    override fun beforeGameSave() {
+        super.beforeGameSave()
+
+        // Remove quest bar events so they don't get into save file.
+        // It's a pain to migrate after refactoring and they are stateless
+        // so there's no reason for them to be in the save file.
+        val bar = BarEventManager.getInstance()
+        bar.creators.removeAll { it is IntroBarEventCreator || it is MidgameBarEventCreator }
+        bar.active.items
+            .filter { it is IntroQuestBeginning || it is MidgameQuestBeginning }
+            .forEach { bar.active.remove(it) }
+    }
+
+    private fun addQuestStarts() {
+        val bar = BarEventManager.getInstance()
+
         if (Intro.haveGatesBeenTagged()
             && !Intro.hasQuestBeenStarted
             && !bar.hasEventCreator(IntroBarEventCreator::class.java)
         ) {
             bar.addEventCreator(IntroBarEventCreator())
-        }
-
-        // Midgame quest
-        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
-            Midgame.findAndTagMidgameCacheLocation()
         }
 
         if (Midgame.hasPlanetWithCacheBeenTagged()
@@ -67,13 +98,6 @@ class LifecyclePlugin : BaseModPlugin() {
         ) {
             bar.addEventCreator(MidgameBarEventCreator())
         }
-
-        adjustPlayerActivationCodesToMatchSettings()
-
-        Common.updateActiveGateIntel()
-
-        // Register this so we can intercept and replace interactions, such as with a gate
-        di.sector.registerPlugin(CampaignPlugin())
     }
 
     private fun applyBlacklistTagsToSystems() {

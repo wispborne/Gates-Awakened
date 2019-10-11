@@ -6,6 +6,10 @@
     - Thanks to Liork on Discord for the report
 - Known issue: intel can time out, apparently :(
 
+## 1.4.0
+
+- Readded LazyLib as dependency (to use its Kotlin stdlib)
+
 ## 1.3.0 (2019-10-02)
 
 - Gates now get their original name back after being deactivated

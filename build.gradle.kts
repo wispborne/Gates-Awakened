@@ -6,7 +6,6 @@ val starsectorDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector"
 /////////////////
 
 val starsectorCoreDirectory = "$starsectorDirectory/starsector-core"
-val starsectorModDirectory = "$starsectorDirectory/mods"
 
 plugins {
     kotlin("jvm") version "1.3.50"
@@ -17,17 +16,24 @@ version = "1.0.0"
 
 repositories {
     maven(url = uri("$projectDir/libs"))
+    mavenCentral()
     jcenter()
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk7"))
+    // Get kotlin sdk from LazyLib during runtime
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
 
-    implementation("starfarer:starfarer-api:1.0")
-    implementation(fileTree(starsectorCoreDirectory) {
+    // Include to be able to browse the non-decompiled source
+    compileOnly("starfarer:starfarer-api:1.0")
+    // Starsector jars and dependencies
+    compileOnly(fileTree(starsectorCoreDirectory) {
         include("*.jar")
-        exclude("starfarer.api.jar")
+        exclude("*_obf.jar", "starfarer.api.jar")
     })
+
+    // Handy kotlin helpers
     implementation("ch.tutteli.kbox:kbox:0.13.0")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
@@ -39,6 +45,8 @@ dependencies {
 tasks {
     named<Jar>("jar")
     {
+        // Include all runtime files in the jar so mod is standalone
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) //        with(tasks.jar.get() as CopySpec)
         destinationDir = file("$rootDir/jars")
         archiveName = "Gates_Awakened.jar"
     }
@@ -46,7 +54,6 @@ tasks {
     register("debug-starsector", Exec::class) {
         println("Starting debugger for Starsector...")
         workingDir = file(starsectorCoreDirectory)
-
 
         commandLine = if (System.getProperty("os.name").toLowerCase().contains("windows")) {
             listOf("cmd", "/C", "starsectorDebug.bat")
@@ -65,8 +72,8 @@ tasks {
             listOf("./starsector.bat")
         }
     }
-}
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.6"
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.6"
+    }
 }

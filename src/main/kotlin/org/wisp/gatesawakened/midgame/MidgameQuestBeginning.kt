@@ -1,32 +1,108 @@
 package org.wisp.gatesawakened.midgame
 
 import com.fs.starfarer.api.campaign.InteractionDialogAPI
+import com.fs.starfarer.api.campaign.PlanetAPI
 import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
-import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
-import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
-import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.appendPara
 import org.wisp.gatesawakened.exhaustiveWhen
+import org.wisp.gatesawakened.questLib.BarEventCreator
+import org.wisp.gatesawakened.questLib.QuestDefinition
+import org.wisp.gatesawakened.questLib.addPara
 
 /**
  * Creates the midgame quest at the bar.
  */
-class MidgameBarEventCreator : BaseBarEventCreator() {
-    override fun createBarEvent(): PortsideBarEvent =
-        MidgameQuestBeginning()
+class MidgameBarEventCreator : BarEventCreator(creator = {
+    MidgameQuestBeginning()
+})
 
-    override fun getBarEventFrequencyWeight(): Float =
-        if (Common.isDebugModeEnabled) {
-            100f
-        } else {
-            super.getBarEventFrequencyWeight()
+class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning>(
+    state = this,
+    shouldShowEvent = { Midgame.shouldOfferQuest(it) },
+    textOnInteractionOffer = {
+        dialog.textPanel.addPara {
+            "You spot a familiar tattoo; a grey circle around the eye of a $manOrWoman" +
+                    " in the corner of the bar, glowing a faint white. " +
+                    "You realize that it looks a bit like a " + mark("Gate") + "."
         }
+    },
+    textToStartInteraction = {
+        "Move in for a closer look at the tattooed $manOrWoman's tripad screen."
+    },
+    onInteractionStarted = {
+        state.planetWithCache = Midgame.planetWithCache
+    },
+    pages = listOf(
+        DialogPage(
+            id = OptionId.Init,
+            isInitialPage = true,
+            textOnPageShown = {
+                val planetWithCache = state.planetWithCache
+
+                if (planetWithCache == null) {
+                    dialog.textPanel.addPara { "But their screen is blank. How unexpected." }
+                    dialog.optionPanel.addOption(
+                        "Wander away.",
+                        MidgameQuestBeginningOld.OptionId.LEAVE
+                    )
+                } else {
+                    dialog.textPanel.addPara {
+                        "You casually peer over the $manOrWoman's shoulder, " +
+                                "reading from $hisOrHer screen."
+                    }
+                    dialog.textPanel.addPara {
+                        "\"The alpha core has decoded another section of the " + mark("transmission") + ". " +
+                                "It mentions the location of a cache which, apparently, " +
+                                "contains " + mark("Gate activation codes") + ". Absolutely incredible. We haven't shared this information, " +
+                                "so there is no rush, but when possible, please retrieve the cache. " +
+                                "It is located on " + mark(planetWithCache.name) +
+                                " at 56.4314° N, 6.3414° W in " + mark(planetWithCache.starSystem.baseName) + ".\""
+                    }
+
+                    state.startMidgameQuest(dialog)
+
+                    dialog.optionPanel.addOption(
+                        "Note the information and casually wander away.",
+                        MidgameQuestBeginningOld.OptionId.WANDER
+                    )
+                }
+            }
+        )
+    )
+) {
+    class State() {
+        var planetWithCache: PlanetAPI? = null
+
+
+        fun startMidgameQuest(dialog: InteractionDialogAPI) {
+            val wasQuestSuccessfullyStarted = Midgame.startQuest(dialog.interactionTarget)
+
+            if (wasQuestSuccessfullyStarted) {
+                BarEventManager.getInstance().notifyWasInteractedWith(this)
+            } else {
+                dialog.textPanel.appendPara("After a moment's consideration, you decide that there's nothing out there after all.")
+            }
+        }
+    }
+    fun startMidgameQuest(dialog: InteractionDialogAPI) {
+        val wasQuestSuccessfullyStarted = Midgame.startQuest(dialog.interactionTarget)
+
+        if (wasQuestSuccessfullyStarted) {
+            BarEventManager.getInstance().notifyWasInteractedWith(this)
+        } else {
+            dialog.textPanel.appendPara("After a moment's consideration, you decide that there's nothing out there after all.")
+        }
+    }
+
+    enum class OptionId {
+        Init
+    }
 }
 
-class MidgameQuestBeginning : BaseBarEventWithPerson() {
+class MidgameQuestBeginningOld : BaseBarEventWithPerson() {
     override fun shouldShowAtMarket(market: MarketAPI): Boolean =
         super.shouldShowAtMarket(market)
                 && Midgame.shouldOfferQuest(market)
