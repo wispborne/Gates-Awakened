@@ -2,7 +2,6 @@ package org.wisp.gatesawakened.intro
 
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
-import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.QuestDefinition
 import org.wisp.gatesawakened.questLib.addPara
@@ -11,7 +10,7 @@ import org.wisp.gatesawakened.questLib.addPara
  * Creates the intro quest at the bar.
  */
 class IntroBarEventCreator : BarEventCreator(
-    creator = { IntroQuestBeginning() }
+    creator = { IntroQuestBeginning().build() }
 )
 
 /**
@@ -31,14 +30,6 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
     },
     textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
     onInteractionStarted = {
-        val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
-
-        if (wasQuestSuccessfullyStarted) {
-            // TODO would be great to not need this
-            BarEventManager.getInstance().notifyWasInteractedWith(this.event)
-        } else {
-            this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
-        }
     },
     pages = listOf(
         DialogPage(
@@ -61,12 +52,19 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
                                 "could be at ${state.destinationSystem!!.baseName}."
                     },
                     onClick = { navigator ->
-                        navigator.close()
+                        val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
+
+                        if (!wasQuestSuccessfullyStarted) {
+                            this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
+                        }
+
+                        navigator.close(hideQuestOfferAfterClose = true)
                     }
                 )
             )
         )
-    )
+    ),
+    personRank = Ranks.SPACE_SAILOR
 ) {
     class State {
         var destinationSystem: StarSystemAPI? = null
@@ -75,6 +73,4 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
             INIT
         }
     }
-
-    override fun getPersonRank(): String = Ranks.SPACE_SAILOR
 }

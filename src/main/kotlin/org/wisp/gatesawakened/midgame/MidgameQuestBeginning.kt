@@ -16,11 +16,11 @@ import org.wisp.gatesawakened.questLib.addPara
  * Creates the midgame quest at the bar.
  */
 class MidgameBarEventCreator : BarEventCreator(creator = {
-    MidgameQuestBeginning()
+    MidgameQuestBeginning().build()
 })
 
-class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning>(
-    state = this,
+class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
+    state = State(),
     shouldShowEvent = { Midgame.shouldOfferQuest(it) },
     textOnInteractionOffer = {
         dialog.textPanel.addPara {
@@ -33,11 +33,11 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning>(
         "Move in for a closer look at the tattooed $manOrWoman's tripad screen."
     },
     onInteractionStarted = {
-        state.planetWithCache = Midgame.planetWithCache
+        this.state.planetWithCache = Midgame.planetWithCache
     },
     pages = listOf(
         DialogPage(
-            id = OptionId.Init,
+            id = State.OptionId.Init,
             isInitialPage = true,
             textOnPageShown = {
                 val planetWithCache = state.planetWithCache
@@ -61,44 +61,32 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning>(
                                 "It is located on " + mark(planetWithCache.name) +
                                 " at 56.4314° N, 6.3414° W in " + mark(planetWithCache.starSystem.baseName) + ".\""
                     }
-
-                    state.startMidgameQuest(dialog)
-
-                    dialog.optionPanel.addOption(
-                        "Note the information and casually wander away.",
-                        MidgameQuestBeginningOld.OptionId.WANDER
-                    )
                 }
-            }
+            },
+            options = listOf(
+                Option(
+                    text = { "Note the information and casually wander away." },
+                    onClick = {
+                        val wasQuestSuccessfullyStarted = Midgame.startQuest(this.dialog.interactionTarget)
+
+                        if (!wasQuestSuccessfullyStarted) {
+                            this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
+                        }
+
+                        it.close(hideQuestOfferAfterClose = true)
+                    }
+                )
+            )
         )
-    )
+    ),
+    personRank = Ranks.SPACE_SAILOR
 ) {
-    class State() {
+    class State {
         var planetWithCache: PlanetAPI? = null
 
-
-        fun startMidgameQuest(dialog: InteractionDialogAPI) {
-            val wasQuestSuccessfullyStarted = Midgame.startQuest(dialog.interactionTarget)
-
-            if (wasQuestSuccessfullyStarted) {
-                BarEventManager.getInstance().notifyWasInteractedWith(this)
-            } else {
-                dialog.textPanel.appendPara("After a moment's consideration, you decide that there's nothing out there after all.")
-            }
+        enum class OptionId {
+            Init
         }
-    }
-    fun startMidgameQuest(dialog: InteractionDialogAPI) {
-        val wasQuestSuccessfullyStarted = Midgame.startQuest(dialog.interactionTarget)
-
-        if (wasQuestSuccessfullyStarted) {
-            BarEventManager.getInstance().notifyWasInteractedWith(this)
-        } else {
-            dialog.textPanel.appendPara("After a moment's consideration, you decide that there's nothing out there after all.")
-        }
-    }
-
-    enum class OptionId {
-        Init
     }
 }
 
