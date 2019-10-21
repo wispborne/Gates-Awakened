@@ -14,7 +14,7 @@ import com.fs.starfarer.api.util.Misc
 abstract class QuestDefinition<S>(
     val state: S,
     private val shouldShowEvent: (MarketAPI) -> Boolean,
-    val textOnInteractionOffer: Context<S>.() -> Unit,
+    val interactionPrompt: Context<S>.() -> Unit,
     val textToStartInteraction: Context<S>.() -> String,
     val onInteractionStarted: Context<S>.() -> Unit,
     val pages: List<DialogPage<Context<S>>>,
@@ -24,27 +24,22 @@ abstract class QuestDefinition<S>(
     val personPost: String = Ranks.CITIZEN,
     val personPortrait: String? = null
 ) {
-    init {
-        assert(pages.count { it.isInitialPage } == 1) { "Must contain one initial page." }
-    }
-
     class DialogPage<Context>(
         val id: Any,
-        val isInitialPage: Boolean,
         val image: Image? = null,
-        val textOnPageShown: Context.() -> Unit,
+        val onPageShown: Context.() -> Unit,
         val options: List<Option<Context>>
     )
 
     open class Option<Context>(
         val text: Context.() -> String,
         val shortcut: Shortcut? = null,
-        val onClick: Context.(PageNavigator) -> Unit,
+        val onOptionSelected: Context.(PageNavigator) -> Unit,
         val id: String = Misc.random.nextInt().toString()
     )
 
     interface PageNavigator {
-        fun goTo(pageId: Any)
+        fun goToPage(pageId: Any)
         fun close(hideQuestOfferAfterClose: Boolean)
     }
 
@@ -78,15 +73,18 @@ abstract class QuestDefinition<S>(
         val event: BaseBarEventWithPerson
     )
 
-    fun build(): BaseBarEventWithPerson {
-        return object : BaseBarEventWithPerson() {
+    abstract inner class BarEvent : BaseBarEventWithPerson() {
+    }
+
+    fun build(): BarEvent {
+        return object : BarEvent() {
             /**
              * Must be created after `regen` is called so that Person exists.
              */
             private lateinit var context: Context<S>
 
             private val navigator = object : PageNavigator {
-                override fun goTo(pageId: Any) {
+                override fun goToPage(pageId: Any) {
                     showPage(pages.single { it.id == pageId })
                 }
 
@@ -118,7 +116,7 @@ abstract class QuestDefinition<S>(
                     dialog = dialog,
                     event = this
                 )
-                textOnInteractionOffer(context)
+                interactionPrompt(context)
 
                 dialog.optionPanel.addOption(
                     textToStartInteraction(context),
@@ -134,7 +132,10 @@ abstract class QuestDefinition<S>(
                 this.done = false
                 dialog.visualPanel.showPersonInfo(this.person, true)
                 onInteractionStarted(context)
-                showPage(pages.single { it.isInitialPage })
+
+                if (pages.any()) {
+                    showPage(pages.first())
+                }
             }
 
             override fun optionSelected(optionText: String?, optionData: Any?) {
@@ -145,13 +146,13 @@ abstract class QuestDefinition<S>(
                         }
                     }.single()
 
-                optionSelected.onClick(context, navigator)
+                optionSelected.onOptionSelected(context, navigator)
             }
 
             fun showPage(page: DialogPage<Context<S>>) {
                 dialog.optionPanel.clearOptions()
 
-                page.textOnPageShown(context)
+                page.onPageShown(context)
                 page.options.forEach { option ->
                     dialog.optionPanel.addOption(option.text(context), option.id)
                 }

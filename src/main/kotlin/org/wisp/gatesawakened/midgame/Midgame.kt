@@ -22,6 +22,7 @@ object Midgame {
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
                 && isMidgame()
+                && planetWithCache != null
 
     val planetWithCache: PlanetAPI?
         get() = Common.getSystems()
@@ -83,7 +84,7 @@ object Midgame {
         var success = false
 
         if (destination != null && !hasQuestBeenStarted) {
-            val intel = MidgameIntel(foundAt, destination)
+            val intel = MidgameIntel(destination)
 
             if (!intel.isDone) {
                 di.memory[Memory.MID_QUEST_IN_PROGRESS] = true

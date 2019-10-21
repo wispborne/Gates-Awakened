@@ -15,6 +15,7 @@ import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameBarEventCreator
 import org.wisp.gatesawakened.midgame.MidgameIntel
 import org.wisp.gatesawakened.midgame.MidgameQuestBeginning
+import org.wisp.gatesawakened.questLib.QuestDefinition
 
 class LifecyclePlugin : BaseModPlugin() {
 
@@ -78,7 +79,7 @@ class LifecyclePlugin : BaseModPlugin() {
         val bar = BarEventManager.getInstance()
         bar.creators.removeAll { it is IntroBarEventCreator || it is MidgameBarEventCreator }
         bar.active.items
-            .filter { it is IntroQuestBeginning || it is MidgameQuestBeginning }
+            .filterIsInstance<QuestDefinition<*>.BarEvent>()
             .forEach { bar.active.remove(it) }
     }
 

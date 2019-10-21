@@ -19,7 +19,7 @@ class IntroBarEventCreator : BarEventCreator(
 class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
     state = State(),
     shouldShowEvent = { market -> Intro.shouldOfferQuest(market) },
-    textOnInteractionOffer = {
+    interactionPrompt = {
         dialog.textPanel.addPara {
             "A $manOrWoman's tattoo catches your attention. " +
                     "The dark grey circle wraps around $hisOrHer left eye, emitting a faint white glow. " +
@@ -30,13 +30,12 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
     },
     textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
     onInteractionStarted = {
+        state.destinationSystem = Intro.fringeGate?.starSystem!!
     },
     pages = listOf(
         DialogPage(
-            id = State.OptionId.INIT,
-            isInitialPage = true,
-            textOnPageShown = {
-                state.destinationSystem = Intro.fringeGate?.starSystem!!
+            id = Page.Initial,
+            onPageShown = {
                 dialog.textPanel.addPara {
                     "As soon as you get close, " +
                             "$heOrShe flips off $hisOrHer tripad and quickly rushes out."
@@ -51,7 +50,7 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
                         "Watch the $manOrWoman hurry down the street and consider what " +
                                 "could be at ${state.destinationSystem!!.baseName}."
                     },
-                    onClick = { navigator ->
+                    onOptionSelected = { navigator ->
                         val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
 
                         if (!wasQuestSuccessfullyStarted) {
@@ -68,9 +67,9 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
 ) {
     class State {
         var destinationSystem: StarSystemAPI? = null
+    }
 
-        enum class OptionId {
-            INIT
-        }
+    enum class Page {
+        Initial
     }
 }

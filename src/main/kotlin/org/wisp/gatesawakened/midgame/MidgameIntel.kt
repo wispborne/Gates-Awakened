@@ -11,7 +11,7 @@ import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.addPara
 
 
-class MidgameIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
+class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet) {
 
     companion object {
         private val iconSpritePath: String by lazy(LazyThreadSafetyMode.NONE) {
@@ -38,8 +38,8 @@ class MidgameIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
         }
         info.addPara {
             "Perhaps it's worth a visit to " +
-                    mark(target.starSystem.baseName) +
-                    " in " + mark(target.name) + "."
+                    mark(planet.name) +
+                    " in " + mark(target.starSystem.baseName) + "."
         }
 
         val days = daysSincePlayerVisible

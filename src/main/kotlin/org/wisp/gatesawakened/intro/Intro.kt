@@ -76,7 +76,7 @@ internal object Intro {
         var success = false
 
         if (destination != null && !hasQuestBeenStarted) {
-            val intel = IntroIntel(foundAt, destination)
+            val intel = IntroIntel(destination)
 
             if (!intel.isDone) {
                 di.memory[Memory.INTRO_QUEST_IN_PROGRESS] = true
