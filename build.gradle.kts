@@ -6,6 +6,7 @@ val starsectorDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector"
 /////////////////
 
 val starsectorCoreDirectory = "$starsectorDirectory/starsector-core"
+val starsectorModDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector/mods"
 
 plugins {
     kotlin("jvm") version "1.3.50"
@@ -21,9 +22,13 @@ repositories {
 }
 
 dependencies {
-    // Get kotlin sdk from LazyLib during runtime
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib")
-    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk7")
+    val kotlinVersionInLazyLib = "1.3.50"
+
+    // Get kotlin sdk from LazyLib during runtime, only use it here during compile time
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersionInLazyLib")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersionInLazyLib")
+
+    compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
 
     // Include to be able to browse the non-decompiled source
     compileOnly("starfarer:starfarer-api:1.0")

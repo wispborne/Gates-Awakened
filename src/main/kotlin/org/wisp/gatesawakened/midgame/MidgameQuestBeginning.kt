@@ -56,6 +56,7 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
                             it.goToPage(Page.Wander)
                         } else {
                             this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
+                            it.close(hideQuestOfferAfterClose = true)
                         }
                     }
                 )
