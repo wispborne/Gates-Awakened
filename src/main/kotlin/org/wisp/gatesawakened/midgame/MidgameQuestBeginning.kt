@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.QuestDefinition
-import org.wisp.gatesawakened.questLib.addPara
+import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * Creates the midgame quest at the bar.

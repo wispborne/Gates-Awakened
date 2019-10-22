@@ -6,7 +6,7 @@ val starsectorDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector"
 /////////////////
 
 val starsectorCoreDirectory = "$starsectorDirectory/starsector-core"
-val starsectorModDirectory = "C:/Program Files (x86)/Fractal Softworks/Starsector/mods"
+val starsectorModDirectory = "$starsectorDirectory/mods"
 
 plugins {
     kotlin("jvm") version "1.3.50"
@@ -31,11 +31,11 @@ dependencies {
     compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
 
     // Include to be able to browse the non-decompiled source
-    compileOnly("starfarer:starfarer-api:1.0")
+//    compileOnly("starfarer:starfarer-api:1.0")
     // Starsector jars and dependencies
     compileOnly(fileTree(starsectorCoreDirectory) {
         include("*.jar")
-        exclude("*_obf.jar", "starfarer.api.jar")
+        exclude("*_obf.jar")
     })
 
     // Handy kotlin helpers

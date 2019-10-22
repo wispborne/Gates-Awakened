@@ -1,4 +1,4 @@
-package org.wisp.gatesawakened.questLib
+package org.wisp.gatesawakened.wispLib
 
 import com.fs.starfarer.api.campaign.TextPanelAPI
 import com.fs.starfarer.api.ui.LabelAPI

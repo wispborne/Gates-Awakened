@@ -8,7 +8,7 @@ import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.questLib.addPara
+import org.wisp.gatesawakened.wispLib.addPara
 
 
 class IntroIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {

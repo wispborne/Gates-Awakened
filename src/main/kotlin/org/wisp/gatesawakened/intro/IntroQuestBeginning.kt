@@ -2,9 +2,10 @@ package org.wisp.gatesawakened.intro
 
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
+import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.QuestDefinition
-import org.wisp.gatesawakened.questLib.addPara
+import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * Creates the intro quest at the bar.
@@ -52,12 +53,11 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
                     },
                     onOptionSelected = { navigator ->
                         val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
+                        navigator.close(hideQuestOfferAfterClose = true)
 
                         if (!wasQuestSuccessfullyStarted) {
-                            this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
+                            state.errorReporter.reportCrash(RuntimeException("Unable to start intro quest!"))
                         }
-
-                        navigator.close(hideQuestOfferAfterClose = true)
                     }
                 )
             )
@@ -67,6 +67,7 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
 ) {
     class State {
         var destinationSystem: StarSystemAPI? = null
+        val errorReporter = di.errorReporter
     }
 
     enum class Page {
