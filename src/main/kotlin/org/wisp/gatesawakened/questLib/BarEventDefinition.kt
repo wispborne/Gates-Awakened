@@ -9,80 +9,37 @@ import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
-import com.fs.starfarer.api.util.Misc
 
-abstract class QuestDefinition<S>(
-    val state: S,
+abstract class BarEventDefinition<S : InteractionDefinition<S>>(
     private val shouldShowEvent: (MarketAPI) -> Boolean,
-    val interactionPrompt: Context<S>.() -> Unit,
-    val textToStartInteraction: Context<S>.() -> String,
-    val onInteractionStarted: Context<S>.() -> Unit,
-    val pages: List<DialogPage<Context<S>>>,
+    val interactionPrompt: S.() -> Unit,
+    val textToStartInteraction: S.() -> String,
+    onInteractionStarted: S.() -> Unit,
+    pages: List<DialogPage<S>>,
     val personRank: String = Ranks.CITIZEN,
     val personFaction: String = Factions.INDEPENDENT,
     val personGender: FullName.Gender = FullName.Gender.ANY,
     val personPost: String = Ranks.CITIZEN,
     val personPortrait: String? = null
+) : InteractionDefinition<S>(
+    onInteractionStarted = onInteractionStarted,
+    pages = pages
 ) {
-    class DialogPage<Context>(
-        val id: Any,
-        val image: Image? = null,
-        val onPageShown: Context.() -> Unit,
-        val options: List<Option<Context>>
-    )
 
-    open class Option<Context>(
-        val text: Context.() -> String,
-        val shortcut: Shortcut? = null,
-        val onOptionSelected: Context.(PageNavigator) -> Unit,
-        val id: String = Misc.random.nextInt().toString()
-    )
-
-    interface PageNavigator {
-        fun goToPage(pageId: Any)
-        fun close(hideQuestOfferAfterClose: Boolean)
-    }
+    lateinit var manOrWoman: String
+    lateinit var hisOrHer: String
+    lateinit var heOrShe: String
+    lateinit var event: BaseBarEventWithPerson
 
     /**
-     * @param code constant from [org.lwjgl.input.Keyboard]
+     * Needed so we can figure out which BarEvents are part of this mod
+     * when looking at [BarEventManager.getInstance().active.items].
      */
-    class Shortcut(
-        code: Int,
-        holdCtrl: Boolean,
-        holdAlt: Boolean,
-        holdShift: Boolean
-    )
-
-    class Image(
-        val category: String,
-        val id: String,
-        val width: Float = 640f,
-        val height: Float = 400f,
-        val xOffset: Float = 0f,
-        val yOffset: Float = 0f,
-        val displayWidth: Float = 480f,
-        val displayHeight: Float = 300f
-    )
-
-    class Context<S>(
-        val state: S,
-        val manOrWoman: String,
-        val hisOrHer: String,
-        val heOrShe: String,
-        val dialog: InteractionDialogAPI,
-        val event: BaseBarEventWithPerson
-    )
-
     abstract inner class BarEvent : BaseBarEventWithPerson() {
     }
 
-    fun build(): BarEvent {
+    fun buildBarEvent(): BarEvent {
         return object : BarEvent() {
-            /**
-             * Must be created after `regen` is called so that Person exists.
-             */
-            private lateinit var context: Context<S>
-
             private val navigator = object : PageNavigator {
                 override fun goToPage(pageId: Any) {
                     showPage(pages.single { it.id == pageId })
@@ -90,7 +47,7 @@ abstract class QuestDefinition<S>(
 
                 override fun close(hideQuestOfferAfterClose: Boolean) {
                     if (hideQuestOfferAfterClose) {
-                        BarEventManager.getInstance().notifyWasInteractedWith(context.event)
+                        BarEventManager.getInstance().notifyWasInteractedWith(event)
                     }
 
                     noContinue = true
@@ -108,18 +65,15 @@ abstract class QuestDefinition<S>(
             override fun addPromptAndOption(dialog: InteractionDialogAPI) {
                 super.addPromptAndOption(dialog)
                 regen(dialog.interactionTarget.market)
-                context = Context(
-                    state = state,
-                    manOrWoman = manOrWoman,
-                    hisOrHer = hisOrHer,
-                    heOrShe = heOrShe,
-                    dialog = dialog,
-                    event = this
-                )
-                interactionPrompt(context)
+                this@BarEventDefinition.manOrWoman = manOrWoman
+                this@BarEventDefinition.hisOrHer = hisOrHer
+                this@BarEventDefinition.heOrShe = heOrShe
+                this@BarEventDefinition.dialog = dialog
+                this@BarEventDefinition.event = this
+                interactionPrompt(this@BarEventDefinition as S)
 
                 dialog.optionPanel.addOption(
-                    textToStartInteraction(context),
+                    textToStartInteraction(),
                     this as BaseBarEventWithPerson
                 )
             }
@@ -131,7 +85,7 @@ abstract class QuestDefinition<S>(
                 super.init(dialog)
                 this.done = false
                 dialog.visualPanel.showPersonInfo(this.person, true)
-                onInteractionStarted(context)
+                onInteractionStarted(this@BarEventDefinition as S)
 
                 if (pages.any()) {
                     showPage(pages.first())
@@ -146,15 +100,15 @@ abstract class QuestDefinition<S>(
                         }
                     }.single()
 
-                optionSelected.onOptionSelected(context, navigator)
+                optionSelected.onOptionSelected(this@BarEventDefinition as S, navigator)
             }
 
-            fun showPage(page: DialogPage<Context<S>>) {
+            fun showPage(page: DialogPage<S>) {
                 dialog.optionPanel.clearOptions()
 
-                page.onPageShown(context)
+                page.onPageShown(this@BarEventDefinition as S)
                 page.options.forEach { option ->
-                    dialog.optionPanel.addOption(option.text(context), option.id)
+                    dialog.optionPanel.addOption(option.text(this@BarEventDefinition as S), option.id)
                 }
             }
         }

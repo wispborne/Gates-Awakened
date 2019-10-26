@@ -17,6 +17,8 @@ import org.wisp.gatesawakened.*
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.midgame.Midgame
+import org.wisp.gatesawakened.wispLib.addPara
+import kotlin.math.absoluteValue
 
 class JumpDialog : PaginatedOptions() {
     private var selectedOptionBeingConfirmed: String? = null
@@ -38,10 +40,10 @@ class JumpDialog : PaginatedOptions() {
         )
 
         if (isPlayerBeingWatched()) {
-            dialog.textPanel.appendPara(
-                "A nearby fleet is %s, making it unwise to approach the Gate.",
-                "tracking your movements"
-            )
+            dialog.textPanel.addPara {
+                "A nearby fleet is " + mark("tracking your movements") + ", making it unwise to approach the Gate."
+            }
+
             addOption(Option.LEAVE.text, Option.LEAVE.id)
             showOptions()
             dialog.optionPanel.setShortcut(Option.LEAVE.id, Keyboard.KEY_ESCAPE, false, false, false, true)
@@ -87,14 +89,15 @@ class JumpDialog : PaginatedOptions() {
 
                     if (wasNewGateActivated) {
                         Common.remainingActivationCodes--
-                        dialog.textPanel.appendPara(
+                        dialog.textPanel.addPara {
                             "You follow the activation instructions carefully. " +
                                     "A barely perceptible energy signature is the only indication that it worked."
-                        )
+                        }
+
                     } else {
-                        dialog.textPanel.appendPara(
+                        dialog.textPanel.addPara {
                             "Hmm...it didn't work."
-                        )
+                        }
                     }
 
                     printRemainingActivationCodes()
@@ -103,8 +106,17 @@ class JumpDialog : PaginatedOptions() {
                 }
                 Option.FLY_THROUGH -> {
                     activatedGates.forEach { activatedGate ->
+                        val jumpCostInFuel = Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayer)
+                        val fuelRemainingAfterJump = di.sector.playerFleet.cargo.fuel - jumpCostInFuel
+                        var jumpText =
+                            "Jump to ${activatedGate.systemName} ($jumpCostInFuel fuel)"
+
+                        if(fuelRemainingAfterJump < 0) {
+                            jumpText += " (${fuelRemainingAfterJump.absoluteValue} more required)"
+                        }
+
                         addOption(
-                            "Jump to ${activatedGate.systemName} (${Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayer)} fuel)",
+                            jumpText,
                             activatedGate.systemId
                         )
                     }
@@ -113,20 +125,20 @@ class JumpDialog : PaginatedOptions() {
                 }
                 Option.DEACTIVATE -> {
                     if (gate.canBeDeactivated) {
-                        dialog.textPanel.appendPara(
+                        dialog.textPanel.addPara {
                             "Carefully, you follow the deactivation instructions you found in the cave."
-                        )
+                        }
 
                         if (gate.deactivate()) {
                             Common.remainingActivationCodes++
 
-                            dialog.textPanel.appendPara(
+                            dialog.textPanel.addPara {
                                 "The Gate quietly loses power."
-                            )
+                            }
                         } else {
-                            dialog.textPanel.appendPara(
+                            dialog.textPanel.addPara {
                                 "However, the deactivation doesn't seem to work."
-                            )
+                            }
                         }
                     }
 
@@ -218,18 +230,18 @@ class JumpDialog : PaginatedOptions() {
 
                 if (isPopulated) {
                     if (wouldMindTransponderOff) {
-                        dialog.textPanel.addPara(
+                        dialog.textPanel.addPara {
                             "Your transponder is off, and patrols " +
                                     "in the " +
                                     newSystem.nameWithLowercaseType +
                                     " are likely to give you trouble over the fact, if you're spotted."
-                        )
+                        }
                     } else {
-                        dialog.textPanel.addPara(
-                            ("Your transponder is off, but any patrols in the " +
+                        dialog.textPanel.addPara {
+                            "Your transponder is off, but any patrols in the " +
                                     newSystem.nameWithLowercaseType +
-                                    " are unlikely to raise the issue.")
-                        )
+                                    " are unlikely to raise the issue."
+                        }
                     }
 
                     if (wouldBecomeHostile.isNotEmpty()) {
@@ -266,10 +278,9 @@ class JumpDialog : PaginatedOptions() {
     }
 
     private fun printRemainingActivationCodes() {
-        dialog.textPanel.appendPara(
-            "You have %s activation ${if (Common.remainingActivationCodes == 1) "code" else "codes"} left.",
-            Common.remainingActivationCodes.toString()
-        )
+        dialog.textPanel.addPara {
+            "You have " + mark(Common.remainingActivationCodes.toString()) + " activation ${if (Common.remainingActivationCodes == 1) "code" else "codes"} left."
+        }
     }
 
     /**
@@ -299,8 +310,8 @@ class JumpDialog : PaginatedOptions() {
         // Can only jump using activated gates
         // We shouldn't even see this dialog if the gate isn't activated, but still.
         if (!dialog.interactionTarget.isActive) {
-            text.addPara("Your fleet passes through the inactive gate...")
-            text.addPara("and nothing happens.")
+            text.addPara { "Your fleet passes through the inactive gate..." }
+            text.addPara { "and nothing happens." }
             return false
         }
 
@@ -312,11 +323,11 @@ class JumpDialog : PaginatedOptions() {
             destinationGate = gates.first()
         )) {
             is Jump.JumpResult.Success -> {
-                text.addPara("Your fleet passes through the gate...")
+                text.addPara { "Your fleet passes through the gate..." }
                 true
             }
             is Jump.JumpResult.FuelRequired -> {
-                text.appendPara("You lack the %s fuel necessary to use the gate.", result.fuelCost)
+                text.addPara { "You lack the " + mark(result.fuelCost) + " fuel necessary to use the gate." }
                 false
             }
         }

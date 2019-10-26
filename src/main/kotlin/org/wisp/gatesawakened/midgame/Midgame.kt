@@ -23,6 +23,7 @@ object Midgame {
                 && !wasQuestCompleted
                 && isMidgame()
                 && planetWithCache != null
+                && Common.midgameRewardActivationCodeCount > 0 // Player can disable this quest by setting to 0
 
     val planetWithCache: PlanetAPI?
         get() = Common.getSystems()

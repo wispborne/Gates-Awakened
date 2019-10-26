@@ -4,6 +4,7 @@ import com.fs.starfarer.api.PluginPick
 import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.campaign.CampaignPlugin
 import org.wisp.gatesawakened.constants.Memory
+import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroQuestFinishedDialog
 import org.wisp.gatesawakened.jumping.JumpDialog
@@ -17,7 +18,10 @@ class CampaignPlugin : BaseCampaignPlugin() {
 
     override fun getId() = "g8_GateInteractionPlugin"
 
-    override fun isTransient(): Boolean = false
+    // No need to add to saves
+    override fun isTransient(): Boolean = true
+
+
 
     /**
      * When the player interacts with a dialog, override the default interaction with a
@@ -42,14 +46,18 @@ class CampaignPlugin : BaseCampaignPlugin() {
                         )
                     }
                     interactionTarget.isActive -> {
-                        // Show dialog to jump via an active gate
-                        PluginPick<InteractionDialogPlugin>(
-                            JumpDialog(),
-                            CampaignPlugin.PickPriority.MOD_SET
-                        )
+//                        if(Midgame.wasQuestCompleted && CreateGateQuest.shouldOfferQuest()) {
+//
+//                        } else {
+                            // Show dialog to jump via an active gate
+                            PluginPick<InteractionDialogPlugin>(
+                                JumpDialog(),
+                                CampaignPlugin.PickPriority.MOD_SET
+                            )
+//                        }
                     }
                     !interactionTarget.isActive
-                            && (org.wisp.gatesawakened.di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING]
+                            && (di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING]
                             as? Int ?: 0) > 0 -> {
                         // Show dialog to activate a new gate
                         PluginPick<InteractionDialogPlugin>(
@@ -61,8 +69,8 @@ class CampaignPlugin : BaseCampaignPlugin() {
                 }
             }
             interactionTarget is PlanetAPI
-                    && org.wisp.gatesawakened.di.memory[Memory.MID_QUEST_IN_PROGRESS] == true
-                    && org.wisp.gatesawakened.di.memory[Memory.MID_QUEST_DONE] != true
+                    && di.memory[Memory.MID_QUEST_IN_PROGRESS] == true
+                    && di.memory[Memory.MID_QUEST_DONE] != true
                     && interactionTarget == Midgame.planetWithCache -> {
                 // Show dialog to finish the midgame quest
                 PluginPick(

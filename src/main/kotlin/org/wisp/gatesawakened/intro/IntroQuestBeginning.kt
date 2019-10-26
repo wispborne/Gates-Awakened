@@ -4,21 +4,20 @@ import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.BarEventCreator
-import org.wisp.gatesawakened.questLib.QuestDefinition
+import org.wisp.gatesawakened.questLib.BarEventDefinition
 import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * Creates the intro quest at the bar.
  */
 class IntroBarEventCreator : BarEventCreator(
-    creator = { IntroQuestBeginning().build() }
+    creator = { IntroQuestBeginning().buildBarEvent() }
 )
 
 /**
  * Facilitates the intro quest at the bar.
  */
-class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
-    state = State(),
+class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     shouldShowEvent = { market -> Intro.shouldOfferQuest(market) },
     interactionPrompt = {
         dialog.textPanel.addPara {
@@ -31,7 +30,7 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
     },
     textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
     onInteractionStarted = {
-        state.destinationSystem = Intro.fringeGate?.starSystem!!
+        destinationSystem = Intro.fringeGate?.starSystem!!
     },
     pages = listOf(
         DialogPage(
@@ -42,21 +41,21 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
                             "$heOrShe flips off $hisOrHer tripad and quickly rushes out."
                 }
                 dialog.textPanel.addPara {
-                    "However, just before $hisOrHer tripad goes dark, you catch one line: " + mark(state.destinationSystem!!.name)
+                    "However, just before $hisOrHer tripad goes dark, you catch one line: " + mark(destinationSystem!!.name)
                 }
             },
             options = listOf(
                 Option(
                     text = {
                         "Watch the $manOrWoman hurry down the street and consider what " +
-                                "could be at ${state.destinationSystem!!.baseName}."
+                                "could be at ${destinationSystem!!.baseName}."
                     },
                     onOptionSelected = { navigator ->
                         val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
                         navigator.close(hideQuestOfferAfterClose = true)
 
                         if (!wasQuestSuccessfullyStarted) {
-                            state.errorReporter.reportCrash(RuntimeException("Unable to start intro quest!"))
+                            errorReporter.reportCrash(RuntimeException("Unable to start intro quest!"))
                         }
                     }
                 )
@@ -65,10 +64,8 @@ class IntroQuestBeginning : QuestDefinition<IntroQuestBeginning.State>(
     ),
     personRank = Ranks.SPACE_SAILOR
 ) {
-    class State {
         var destinationSystem: StarSystemAPI? = null
         val errorReporter = di.errorReporter
-    }
 
     enum class Page {
         Initial

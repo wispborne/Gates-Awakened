@@ -10,6 +10,9 @@ class Memory(private val memoryApi: MemoryAPI) {
         const val MID_QUEST_IN_PROGRESS = "${MOD_PREFIX}mid_quest_in_progress"
         const val MID_QUEST_DONE = "${MOD_PREFIX}mid_quest_done"
 
+        const val CREATE_GATE_QUEST_IN_PROGRESS = "${MOD_PREFIX}create_gate_in_progress"
+        const val CREATE_GATE_QUEST_DONE = "${MOD_PREFIX}create_gate_done"
+
         const val GATE_ACTIVATION_CODES_REMAINING = "${MOD_PREFIX}activation_codes_remaining"
     }
 

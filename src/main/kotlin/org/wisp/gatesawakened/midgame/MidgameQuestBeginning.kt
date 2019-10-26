@@ -3,18 +3,17 @@ package org.wisp.gatesawakened.midgame
 import com.fs.starfarer.api.campaign.PlanetAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import org.wisp.gatesawakened.questLib.BarEventCreator
-import org.wisp.gatesawakened.questLib.QuestDefinition
+import org.wisp.gatesawakened.questLib.BarEventDefinition
 import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * Creates the midgame quest at the bar.
  */
 class MidgameBarEventCreator : BarEventCreator(creator = {
-    MidgameQuestBeginning().build()
+    MidgameQuestBeginning().buildBarEvent()
 })
 
-class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
-    state = State(),
+class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
     shouldShowEvent = { Midgame.shouldOfferQuest(it) },
     interactionPrompt = {
         dialog.textPanel.addPara {
@@ -27,7 +26,7 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
         "Move in for a closer look at the tattooed $manOrWoman's tripad screen."
     },
     onInteractionStarted = {
-        this.state.planetWithCache = Midgame.planetWithCache!! // Must exist for quest to be offered
+        planetWithCache = Midgame.planetWithCache!! // Must exist for quest to be offered
     },
     pages = listOf(
         DialogPage(
@@ -42,8 +41,8 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
                             "It mentions the location of a cache which, apparently, " +
                             "contains " + mark("Gate activation codes") + ". Absolutely incredible. We haven't shared this information, " +
                             "so there is no rush, but when possible, please retrieve the cache. " +
-                            "It is located on " + mark(state.planetWithCache.name) +
-                            " at 56.4314° N, 6.3414° W in " + mark(state.planetWithCache.starSystem.baseName) + ".\""
+                            "It is located on " + mark(planetWithCache.name) +
+                            " at 56.4314° N, 6.3414° W in " + mark(planetWithCache.starSystem.baseName) + ".\""
                 }
             },
             options = listOf(
@@ -83,9 +82,7 @@ class MidgameQuestBeginning : QuestDefinition<MidgameQuestBeginning.State>(
     ),
     personRank = Ranks.SPACE_SAILOR
 ) {
-    class State {
-        lateinit var planetWithCache: PlanetAPI
-    }
+    lateinit var planetWithCache: PlanetAPI
 
     enum class Page {
         Initial,
