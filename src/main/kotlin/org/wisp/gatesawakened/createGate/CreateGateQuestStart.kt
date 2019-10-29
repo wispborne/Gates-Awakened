@@ -1,5 +1,7 @@
 package org.wisp.gatesawakened.createGate
 
+import com.fs.starfarer.api.util.Misc
+import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.questLib.InteractionDefinition
 
@@ -34,6 +36,7 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
         ),
         Page(
             id = Pages.Two,
+            image = null,  // Show image of gate appearing on top of a station?
             onPageShown = {
                 addPara {
                     "As you shakily tap through the Tripad, it becomes clear that at least one reason for the Gate Haulers to travel near " +
@@ -46,15 +49,65 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
                             "The entire process is initiated simply by moving to the desired Gate location and touching a few elements on the Tripad."
                 }
                 addPara {
-                    "It goes on to explain that selecting a remote location is no longer possible due to \"security reasons\"."
+                    "It goes on to explain that selecting any position except your present location is no longer possible due to \"security reasons\"."
                 }
 
             },
             options = listOf(
                 Option(
-                    text = { "Browse the rest of the pages on security" },
+                    text = { "Read the fine print" },
                     onOptionSelected = { it.goToPage(Pages.Security) }
+                ),
+                Option(
+                    text = { "Skip to the end" },
+                    onOptionSelected = { it.goToPage(Pages.Final) }
                 )
+            )
+        ),
+        Page(
+            id = Pages.Security,
+            onPageShown = {
+                addPara { "\"- May not be located at an unsafe proximity to a celestial body\"" }
+                addPara { "\"- Multiple Gates within the same star system will result in total hyperwave collapse\"" }
+                addPara {
+                    "\"- The drone fleet will automatically stand down once contact is established with the " +
+                            mark("Reach") + "\""
+                }
+                addPara(
+                    textColor = di.sector.getFaction("luddic_church")?.color ?: Misc.getHighlightColor()
+                ) {
+                    "\"USE THESE WORDS, MY BROTHERS. REAP THE CROPS OF THE UNREPENTANT. THEY WILL BE CAST OUT OF THE PROMISED " +
+                            "LAND AND IT WILL BE SHAPED TO THE VISION OF GOD.\""
+                }
+                addPara {
+                    "It seems clear that, whatever the original purpose of this Tripad, it has been modified."
+                }
+            },
+            options = listOf(
+                Option(
+                    text = { "Tap on the proclamation" },
+                    onOptionSelected = { addPara { "Nothing happens." } }
+                ),
+                Option(
+                    text = { "Tap on \"Reach\"" },
+                    onOptionSelected = { it.goToPage(Pages.Reach) }
+                )
+            )
+        ),
+        Page(
+            id = Pages.Reach,
+            onPageShown = {
+                addPara { "" }
+            },
+            options = listOf()
+        ),
+        Page(
+            id = Pages.Final,
+            onPageShown = {
+
+            },
+            options = listOf(
+
             )
         )
     )
@@ -62,6 +115,8 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
     enum class Pages {
         One,
         Two,
-        Security
+        Security,
+        Reach,
+        Final
     }
 }

@@ -11,7 +11,8 @@ import java.awt.Color
 
 abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     val onInteractionStarted: S.() -> Unit,
-    val pages: List<Page<S>>
+    val pages: List<Page<S>>,
+    private val shouldValidateOnDialogStart: Boolean = true
 ) {
     class Page<S>(
         val id: Any,
@@ -38,7 +39,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
             showPage(pages.single { it.id == pageId })
         }
 
-        open fun gotoPage(page: Page<S>) {
+        open fun goToPage(page: Page<S>) {
             showPage(page)
         }
 
@@ -100,6 +101,15 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
             private val navigator = PageNavigator()
 
             /**
+             * Called when this class is instantiated.
+             */
+            init {
+                if(shouldValidateOnDialogStart) {
+
+                }
+            }
+
+            /**
              * Called when the dialog is shown.
              */
             override fun init(dialog: InteractionDialogAPI) {
@@ -122,6 +132,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
                 optionSelected.onOptionSelected(this@InteractionDefinition as S, navigator)
             }
 
+            // Other overrides that are necessary but do nothing
             override fun optionMousedOver(optionText: String?, optionData: Any?) {
             }
 
