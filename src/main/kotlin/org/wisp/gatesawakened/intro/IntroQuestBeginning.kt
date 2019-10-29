@@ -5,7 +5,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.BarEventDefinition
-import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * Creates the intro quest at the bar.
@@ -20,7 +19,7 @@ class IntroBarEventCreator : BarEventCreator(
 class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     shouldShowEvent = { market -> Intro.shouldOfferQuest(market) },
     interactionPrompt = {
-        dialog.textPanel.addPara {
+        addPara {
             "A $manOrWoman's tattoo catches your attention. " +
                     "The dark grey circle wraps around $hisOrHer left eye, emitting a faint white glow. " +
                     "You've never seen the like. " +
@@ -33,14 +32,14 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
         destinationSystem = Intro.fringeGate?.starSystem!!
     },
     pages = listOf(
-        DialogPage(
-            id = Page.Initial,
+        Page(
+            id = 1,
             onPageShown = {
-                dialog.textPanel.addPara {
+                addPara {
                     "As soon as you get close, " +
                             "$heOrShe flips off $hisOrHer tripad and quickly rushes out."
                 }
-                dialog.textPanel.addPara {
+                addPara {
                     "However, just before $hisOrHer tripad goes dark, you catch one line: " + mark(destinationSystem!!.name)
                 }
             },
@@ -51,7 +50,7 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                                 "could be at ${destinationSystem!!.baseName}."
                     },
                     onOptionSelected = { navigator ->
-                        val wasQuestSuccessfullyStarted = Intro.startQuest(this.dialog.interactionTarget)
+                        val wasQuestSuccessfullyStarted = Intro.startQuest(dialog.interactionTarget)
                         navigator.close(hideQuestOfferAfterClose = true)
 
                         if (!wasQuestSuccessfullyStarted) {
@@ -64,10 +63,6 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     ),
     personRank = Ranks.SPACE_SAILOR
 ) {
-        var destinationSystem: StarSystemAPI? = null
-        val errorReporter = di.errorReporter
-
-    enum class Page {
-        Initial
-    }
+    private var destinationSystem: StarSystemAPI? = null
+    private val errorReporter = di.errorReporter
 }

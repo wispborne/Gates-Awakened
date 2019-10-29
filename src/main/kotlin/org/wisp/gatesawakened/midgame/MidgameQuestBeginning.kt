@@ -16,7 +16,7 @@ class MidgameBarEventCreator : BarEventCreator(creator = {
 class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
     shouldShowEvent = { Midgame.shouldOfferQuest(it) },
     interactionPrompt = {
-        dialog.textPanel.addPara {
+        addPara {
             "You spot a familiar tattoo; a grey circle around the eye of a $manOrWoman" +
                     " in the corner of the bar, glowing a faint white. " +
                     "You realize that it looks a bit like a " + mark("Gate") + "."
@@ -29,14 +29,14 @@ class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
         planetWithCache = Midgame.planetWithCache!! // Must exist for quest to be offered
     },
     pages = listOf(
-        DialogPage(
+        Page(
             id = Page.Initial,
             onPageShown = {
-                dialog.textPanel.addPara {
+                addPara {
                     "You casually peer over the $manOrWoman's shoulder, " +
                             "reading from $hisOrHer screen."
                 }
-                dialog.textPanel.addPara {
+                addPara {
                     "\"The alpha core has decoded another section of the " + mark("transmission") + ". " +
                             "It mentions the location of a cache which, apparently, " +
                             "contains " + mark("Gate activation codes") + ". Absolutely incredible. We haven't shared this information, " +
@@ -49,22 +49,22 @@ class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
                 Option(
                     text = { "Note the information and casually wander away." },
                     onOptionSelected = {
-                        val wasQuestSuccessfullyStarted = Midgame.startQuest(this.dialog.interactionTarget)
+                        val wasQuestSuccessfullyStarted = Midgame.startQuest(dialog.interactionTarget)
 
                         if (wasQuestSuccessfullyStarted) {
                             it.goToPage(Page.Wander)
                         } else {
-                            this.dialog.textPanel.addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
+                            addPara { "After a moment's consideration, you decide that there's nothing out there after all." }
                             it.close(hideQuestOfferAfterClose = true)
                         }
                     }
                 )
             )
         ),
-        DialogPage(
+        Page(
             id = Page.Wander,
             onPageShown = {
-                this.dialog.textPanel.addPara {
+                addPara {
                     "You move away without the $manOrWoman noticing. " +
                             "You can't help but think that they ought to stop flashing " +
                             "such important information around at bars."

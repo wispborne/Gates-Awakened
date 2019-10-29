@@ -5,12 +5,15 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.combat.EngagementResultAPI
 import com.fs.starfarer.api.util.Misc
+import org.wisp.gatesawakened.wispLib.ParagraphText
+import org.wisp.gatesawakened.wispLib.addPara
+import java.awt.Color
 
 abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     val onInteractionStarted: S.() -> Unit,
-    val pages: List<DialogPage<S>>
+    val pages: List<Page<S>>
 ) {
-    class DialogPage<S>(
+    class Page<S>(
         val id: Any,
         val image: Image? = null,
         val onPageShown: S.() -> Unit,
@@ -20,13 +23,37 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     open class Option<S>(
         val text: S.() -> String,
         val shortcut: Shortcut? = null,
-        val onOptionSelected: S.(PageNavigator) -> Unit,
+        val onOptionSelected: S.(InteractionDefinition<*>.PageNavigator) -> Unit,
         val id: String = Misc.random.nextInt().toString()
     )
 
-    interface PageNavigator {
-        fun goToPage(pageId: Any)
-        fun close(hideQuestOfferAfterClose: Boolean)
+//    interface PageNavigator<S> {
+//        fun goToPage(pageId: Any)
+//        fun gotoPage(page: Page<S>)
+//        fun close(hideQuestOfferAfterClose: Boolean)
+//    }
+
+    open inner class PageNavigator() {
+        open fun goToPage(pageId: Any) {
+            showPage(pages.single { it.id == pageId })
+        }
+
+        open fun gotoPage(page: Page<S>) {
+            showPage(page)
+        }
+
+        open fun close(hideQuestOfferAfterClose: Boolean) {
+            dialog.dismiss()
+        }
+
+        open fun showPage(page: Page<S>) {
+            dialog.optionPanel.clearOptions()
+
+            page.onPageShown(this@InteractionDefinition as S)
+            page.options.forEach { option ->
+                dialog.optionPanel.addOption(option.text(this@InteractionDefinition as S), option.id)
+            }
+        }
     }
 
     /**
@@ -52,29 +79,25 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
 
     lateinit var dialog: InteractionDialogAPI
 
+    fun addPara(
+        textColor: Color = Misc.getTextColor(),
+        highlightColor: Color = Misc.getHighlightColor(),
+        stringMaker: ParagraphText.() -> String
+    ) = dialog.textPanel.addPara(textColor, highlightColor, stringMaker)
+
 
     /**
      * Needed so we can figure out which BarEvents are part of this mod
      * when looking at [BarEventManager.getInstance().active.items].
      */
-    abstract inner class InteractionDialog : InteractionDialogPlugin {
-    }
+    abstract inner class InteractionDialog : InteractionDialogPlugin
 
     fun build(): InteractionDialog {
         return object : InteractionDialog() {
 
             lateinit var dialog: InteractionDialogAPI
 
-            private val navigator = object : PageNavigator {
-                override fun goToPage(pageId: Any) {
-                    showPage(pages.single { it.id == pageId })
-                }
-
-                override fun close(hideQuestOfferAfterClose: Boolean) {
-                    dialog.dismiss()
-                }
-            }
-
+            private val navigator = PageNavigator()
 
             /**
              * Called when the dialog is shown.
@@ -84,7 +107,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
                 onInteractionStarted(this@InteractionDefinition as S)
 
                 if (pages.any()) {
-                    showPage(pages.first())
+                    navigator.showPage(pages.first())
                 }
             }
 
@@ -97,15 +120,6 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
                     }.single()
 
                 optionSelected.onOptionSelected(this@InteractionDefinition as S, navigator)
-            }
-
-            fun showPage(page: DialogPage<S>) {
-                dialog.optionPanel.clearOptions()
-
-                page.onPageShown(this@InteractionDefinition as S)
-                page.options.forEach { option ->
-                    dialog.optionPanel.addOption(option.text(this@InteractionDefinition as S), option.id)
-                }
             }
 
             override fun optionMousedOver(optionText: String?, optionData: Any?) {

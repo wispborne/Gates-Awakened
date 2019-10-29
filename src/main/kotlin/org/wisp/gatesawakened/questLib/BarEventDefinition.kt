@@ -15,7 +15,7 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
     val interactionPrompt: S.() -> Unit,
     val textToStartInteraction: S.() -> String,
     onInteractionStarted: S.() -> Unit,
-    pages: List<DialogPage<S>>,
+    pages: List<Page<S>>,
     val personRank: String = Ranks.CITIZEN,
     val personFaction: String = Factions.INDEPENDENT,
     val personGender: FullName.Gender = FullName.Gender.ANY,
@@ -40,10 +40,8 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
 
     fun buildBarEvent(): BarEvent {
         return object : BarEvent() {
-            private val navigator = object : PageNavigator {
-                override fun goToPage(pageId: Any) {
-                    showPage(pages.single { it.id == pageId })
-                }
+            private val navigator = object :
+                InteractionDefinition<*>.PageNavigator() {
 
                 override fun close(hideQuestOfferAfterClose: Boolean) {
                     if (hideQuestOfferAfterClose) {
@@ -103,7 +101,7 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
                 optionSelected.onOptionSelected(this@BarEventDefinition as S, navigator)
             }
 
-            fun showPage(page: DialogPage<S>) {
+            fun showPage(page: Page<S>) {
                 dialog.optionPanel.clearOptions()
 
                 page.onPageShown(this@BarEventDefinition as S)

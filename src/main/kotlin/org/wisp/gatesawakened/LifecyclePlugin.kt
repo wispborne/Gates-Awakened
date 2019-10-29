@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.XStream
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroBarEventCreator
 import org.wisp.gatesawakened.intro.IntroIntel
@@ -159,6 +160,7 @@ class LifecyclePlugin : BaseModPlugin() {
             MidgameQuestBeginning::class to "MidgameQuestBeginning",
             MidgameBarEventCreator::class to "MidgameBarEventCreator",
             MidgameIntel::class to "MidgameIntel",
+            CreateGateQuestStart::class to "CreateGateQuestStart",
             ActiveGateIntel::class to "ActiveGateIntel",
             CampaignPlugin::class to "CampaignPlugin"
         )
