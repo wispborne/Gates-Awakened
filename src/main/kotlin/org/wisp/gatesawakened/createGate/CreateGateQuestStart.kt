@@ -5,6 +5,7 @@ import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.questLib.InteractionDefinition
 
+
 class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
     onInteractionStarted = {
     },
@@ -59,7 +60,7 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
                     onOptionSelected = { it.goToPage(Pages.Security) }
                 ),
                 Option(
-                    text = { "Skip to the end" },
+                    text = { "Don't bother reading the rest" },
                     onOptionSelected = { it.goToPage(Pages.Final) }
                 )
             )
@@ -68,7 +69,8 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
             id = Pages.Security,
             onPageShown = {
                 addPara { "\"- May not be located at an unsafe proximity to a celestial body\"" }
-                addPara { "\"- Multiple Gates within the same star system will result in total hyperwave collapse\"" }
+                addPara { "\"- May not be located in hyperspace. Doing so will collapse hyperspace in a 10 ly radius\"" }
+                addPara { "\"- Multiple Gates within the same star system will result in total system hyperwave collapse\"" }
                 addPara {
                     "\"- The drone fleet will automatically stand down once contact is established with the " +
                             mark("Reach") + "\""
@@ -84,34 +86,54 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
                 }
             },
             options = listOf(
-                Option(
-                    text = { "Tap on the proclamation" },
-                    onOptionSelected = { addPara { "Nothing happens." } }
-                ),
+                tapProclamationOption,
                 Option(
                     text = { "Tap on \"Reach\"" },
                     onOptionSelected = { it.goToPage(Pages.Reach) }
-                )
+                ),
+                goToFinalOption
             )
         ),
         Page(
             id = Pages.Reach,
             onPageShown = {
-                addPara { "" }
+                addPara { "Domain Agency: The Reach" }
+                addPara { "\"Bringing the stars together.\"" }
+                addPara { "The nearest Reach representative is located at <not found>. Appointment required." }
             },
-            options = listOf()
+            options = listOf(
+                tapProclamationOption,
+                goToFinalOption
+            )
         ),
         Page(
             id = Pages.Final,
             onPageShown = {
-
+                addPara { "You may now interact with the Gate Hauler intel to designate a location for a Gate." }
             },
             options = listOf(
+                Option(
+                    text = { "Close" },
+                    onOptionSelected = {
+                        it.close(hideQuestOfferAfterClose = true)
 
+                    }
+                )
             )
         )
     )
 ) {
+    companion object {
+        val tapProclamationOption = Option<CreateGateQuestStart>(
+            text = { "Tap on the religious proclamation" },
+            onOptionSelected = { addPara { "Nothing happens." } }
+        )
+        val goToFinalOption = Option<CreateGateQuestStart>(
+            text = { "Close the Tripad" },
+            onOptionSelected = { it.goToPage(Pages.Final) }
+        )
+    }
+
     enum class Pages {
         One,
         Two,
