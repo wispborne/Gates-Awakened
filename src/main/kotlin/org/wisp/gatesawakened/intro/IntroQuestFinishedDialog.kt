@@ -7,8 +7,6 @@ import com.fs.starfarer.api.combat.EngagementResultAPI
 import org.wisp.gatesawakened.appendPara
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.jumping.Jump
-import java.util.*
-import kotlin.concurrent.schedule
 
 class IntroQuestFinishedDialog : InteractionDialogPlugin {
     private lateinit var dialog: InteractionDialogAPI
@@ -75,17 +73,13 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
 
                 if (coreGate != null) {
                     dialog.dismiss()
+                    di.sector.isPaused = false
                     Jump.jumpPlayer(
                         sourceLocation = null,
                         destinationGate = coreGate,
                         isFuelRequired = false
                     )
-                    di.sector.isPaused = false
-
-                    Timer().schedule(1000) {
-                        di.sector.isPaused = true
-                        Intro.displayIntroQuestEpilogueWindow()
-                    }
+                    di.sector.addScript(ShowIntroEpilogueAfterJumpCompletes())
                 }
             }
 

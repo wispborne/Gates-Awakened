@@ -96,15 +96,13 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     fun build(): InteractionDialog {
         return object : InteractionDialog() {
 
-            lateinit var dialog: InteractionDialogAPI
-
             private val navigator = PageNavigator()
 
             /**
              * Called when this class is instantiated.
              */
             init {
-                if(shouldValidateOnDialogStart) {
+                if (shouldValidateOnDialogStart) {
 
                 }
             }
@@ -113,7 +111,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
              * Called when the dialog is shown.
              */
             override fun init(dialog: InteractionDialogAPI) {
-                this.dialog = dialog
+                this@InteractionDefinition.dialog = dialog
                 onInteractionStarted(this@InteractionDefinition as S)
 
                 if (pages.any()) {
@@ -124,9 +122,8 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
             override fun optionSelected(optionText: String?, optionData: Any?) {
                 val optionSelected = pages
                     .flatMap { page ->
-                        page.options.filter { option ->
-                            option.id == optionData
-                        }
+                        page.options
+                            .filter { option -> option.id == optionData }
                     }.single()
 
                 optionSelected.onOptionSelected(this@InteractionDefinition as S, navigator)

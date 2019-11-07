@@ -35,7 +35,7 @@ dependencies {
     // Starsector jars and dependencies
     compileOnly(fileTree(starsectorCoreDirectory) {
         include("*.jar")
-        exclude("*_obf.jar")
+//        exclude("*_obf.jar")
     })
 
     // Handy kotlin helpers

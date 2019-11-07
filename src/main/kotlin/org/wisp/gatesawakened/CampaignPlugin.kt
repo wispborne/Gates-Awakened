@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.campaign.CampaignPlugin
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.createGate.CreateGateQuest
+import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroQuestFinishedDialog
 import org.wisp.gatesawakened.jumping.JumpDialog
@@ -20,7 +21,6 @@ class CampaignPlugin : BaseCampaignPlugin() {
 
     // No need to add to saves
     override fun isTransient(): Boolean = true
-
 
 
     /**
@@ -46,15 +46,18 @@ class CampaignPlugin : BaseCampaignPlugin() {
                         )
                     }
                     interactionTarget.isActive -> {
-//                        if(Midgame.wasQuestCompleted && CreateGateQuest.shouldOfferQuest()) {
-//
-//                        } else {
+                        if (Midgame.wasQuestCompleted && CreateGateQuest.shouldOfferQuest()) {
+                            PluginPick<InteractionDialogPlugin>(
+                                CreateGateQuestStart().build(),
+                                CampaignPlugin.PickPriority.MOD_SET
+                            )
+                        } else {
                             // Show dialog to jump via an active gate
                             PluginPick<InteractionDialogPlugin>(
                                 JumpDialog(),
                                 CampaignPlugin.PickPriority.MOD_SET
                             )
-//                        }
+                        }
                     }
                     !interactionTarget.isActive
                             && (di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING]

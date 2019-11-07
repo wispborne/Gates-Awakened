@@ -10,6 +10,10 @@ object CreateGateQuest {
                 && !wasQuestCompleted
                 && (1..10).random() == 7 // 10% chance lol
 
+    fun placeGateAtPlayerLocation() {
+        // TODO
+    }
+
     val hasQuestBeenStarted: Boolean
         get() = di.memory[Memory.CREATE_GATE_QUEST_IN_PROGRESS] == true
                 || di.memory[Memory.CREATE_GATE_QUEST_DONE] == true
