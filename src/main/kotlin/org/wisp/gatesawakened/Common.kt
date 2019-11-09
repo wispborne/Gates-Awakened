@@ -3,7 +3,6 @@ package org.wisp.gatesawakened
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
-import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
 import kotlin.math.max
@@ -23,14 +22,6 @@ internal object Common {
                 1F,
                 (di.sector.playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
             )
-        }
-
-    val midgameRewardActivationCodeCount = di.settings.getInt("gatesAwakened_midgameQuestRewardCodeCount")
-
-    var remainingActivationCodes: Int
-        get() = di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
-        set(value) {
-            di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
         }
 
     fun jumpCostInFuel(distanceInLY: Float): Int = (fuelCostPerLY * distanceInLY).roundToInt()
@@ -64,11 +55,11 @@ internal object Common {
             }
             .filter {
                 if (excludeCurrentGate)
-                    it.gate.distanceFromPlayer > 0
+                    it.gate.distanceFromPlayerInHyperspace > 0
                 else
                     true
             }
-            .sortedBy { it.gate.distanceFromPlayer }
+            .sortedBy { it.gate.distanceFromPlayerInHyperspace }
             .toList()
     }
 

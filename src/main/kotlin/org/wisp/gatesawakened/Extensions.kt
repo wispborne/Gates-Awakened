@@ -36,19 +36,19 @@ internal fun Gate.activate(): Boolean = GateActivation.activate(this)
  */
 internal fun Gate.deactivate(): Boolean = GateActivation.deactivate(this)
 
-internal val SectorEntityToken.distanceFromCenter: Float
-    get() = this.starSystem.distanceFromCenter
+internal val SectorEntityToken.distanceFromCenterOfSector: Float
+    get() = this.starSystem.distanceFromCenterOfSector
 
-internal val StarSystemAPI.distanceFromCenter: Float
+internal val StarSystemAPI.distanceFromCenterOfSector: Float
     get() = Misc.getDistanceLY(
         this.location,
         di.sector.hyperspace.location
     )
 
-internal val SectorEntityToken.distanceFromPlayer: Float
-    get() = this.starSystem.distanceFromPlayer
+internal val SectorEntityToken.distanceFromPlayerInHyperspace: Float
+    get() = this.starSystem.distanceFromPlayerInHyperspace
 
-internal val StarSystemAPI.distanceFromPlayer: Float
+internal val StarSystemAPI.distanceFromPlayerInHyperspace: Float
     get() = Misc.getDistanceLY(
         this.location,
         di.sector.playerFleet.locationInHyperspace

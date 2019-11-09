@@ -35,7 +35,7 @@ class ActiveGateIntel(val activeGate: Gate) : BreadcrumbIntel(null, activeGate) 
             10f
         )
         if (Midgame.wasQuestCompleted) {
-            info.appendPara("${BaseIntelPlugin.BULLET}You have %s activation codes left.", 0f, Common.remainingActivationCodes.toString())
+            info.appendPara("${BaseIntelPlugin.BULLET}You have %s activation codes left.", 0f, Midgame.remainingActivationCodes.toString())
         }
     }
 

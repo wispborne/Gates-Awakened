@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin
 import com.fs.starfarer.api.campaign.rules.MemoryAPI
 import com.fs.starfarer.api.combat.EngagementResultAPI
-import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.appendPara
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.di
@@ -52,10 +51,10 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
 
                 text.appendPara(
                     """At the very end is a list of %s and the writer's signature: "Ludd".""",
-                    "${Common.midgameRewardActivationCodeCount} activation codes"
+                    "${Midgame.midgameRewardActivationCodeCount} activation codes"
                 )
 
-                Common.remainingActivationCodes = Common.midgameRewardActivationCodeCount
+                Midgame.remainingActivationCodes = Midgame.midgameRewardActivationCodeCount
 
                 di.memory[Memory.MID_QUEST_DONE] = true
 

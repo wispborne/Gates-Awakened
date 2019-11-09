@@ -137,12 +137,12 @@ internal object Intro {
 
         @Suppress("SimplifiableCallChain")
         return Common.getGates(GateFilter.Inactive, excludeCurrentGate = false)
-            .sortedByDescending { it.gate.distanceFromCenter }
+            .sortedByDescending { it.gate.distanceFromCenterOfSector }
             .filter {
                 val isValid = it.gate.starSystem.isValidSystemForRandomActivation
 
                 di.logger.i {
-                    val distanceFromCenter = it.gate.distanceFromCenter
+                    val distanceFromCenter = it.gate.distanceFromCenterOfSector
                     val validOrInvalid = if (isValid) "valid" else "invalid"
 
                     "$distanceFromCenter LY, ${it.gate.starSystem}, $validOrInvalid, tags: ${it.gate.starSystem.tags}"

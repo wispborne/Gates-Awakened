@@ -4,7 +4,8 @@
   ],
   "gatesAwakened_Debug": false,
   "gatesAwakened_FuelMultiplier": 0.8,
-  "gatesAwakened_midgameQuestRewardCodeCount": 6
+  "gatesAwakened_midgameQuestRewardCodeCount": 6,
+  "gatesAwakened_numberOfDaysToDeliverGate": 1
 }
 # where rule commands called from rules.csv can be implemented.
 # rules from multiple packages CAN NOT share the same name

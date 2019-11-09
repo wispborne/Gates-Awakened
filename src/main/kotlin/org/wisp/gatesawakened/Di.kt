@@ -1,5 +1,6 @@
 package org.wisp.gatesawakened
 
+import com.fs.starfarer.api.FactoryAPI
 import com.fs.starfarer.api.GameState
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.SettingsAPI
@@ -31,6 +32,9 @@ class Di {
 
     val currentState: GameState
         get() = Global.getCurrentState()
+
+    val factory: FactoryAPI
+        get() = Global.getFactory()
 
     val errorReporter: CrashReporter = CrashReporter(modName = "Gates Awakened", di = this)
 }

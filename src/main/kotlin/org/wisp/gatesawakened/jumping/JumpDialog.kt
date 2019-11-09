@@ -71,9 +71,9 @@ class JumpDialog : PaginatedOptions() {
                 Option.RECONSIDER -> {
                     if (gate.isActive) {
                         addOption(Option.FLY_THROUGH.text, Option.FLY_THROUGH.id)
-                    } else if (Common.remainingActivationCodes > 0) {
+                    } else if (Midgame.remainingActivationCodes > 0) {
                         addOption(
-                            Option.ACTIVATE.text.replace("%d", Common.remainingActivationCodes.toString()),
+                            Option.ACTIVATE.text.replace("%d", Midgame.remainingActivationCodes.toString()),
                             Option.ACTIVATE.id
                         )
                     }
@@ -88,7 +88,7 @@ class JumpDialog : PaginatedOptions() {
                     val wasNewGateActivated = gate.activate()
 
                     if (wasNewGateActivated) {
-                        Common.remainingActivationCodes--
+                        Midgame.remainingActivationCodes--
                         dialog.textPanel.addPara {
                             "You follow the activation instructions carefully. " +
                                     "A barely perceptible energy signature is the only indication that it worked."
@@ -106,7 +106,7 @@ class JumpDialog : PaginatedOptions() {
                 }
                 Option.FLY_THROUGH -> {
                     activatedGates.forEach { activatedGate ->
-                        val jumpCostInFuel = Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayer)
+                        val jumpCostInFuel = Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayerInHyperspace)
                         val fuelRemainingAfterJump = di.sector.playerFleet.cargo.fuel - jumpCostInFuel
                         var jumpText =
                             "Jump to ${activatedGate.systemName} ($jumpCostInFuel fuel)"
@@ -130,7 +130,7 @@ class JumpDialog : PaginatedOptions() {
                         }
 
                         if (gate.deactivate()) {
-                            Common.remainingActivationCodes++
+                            Midgame.remainingActivationCodes++
 
                             dialog.textPanel.addPara {
                                 "The Gate quietly loses power."
@@ -279,7 +279,7 @@ class JumpDialog : PaginatedOptions() {
 
     private fun printRemainingActivationCodes() {
         dialog.textPanel.addPara {
-            "You have " + mark(Common.remainingActivationCodes.toString()) + " activation ${if (Common.remainingActivationCodes == 1) "code" else "codes"} left."
+            "You have " + mark(Midgame.remainingActivationCodes.toString()) + " activation ${if (Midgame.remainingActivationCodes == 1) "code" else "codes"} left."
         }
     }
 

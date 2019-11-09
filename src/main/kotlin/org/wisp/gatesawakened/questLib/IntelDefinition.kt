@@ -38,6 +38,10 @@ open class IntelDefinition(
 
         startLocationCopy = startLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
         endLocationCopy = endLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
+
+        if (iconPath != null) {
+            di.settings.loadTexture(iconPath)
+        }
     }
 
     override fun shouldRemoveIntel(): Boolean {

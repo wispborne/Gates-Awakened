@@ -180,12 +180,12 @@ class LifecyclePlugin : BaseModPlugin() {
         val activeGateCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
             .filter { it.gate.canBeDeactivated }
             .count()
-        val currentTotalActivateCodeCount = activeGateCount + Common.remainingActivationCodes
-        val expectedTotalActivationCodeCount = Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
+        val currentTotalActivateCodeCount = activeGateCount + Midgame.remainingActivationCodes
+        val expectedTotalActivationCodeCount = Midgame.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
 
         if (Midgame.wasQuestCompleted && currentTotalActivateCodeCount != expectedTotalActivationCodeCount
         ) {
-            Common.remainingActivationCodes =
+            Midgame.remainingActivationCodes =
                 (expectedTotalActivationCodeCount - activeGateCount)
                     .coerceAtLeast(minimumValue = 0)
         }
