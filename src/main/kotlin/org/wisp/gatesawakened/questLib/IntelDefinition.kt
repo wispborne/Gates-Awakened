@@ -18,7 +18,7 @@ open class IntelDefinition(
     var iconPath: String? = null,
     var durationInDays: Float = Float.NaN,
     val infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
-    val smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI?, width: Float, height: Float) -> Unit)? = null,
+    val smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
     val showDaysSinceCreated: Boolean = false,
     val intelTags: List<String>,
     startLocation: SectorEntityToken? = null,
@@ -63,12 +63,12 @@ open class IntelDefinition(
         return super.shouldRemoveIntel()
     }
 
-    final override fun createIntelInfo(info: TooltipMakerAPI?, mode: IntelInfoPlugin.ListInfoMode?) {
-        title?.let { info!!.addPara(textColor = getTitleColor(mode), padding = 0f) { title } }
+    final override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
+        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title } }
         infoCreator?.invoke(this, info)
     }
 
-    final override fun createSmallDescription(info: TooltipMakerAPI?, width: Float, height: Float) {
+    final override fun createSmallDescription(info: TooltipMakerAPI, width: Float, height: Float) {
         smallDescriptionCreator?.invoke(this, info, width, height)
 
         if (showDaysSinceCreated && daysSincePlayerVisible > 0) {

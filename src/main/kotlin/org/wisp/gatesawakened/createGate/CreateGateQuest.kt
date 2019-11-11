@@ -6,32 +6,52 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
 import com.fs.starfarer.api.util.Misc
-import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.midgame.Midgame
 
 object CreateGateQuest {
+    private const val MEM_KEY_QUEST_IN_PROGRESS = "create_gate_in_progress"
+    private const val MEM_KEY_QUEST_DONE = "create_gate_done"
+    private const val MEM_KEY_HAULER_SUMMON_TIMESTAMP = "create_gate_hauler_summon_timestamp"
+    private const val MEM_KEY_LOCATION_FOR_GATE = "create_gate_location_for_gate"
 
     fun shouldOfferQuest(): Boolean =
-        !hasQuestBeenStarted
+        Midgame.wasQuestCompleted
+                && !hasQuestBeenStarted
                 && !wasQuestCompleted
                 && (1..1).random() == 1 // 10% chance lol TODO
 
+    val gateSummonedTimestamp: Long?
+        get() = di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] as? Long
+
+    val summonLocation: SectorEntityToken?
+        get() = di.memory[MEM_KEY_LOCATION_FOR_GATE] as? SectorEntityToken
+
+    val hasQuestBeenStarted: Boolean
+        get() = di.memory[MEM_KEY_QUEST_IN_PROGRESS] == true
+                || di.memory[MEM_KEY_QUEST_DONE] == true
+
+    val wasQuestCompleted: Boolean
+        get() = di.memory[MEM_KEY_QUEST_DONE] == true
+
+    val numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
+
     // todo change to 10% chance
     fun placeGateAtPlayerLocationAfterDelay() {
-        di.memory[Memory.CREATE_GATE_LOCATION_FOR_GATE] =
+        di.memory[MEM_KEY_LOCATION_FOR_GATE] =
             di.sector.playerFleet.containingLocation.createToken(di.sector.playerFleet.location)
-        di.memory[Memory.CREATE_GATE_HAULER_SUMMON_TIMESTAMP] = di.sector.clock.timestamp
-        di.memory[Memory.CREATE_GATE_QUEST_IN_PROGRESS] = true
+        di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] = di.sector.clock.timestamp
+        di.memory[MEM_KEY_QUEST_IN_PROGRESS] = true
 
         di.sector.addScript(CountdownToGateHaulerScript())
     }
 
-    fun spawnGateAtDesignatedLocation() {
-        val targetLocation = di.memory[Memory.CREATE_GATE_LOCATION_FOR_GATE] as? SectorEntityToken
+    fun spawnGateAtDesignatedLocation(): Boolean {
+        val targetLocation = di.memory[MEM_KEY_LOCATION_FOR_GATE] as? SectorEntityToken
 
         if (targetLocation == null) {
             di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
-            return
+            return false
         }
 
         BaseThemeGenerator.addNonSalvageEntity(
@@ -45,19 +65,14 @@ object CreateGateQuest {
             Factions.DERELICT
         )
 
-        di.memory.unset(Memory.CREATE_GATE_LOCATION_FOR_GATE)
-        di.memory.unset(Memory.CREATE_GATE_HAULER_SUMMON_TIMESTAMP)
-        di.memory[Memory.CREATE_GATE_QUEST_DONE] = true // Quest complete
+        return true
     }
 
-    val hasQuestBeenStarted: Boolean
-        get() = di.memory[Memory.CREATE_GATE_QUEST_IN_PROGRESS] == true
-                || di.memory[Memory.CREATE_GATE_QUEST_DONE] == true
-
-    val wasQuestCompleted: Boolean
-        get() = di.memory[Memory.CREATE_GATE_QUEST_DONE] == true
-
-    val numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
+    fun completeQuest() {
+        di.memory.unset(MEM_KEY_LOCATION_FOR_GATE)
+        di.memory.unset(MEM_KEY_HAULER_SUMMON_TIMESTAMP)
+        di.memory[MEM_KEY_QUEST_DONE] = true
+    }
 
     private fun createOrbit(
         targetLocation: SectorEntityToken,

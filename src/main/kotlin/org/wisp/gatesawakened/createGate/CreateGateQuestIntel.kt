@@ -8,6 +8,7 @@ import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.IntelDefinition
 import org.wisp.gatesawakened.wispLib.addPara
+import kotlin.math.roundToInt
 
 
 class CreateGateQuestIntel : IntelDefinition(
@@ -18,12 +19,24 @@ class CreateGateQuestIntel : IntelDefinition(
             "Gate Hauler Detected"
         }
     },
-    smallDescriptionCreator = { info: TooltipMakerAPI?, width: Float, _ ->
-        info?.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
-        info?.addPara {
-            "A Gate Hauler is standing by, waiting for you to choose a location for a new Gate."
+    smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
+        info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
+        val gateSummonedTimestamp = CreateGateQuest.gateSummonedTimestamp
+
+        if (gateSummonedTimestamp == null) {
+            info.addPara {
+                "A Gate Hauler is standing by, waiting for you to choose a location for a new Gate."
+            }
+            info.addButton("Place Gate here", BUTTON_CHOOSE, width, 20f, 10f)
+        } else {
+            info.addPara {
+                val daysUntilGateIsDelivered =
+                    CreateGateQuest.numberOfDaysToDeliverGate -
+                            di.sector.clock.getElapsedDaysSince(gateSummonedTimestamp)
+                "A Gate Hauler is en route to deliver a Gate to " + mark(CreateGateQuest.summonLocation!!.name) +
+                        " and will arrive in " + mark(Misc.getStringForDays(daysUntilGateIsDelivered.roundToInt())) + "."
+            }
         }
-        info?.addButton("Place Gate here", BUTTON_CHOOSE, width, 20f, 10f)
     },
     intelTags = listOf(
         Tags.INTEL_EXPLORATION,
