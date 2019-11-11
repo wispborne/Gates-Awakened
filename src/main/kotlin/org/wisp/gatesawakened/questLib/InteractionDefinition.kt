@@ -79,6 +79,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     )
 
     lateinit var dialog: InteractionDialogAPI
+    val navigator = PageNavigator()
 
     fun addPara(
         textColor: Color = Misc.getTextColor(),
@@ -95,8 +96,6 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
 
     fun build(): InteractionDialog {
         return object : InteractionDialog() {
-
-            private val navigator = PageNavigator()
 
             /**
              * Called when this class is instantiated.

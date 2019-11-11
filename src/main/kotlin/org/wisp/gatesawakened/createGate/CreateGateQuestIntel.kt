@@ -1,12 +1,17 @@
 package org.wisp.gatesawakened.createGate
 
+import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.impl.campaign.ids.Tags
 import com.fs.starfarer.api.ui.IntelUIAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.constants.MOD_PREFIX
+import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.isInsideCircle
 import org.wisp.gatesawakened.questLib.IntelDefinition
+import org.wisp.gatesawakened.questLib.InteractionDefinition
+import org.wisp.gatesawakened.show
 import org.wisp.gatesawakened.wispLib.addPara
 import kotlin.math.roundToInt
 
@@ -33,7 +38,7 @@ class CreateGateQuestIntel : IntelDefinition(
                 val daysUntilGateIsDelivered =
                     CreateGateQuest.numberOfDaysToDeliverGate -
                             di.sector.clock.getElapsedDaysSince(gateSummonedTimestamp)
-                "A Gate Hauler is en route to deliver a Gate to " + mark(CreateGateQuest.summonLocation!!.name) +
+                "A Gate Hauler is en route to deliver a Gate to " + mark(CreateGateQuest.summonLocation!!.containingLocation.name) +
                         " and will arrive in " + mark(Misc.getStringForDays(daysUntilGateIsDelivered.roundToInt())) + "."
             }
         }
@@ -70,8 +75,69 @@ class CreateGateQuestIntel : IntelDefinition(
 
     override fun buttonPressConfirmed(buttonId: Any?, ui: IntelUIAPI?) {
         super.buttonPressConfirmed(buttonId, ui)
-        CreateGateQuest.placeGateAtPlayerLocationAfterDelay()
+
+        val reasonGateCannotBePlacedAtLocation =
+            reasonGateCannotBePlacedAtEntityLocation(entityToPlaceGateOn = di.sector.playerFleet.createToken())
+
+        if (reasonGateCannotBePlacedAtLocation != null) {
+            // TODO note working
+            di.sector.campaignUI.currentInteractionDialog?.dismiss()
+
+            CannotSummonGateHereDialog(reasonGateCannotBePlacedAtLocation).build()
+                .show(di.sector.campaignUI, di.sector.playerFleet)
+        } else {
+            CreateGateQuest.placeGateAtPlayerLocationAfterDelay()
+            ui?.recreateIntelUI()
+        }
     }
+
+    private fun reasonGateCannotBePlacedAtEntityLocation(entityToPlaceGateOn: SectorEntityToken): String? {
+        val planets = entityToPlaceGateOn.containingLocation.planets
+
+        if (planets.any {
+                // Ensure not close to a celestial body
+                di.sector.playerFleet.location.isInsideCircle(
+                    center = it.location,
+                    radius = it.radius + 600
+                )
+            }) {
+            return "the Gate cannot be placed so close to a celetial body"
+        }
+
+        if (di.sector.playerFleet.isInHyperspace || di.sector.playerFleet.isInHyperspaceTransition) {
+            return "a Gate cannot be placed in hyperspace"
+        }
+
+        if (di.sector.playerFleet.starSystem.getCustomEntitiesWithTag(Tags.GATE).any()) {
+            return "there is already a Gate in this system"
+        }
+
+        return null
+    }
+
+    private class CannotSummonGateHereDialog(reasonToShow: String) : InteractionDefinition<CannotSummonGateHereDialog>(
+        onInteractionStarted = {
+            this.addPara { "You command the TriPad to bring a Gate to your current location." }
+            this.addPara(highlightColor = Misc.getNegativeHighlightColor()) {
+                "The screen flashes red and it informs you that " + mark(reasonToShow) + "."
+            }
+        },
+        pages = listOf(
+            Page(
+                id = 0,
+                onPageShown = {},
+                options = listOf(
+                    Option(
+                        text = { "Close" },
+                        onOptionSelected = {
+                            it.close(hideQuestOfferAfterClose = false)
+                        }
+                    )
+                )
+            )
+        )
+    )
+
 
     override fun isDone(): Boolean = CreateGateQuest.wasQuestCompleted
     override fun isEnded(): Boolean = CreateGateQuest.wasQuestCompleted

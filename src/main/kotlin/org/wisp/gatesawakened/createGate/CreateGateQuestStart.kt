@@ -136,7 +136,7 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
             id = Pages.Final,
             onPageShown = {
                 addPara { "You may now interact with the Gate Hauler intel to designate a location for a Gate." }
-                di.intelManager.addIntel(CreateGateQuestIntel())
+                CreateGateQuest.startQuest()
             },
             options = listOf(
                 Option(

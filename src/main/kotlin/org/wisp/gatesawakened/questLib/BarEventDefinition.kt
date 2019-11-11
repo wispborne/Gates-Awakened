@@ -102,6 +102,8 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
             }
 
             fun showPage(page: Page<S>) {
+                if (noContinue || done) return
+
                 dialog.optionPanel.clearOptions()
 
                 page.onPageShown(this@BarEventDefinition as S)

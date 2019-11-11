@@ -2,6 +2,8 @@ package org.wisp.gatesawakened.intro
 
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
+import com.fs.starfarer.api.util.Misc
+import org.lazywizard.lazylib.ModUtils
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.BarEventDefinition
@@ -25,6 +27,21 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                     "You've never seen the like. " +
                     "${heOrShe.capitalize()} is focused on $hisOrHer tripad in a corner of the bar " +
                     "and it looks like $heOrShe is staring at an image of a " + mark("Gate") + "."
+        }
+
+        if (isNaziShitEnabled) {
+            addPara {
+                "As you move closer, the $manOrWoman silently collapses forward, their TriPad flickering out. You spin around to see a " +
+                        "man quickly pocketing a gun and leaving, inconspicuous but for his shaved head " +
+                        "marred by a tattoo of a cross with bent arms - the unofficial symbol of the New Galactic Order - and " +
+                        "by the words across the back of his jacket;"
+            }
+            addPara { "" }
+            addPara(textColor = Misc.getHighlightColor()) { "\"War is peace." }
+            addPara(textColor = Misc.getHighlightColor()) { "Freedom is slavery." }
+            addPara(textColor = Misc.getHighlightColor()) { "Ignorance is strength\"" }
+
+            navigator.close(hideQuestOfferAfterClose = true)
         }
     },
     textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
@@ -65,4 +82,6 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
 ) {
     private var destinationSystem: StarSystemAPI? = null
     private val errorReporter = di.errorReporter
+
+    private val isNaziShitEnabled = ModUtils.isModEnabled("new_galactic_order")
 }

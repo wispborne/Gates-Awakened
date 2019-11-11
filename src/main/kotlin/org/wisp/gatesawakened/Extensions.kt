@@ -1,11 +1,11 @@
 package org.wisp.gatesawakened
 
-import com.fs.starfarer.api.campaign.SectorEntityToken
-import com.fs.starfarer.api.campaign.StarSystemAPI
-import com.fs.starfarer.api.campaign.TextPanelAPI
+import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.constants.Tags
+import kotlin.math.pow
 
 @Deprecated("Replace with the one in WispText")
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
@@ -56,3 +56,20 @@ internal val StarSystemAPI.distanceFromPlayerInHyperspace: Float
 
 internal val String.Companion.empty
     get() = ""
+
+internal fun CampaignFleetAPI.createToken(): SectorEntityToken = this.containingLocation.createToken(this.location)
+
+internal fun isPointInsideCircle(
+    point: Vector2f,
+    circleCenter: Vector2f,
+    circleRadius: Float
+): Boolean = (point.x - circleCenter.x).pow(2) +
+        (point.y - circleCenter.y).pow(2) < circleRadius.pow(2)
+
+internal fun Vector2f.isInsideCircle(
+    center: Vector2f,
+    radius: Float
+) = isPointInsideCircle(this, center, radius)
+
+internal fun InteractionDialogPlugin.show(campaignUIAPI: CampaignUIAPI, targetEntity: SectorEntityToken) =
+    campaignUIAPI.showInteractionDialog(this, targetEntity)

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
 import com.fs.starfarer.api.util.Misc
+import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
 
@@ -19,7 +20,7 @@ object CreateGateQuest {
         Midgame.wasQuestCompleted
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
-                && (1..1).random() == 1 // 10% chance lol TODO
+                && (1..1).random() == 1 // 10% chance lol TODO todo change to 10% chance
 
     val gateSummonedTimestamp: Long?
         get() = di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] as? Long
@@ -36,10 +37,13 @@ object CreateGateQuest {
 
     val numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
 
-    // todo change to 10% chance
+    fun startQuest() {
+        di.intelManager.addIntel(CreateGateQuestIntel())
+    }
+
     fun placeGateAtPlayerLocationAfterDelay() {
         di.memory[MEM_KEY_LOCATION_FOR_GATE] =
-            di.sector.playerFleet.containingLocation.createToken(di.sector.playerFleet.location)
+            di.sector.playerFleet.createToken()
         di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] = di.sector.clock.timestamp
         di.memory[MEM_KEY_QUEST_IN_PROGRESS] = true
 

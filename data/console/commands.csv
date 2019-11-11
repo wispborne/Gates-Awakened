@@ -1,4 +1,4 @@
-command,class,tags,syntax,help,
-GatesAwakenedViewInfo,org.wisp.gatesawakened.consoleCommands.GatesAwakenedViewInfo,"gates,campaign",gatesawakenedviewinfo,Prints debug info for the Gates Awakened mod.,
-GatesAwakenedForceStartMidgameQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartMidgameQuest,"gates,campaign",gatesawakenedforcestartmidgamequest,Attempt to force a start of the second Gates Awakened quest.,
-#Test,org.lazywizard.console.testing.Test,core,test (variable),Personal command for quick prototyping. Don't bother uncommenting, it probably won't do anything interesting.
+command,class,tags,syntax,help
+GatesAwakenedViewInfo,org.wisp.gatesawakened.consoleCommands.GatesAwakenedViewInfo,"gates,campaign",gatesawakenedviewinfo,Prints debug info for the Gates Awakened mod.
+GatesAwakenedForceStartMidgameQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartMidgameQuest,"gates,campaign",gatesawakenedforcestartmidgamequest,Attempt to force a start of the second Gates Awakened quest.
+GatesAwakenedForceStartCreateGateQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartCreateGateQuest,"gates,campaign",gatesawakenedforcestartcreategatequest,Attempt to force a start of the third Gates Awakened quest.
