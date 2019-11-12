@@ -12,7 +12,12 @@ class CountdownToGateHaulerScript : EveryFrameScript {
 
     override fun advance(amount: Float) {
         CreateGateQuest.gateSummonedTimestamp?.let { timeHaulerSummoned ->
-            if (!isDone && di.sector.clock.getElapsedDaysSince(timeHaulerSummoned) >= CreateGateQuest.numberOfDaysToDeliverGate) {
+            val isPlayerInSameSystemAsTargetLocation =
+                di.sector.playerFleet.containingLocation == CreateGateQuest.summonLocation?.containingLocation
+            if (!isDone
+                && di.sector.clock.getElapsedDaysSince(timeHaulerSummoned) >= CreateGateQuest.numberOfDaysToDeliverGate
+                && !isPlayerInSameSystemAsTargetLocation
+            ) {
                 CreateGateQuest.spawnGateAtDesignatedLocation()
                 CreateGateQuest.completeQuest()
 
