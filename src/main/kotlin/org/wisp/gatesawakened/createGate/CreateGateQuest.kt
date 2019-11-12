@@ -20,7 +20,7 @@ object CreateGateQuest {
         Midgame.wasQuestCompleted
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
-                && (1..1).random() == 1 // 10% chance lol TODO todo change to 10% chance
+                && (1..10).random() == 1 // 10% chance lol
 
     val gateSummonedTimestamp: Long?
         get() = di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] as? Long
@@ -42,8 +42,7 @@ object CreateGateQuest {
     }
 
     fun placeGateAtPlayerLocationAfterDelay() {
-        di.memory[MEM_KEY_LOCATION_FOR_GATE] =
-            di.sector.playerFleet.createToken()
+        di.memory[MEM_KEY_LOCATION_FOR_GATE] = di.sector.playerFleet.createToken()
         di.memory[MEM_KEY_HAULER_SUMMON_TIMESTAMP] = di.sector.clock.timestamp
         di.memory[MEM_KEY_QUEST_IN_PROGRESS] = true
 
@@ -76,6 +75,12 @@ object CreateGateQuest {
         di.memory.unset(MEM_KEY_LOCATION_FOR_GATE)
         di.memory.unset(MEM_KEY_HAULER_SUMMON_TIMESTAMP)
         di.memory[MEM_KEY_QUEST_DONE] = true
+    }
+
+    enum class Rules(val text: String) {
+        Proximity("\" - May not be located at an unsafe proximity to a celestial body.\""),
+        Hyperspace("\" - May not be located in hyperspace. Doing so will collapse hyperspace in a 10 ly radius.\""),
+        MultipleGates("\" - Multiple Gates within the same star system will result in total system hyperwave collapse.\"")
     }
 
     private fun createOrbit(

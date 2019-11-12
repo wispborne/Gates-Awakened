@@ -40,6 +40,11 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
             addPara(textColor = Misc.getHighlightColor()) { "\"War is peace." }
             addPara(textColor = Misc.getHighlightColor()) { "Freedom is slavery." }
             addPara(textColor = Misc.getHighlightColor()) { "Ignorance is strength\"" }
+            addPara { "" }
+            addPara {
+                "You get the sense that a sector where the NGO exists isn't compatible with free scientific pursuit " +
+                        "or individual exploration."
+            }
 
             navigator.close(hideQuestOfferAfterClose = true)
         }

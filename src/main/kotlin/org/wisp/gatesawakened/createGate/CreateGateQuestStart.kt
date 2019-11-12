@@ -85,12 +85,12 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
         Page(
             id = Pages.FinePrint,
             onPageShown = {
-                addPara { "Restrictions and Requirements" }
-                addPara { "\"- May not be located at an unsafe proximity to a celestial body\"" }
-                addPara { "\"- May not be located in hyperspace. Doing so will collapse hyperspace in a 10 ly radius\"" }
-                addPara { "\"- Multiple Gates within the same star system will result in total system hyperwave collapse\"" }
+                addPara { "\"Restrictions and Requirements\"" }
+                addPara { CreateGateQuest.Rules.Proximity.text }
+                addPara { CreateGateQuest.Rules.Hyperspace.text }
+                addPara { CreateGateQuest.Rules.MultipleGates.text }
                 addPara {
-                    "\"- The drone fleet will automatically stand down once contact is established with the " +
+                    "\"The drone fleet will automatically stand down once contact is established with the " +
                             mark("Reach") + "\""
                 }
                 addPara(
