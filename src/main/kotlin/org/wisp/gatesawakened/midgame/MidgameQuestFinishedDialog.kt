@@ -61,6 +61,7 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
                 (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as? MidgameIntel?)
                     ?.run { di.sector.intelManager.removeIntel(this) }
 
+                // TODO better "quest complete" messaging
                 dialog.optionPanel.addOption(
                     Option.LEAVE.text,
                     Option.LEAVE

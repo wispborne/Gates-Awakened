@@ -79,6 +79,7 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
                         destinationGate = coreGate,
                         isFuelRequired = false
                     )
+                    // TODO don't show this dialog again if player touches it when jumping
                     di.sector.addScript(ShowIntroEpilogueAfterJumpCompletes())
                 }
             }

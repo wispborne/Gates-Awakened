@@ -7,14 +7,14 @@ import org.wisp.gatesawakened.Di
 import java.awt.Color
 
 
-class CrashReporter(private val modName: String, private val di: Di) {
+class CrashReporter(private val modName: String, private val modAuthor: String?, private val di: Di) {
     /**
      * Originally created by Sundog in
      * [Starship Legends](https://bitbucket.org/Nate_NBJ/starship-legends/src/default/src/starship_legends/ModPlugin.java)
      */
     fun reportCrash(exception: Exception): Boolean {
         try {
-            val message = "$modName encountered an error!\nPlease let the mod author know."
+            val message = "$modName encountered an error!\nPlease let ${modAuthor ?: "the mod author"} know."
             val stackTrace = exception.stackTrace.joinToString(separator = System.lineSeparator()) { "    $it" }
 
             di.logger
