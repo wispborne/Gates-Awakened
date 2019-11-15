@@ -19,25 +19,19 @@ class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDia
             image = Image("illustrations", "survey", 640f, 400f, 0f, 0f, 480f, 300f),
             onPageShown = {
                 addPara {
-                    "Squarely located at the coordinates from the " + mark("decrypted transmission") + " is a small island." +
+                    "Squarely located at the coordinates from the decrypted transmission is a small island." +
                             " Visible from the ground is an awe-inspiring cave entrance." +
                             " Natural basalt pillars line the walls, their hexagonal edges overgrown with luminescent moss." +
-                            " The only sign that your crew is not the first to step foot here is the " + mark(
-                        "Universal Access Chip"
-                    ) +
+                            " The only sign that your crew is not the first to step foot here is the Universal Access Chip" +
                             " almost casually placed on top of a pillar deep in the cave."
                 }
                 addPara {
                     "It contains detailed, but slightly foreboding, instructions on how to reactivate and deactivate " +
-                            "\"carefully considered " + mark("Gates") + "\", \"should my mission be successful\"."
+                            "\"carefully considered Gates\", \"should my mission be successful\"."
                 }
 
                 addPara {
-                    "It appears that " + mark("any active Gate may be accessed from any other") + "."
-                }
-
-                addPara {
-                    "At the very end is a list of " + mark("${Midgame.midgameRewardActivationCodeCount} activation codes") +
+                    "At the very end is a list of ${Midgame.midgameRewardActivationCodeCount} activation codes" +
                             " and the writer's signature: \"Ludd\"."
                 }
 
@@ -67,7 +61,7 @@ class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDia
                     text = { "Look around some more" },
                     showIf = { !hasRock },
                     onOptionSelected = {
-                        addPara { "You find a " + mark("cool-looking rock") + ". You put it into your pocket to bring back." }
+                        addPara { "You find a cool-looking rock. You put it into your pocket to bring back." }
                         addPara { "However, while it is very neat, it is just a normal rock." }
                         hasRock = true
                         it.goToPage(2)

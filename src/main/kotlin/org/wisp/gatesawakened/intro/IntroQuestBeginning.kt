@@ -26,7 +26,7 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                     "The dark grey circle wraps around $hisOrHer left eye, emitting a faint white glow. " +
                     "You've never seen the like. " +
                     "${heOrShe.capitalize()} is focused on $hisOrHer tripad in a corner of the bar " +
-                    "and it looks like $heOrShe is staring at an image of a " + mark("Gate") + "."
+                    "and it looks like $heOrShe is staring at an image of a Gate."
         }
 
         if (isNaziShitEnabled) {
