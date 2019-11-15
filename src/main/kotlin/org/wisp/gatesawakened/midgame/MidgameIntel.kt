@@ -15,7 +15,7 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     companion object {
         private val iconSpritePath: String by lazy(LazyThreadSafetyMode.NONE) {
-            val path = "graphics/intel/g8_gate.png"
+            val path = "graphics/intel/g8_gate_quest.png"
             di.settings.loadTexture(path)
             path
         }

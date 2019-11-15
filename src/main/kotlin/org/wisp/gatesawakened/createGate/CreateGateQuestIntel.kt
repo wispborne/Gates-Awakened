@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 
 class CreateGateQuestIntel : IntelDefinition(
     title = "Place Gate",
-    iconPath = "graphics/intel/g8_gate.png",
+    iconPath = "graphics/intel/g8_gate_quest.png",
     infoCreator = { info: TooltipMakerAPI? ->
         //        info?.addPara(padding = 0f) {
 //            ""

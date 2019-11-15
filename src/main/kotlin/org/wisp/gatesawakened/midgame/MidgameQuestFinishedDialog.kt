@@ -7,11 +7,6 @@ import org.wisp.gatesawakened.questLib.InteractionDefinition.Option
 
 class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDialog>(
     onInteractionStarted = {
-
-        dialog.setOptionOnEscape(
-            Option.LEAVE.text,
-            Option.LEAVE
-        )
     },
     pages = listOf(
         Page(

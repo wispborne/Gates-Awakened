@@ -69,6 +69,17 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
                 .filter { it.showIf(this@InteractionDefinition) }
                 .forEach { option ->
                     dialog.optionPanel.addOption(option.text(this@InteractionDefinition as S), option.id)
+
+                    if (option.shortcut != null) {
+                        dialog.optionPanel.setShortcut(
+                            option.id,
+                            option.shortcut.code,
+                            option.shortcut.holdCtrl,
+                            option.shortcut.holdAlt,
+                            option.shortcut.holdShift,
+                            false
+                        )
+                    }
                 }
         }
     }
@@ -76,14 +87,14 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     /**
      * @param code constant from [org.lwjgl.input.Keyboard]
      */
-    class Shortcut(
-        code: Int,
-        holdCtrl: Boolean,
-        holdAlt: Boolean,
-        holdShift: Boolean
+    data class Shortcut(
+        val code: Int,
+        val holdCtrl: Boolean = false,
+        val holdAlt: Boolean = false,
+        val holdShift: Boolean = false
     )
 
-    class Image(
+    data class Image(
         val category: String,
         val id: String,
         val width: Float = 640f,
@@ -139,7 +150,8 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
                     .flatMap { page ->
                         page.options
                             .filter { option -> option.id == optionData }
-                    }.single()
+                    }.singleOrNull()
+                    ?: return
 
                 optionSelected.onOptionSelected(this@InteractionDefinition as S, navigator)
             }
