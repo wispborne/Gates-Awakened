@@ -18,7 +18,8 @@ class CountdownToGateHaulerScript : EveryFrameScript {
                 && di.sector.clock.getElapsedDaysSince(timeHaulerSummoned) >= CreateGateQuest.numberOfDaysToDeliverGate
                 && !isPlayerInSameSystemAsTargetLocation
             ) {
-                CreateGateQuest.spawnGateAtDesignatedLocation()
+                CreateGateQuest.spawnGateAtLocation(CreateGateQuest.summonLocation, activateAfterSpawning = true)
+                CreateGateQuest.addGateDefenceFleet(CreateGateQuest.summonLocation)
                 CreateGateQuest.completeQuest()
 
                 isDone = true

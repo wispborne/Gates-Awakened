@@ -111,7 +111,7 @@ class JumpDialog : PaginatedOptions() {
                         var jumpText =
                             "Jump to ${activatedGate.systemName} ($jumpCostInFuel fuel)"
 
-                        if(fuelRemainingAfterJump < 0) {
+                        if (fuelRemainingAfterJump < 0) {
                             jumpText += " (${fuelRemainingAfterJump.absoluteValue} more required)"
                         }
 

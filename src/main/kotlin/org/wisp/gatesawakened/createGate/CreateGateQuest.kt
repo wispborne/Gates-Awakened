@@ -54,32 +54,36 @@ object CreateGateQuest {
         di.sector.addScript(CountdownToGateHaulerScript())
     }
 
-    fun spawnGateAtDesignatedLocation(): Boolean {
-        val targetLocation = summonLocation
-
-        if (targetLocation == null) {
+    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): Boolean {
+        if (location == null) {
             di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
             return false
         }
 
         val newGate = BaseThemeGenerator.addNonSalvageEntity(
-            targetLocation.starSystem,
+            location.starSystem,
             BaseThemeGenerator.EntityLocation()
                 .apply {
-                    this.location = targetLocation.location
-                    this.orbit = createOrbit(targetLocation)
+                    this.location = location.location
+                    this.orbit = createOrbit(location)
                 },
             "inactive_gate",
             Factions.DERELICT
         )
 
-        newGate.entity?.activate()
-        addGateDefenceFleet(targetLocation)
+        if(activateAfterSpawning) {
+            newGate.entity?.activate()
+        }
 
         return true
     }
 
-    private fun addGateDefenceFleet(gateToDefend: SectorEntityToken) {
+    fun addGateDefenceFleet(gateToDefend: SectorEntityToken?) {
+        if (gateToDefend == null) {
+            di.errorReporter.reportCrash(NullPointerException("Gate to defend cannot be null"))
+            return
+        }
+
         val fleetParams = FleetParamsV3(
             null,
             gateToDefend.locationInHyperspace,
