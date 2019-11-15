@@ -55,5 +55,6 @@ class IntroIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
             .apply {
                 add(Tags.INTEL_EXPLORATION)
                 add(Tags.INTEL_STORY)
+                add(org.wisp.gatesawakened.constants.Tags.INTEL_ACTIVE_GATE)
             }
 }

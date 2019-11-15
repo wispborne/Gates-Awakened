@@ -1,58 +1,45 @@
 package org.wisp.gatesawakened.midgame
 
-import com.fs.starfarer.api.campaign.InteractionDialogAPI
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin
-import com.fs.starfarer.api.campaign.rules.MemoryAPI
-import com.fs.starfarer.api.combat.EngagementResultAPI
-import org.wisp.gatesawakened.appendPara
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.questLib.InteractionDefinition
+import org.wisp.gatesawakened.questLib.InteractionDefinition.Option
 
-class MidgameQuestFinishedDialog : InteractionDialogPlugin {
-    private lateinit var dialog: InteractionDialogAPI
-
-    override fun init(dialog: InteractionDialogAPI) {
-        this.dialog = dialog
-
-        dialog.visualPanel.showImagePortion("illustrations", "survey", 640f, 400f, 0f, 0f, 480f, 300f)
+class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDialog>(
+    onInteractionStarted = {
 
         dialog.setOptionOnEscape(
             Option.LEAVE.text,
             Option.LEAVE
         )
-        optionSelected(null as String?, Option.INIT)
-    }
-
-    override fun optionSelected(optionText: String?, optionData: Any?) {
-        dialog.optionPanel.clearOptions()
-        val text = dialog.textPanel
-
-        when (optionData as? Option) {
-            null -> return
-            Option.INIT -> {
-                text.appendPara(
-                    "Squarely located at the coordinates from the %s is a small island." +
+    },
+    pages = listOf(
+        Page(
+            id = 1,
+            image = Image("illustrations", "survey", 640f, 400f, 0f, 0f, 480f, 300f),
+            onPageShown = {
+                addPara {
+                    "Squarely located at the coordinates from the " + mark("decrypted transmission") + " is a small island." +
                             " Visible from the ground is an awe-inspiring cave entrance." +
                             " Natural basalt pillars line the walls, their hexagonal edges overgrown with luminescent moss." +
-                            " The only sign that your crew is not the first to step foot here is the %s" +
-                            " almost casually placed on top of a pillar deep in the cave.",
-                    "decrypted transmission",
-                    "Universal Access Chip"
-                )
-                text.appendPara(
-                    """It contains detailed, but slightly foreboding, instructions on how to reactivate and deactivate "carefully considered %s", "should my mission be successful".""",
-                    "Gates"
-                )
+                            " The only sign that your crew is not the first to step foot here is the " + mark(
+                        "Universal Access Chip"
+                    ) +
+                            " almost casually placed on top of a pillar deep in the cave."
+                }
+                addPara {
+                    "It contains detailed, but slightly foreboding, instructions on how to reactivate and deactivate " +
+                            "\"carefully considered " + mark("Gates") + "\", \"should my mission be successful\"."
+                }
 
-                text.appendPara(
-                    "It appears that %s",
-                    "any active Gate may be accessed from any other."
-                )
+                addPara {
+                    "It appears that " + mark("any active Gate may be accessed from any other") + "."
+                }
 
-                text.appendPara(
-                    """At the very end is a list of %s and the writer's signature: "Ludd".""",
-                    "${Midgame.midgameRewardActivationCodeCount} activation codes"
-                )
+                addPara {
+                    "At the very end is a list of " + mark("${Midgame.midgameRewardActivationCodeCount} activation codes") +
+                            " and the writer's signature: \"Ludd\"."
+                }
 
                 Midgame.remainingActivationCodes = Midgame.midgameRewardActivationCodeCount
 
@@ -60,36 +47,48 @@ class MidgameQuestFinishedDialog : InteractionDialogPlugin {
 
                 (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as? MidgameIntel?)
                     ?.run { di.sector.intelManager.removeIntel(this) }
-
-                // TODO better "quest complete" messaging
-                dialog.optionPanel.addOption(
-                    Option.LEAVE.text,
-                    Option.LEAVE
+            },
+            options = listOf(
+                Option(
+                    text = { Option.TAKE_DATA.text },
+                    onOptionSelected = {
+                        addPara { mark("You may now activate up to ${Midgame.remainingActivationCodes} Gates of your choosing.") }
+                        it.goToPage(2)
+                    }
                 )
-            }
-
-            Option.LEAVE -> {
-                di.sector.isPaused = false
-                dialog.dismiss()
-            }
-        }
-    }
-
-    override fun optionMousedOver(optionText: String?, optionData: Any?) {
-    }
-
-    override fun backFromEngagement(battleResult: EngagementResultAPI?) {
-    }
-
-    override fun getMemoryMap(): MutableMap<String, MemoryAPI>? = null
-
-    override fun advance(amount: Float) {
-    }
-
-    override fun getContext(): Any? = null
+            )
+        ),
+        Page(
+            id = 2,
+            onPageShown = {
+            },
+            options = listOf(
+                Option(
+                    text = { "Look around some more" },
+                    showIf = { !hasRock },
+                    onOptionSelected = {
+                        addPara { "You find a " + mark("cool-looking rock") + ". You put it into your pocket to bring back." }
+                        addPara { "However, while it is very neat, it is just a normal rock." }
+                        hasRock = true
+                        it.goToPage(2)
+                    }
+                ),
+                Option(
+                    text = { Option.LEAVE.text },
+                    onOptionSelected = {
+                        di.sector.isPaused = false
+                        dialog.dismiss()
+                    }
+                )
+            )
+        )
+    )
+) {
+    @Transient
+    var hasRock = false
 
     enum class Option(val text: String) {
-        INIT(""),
-        LEAVE("Take the data and leave")
+        TAKE_DATA("Take the data"),
+        LEAVE("Exit the cave")
     }
 }

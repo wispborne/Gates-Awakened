@@ -64,5 +64,6 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
             .apply {
                 add(Tags.INTEL_EXPLORATION)
                 add(Tags.INTEL_STORY)
+                add(org.wisp.gatesawakened.constants.Tags.INTEL_ACTIVE_GATE)
             }
 }

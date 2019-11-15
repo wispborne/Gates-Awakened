@@ -77,7 +77,7 @@ class CampaignPlugin : BaseCampaignPlugin() {
                     && interactionTarget == Midgame.planetWithCache -> {
                 // Show dialog to finish the midgame quest
                 PluginPick(
-                    MidgameQuestFinishedDialog(),
+                    MidgameQuestFinishedDialog().build(),
                     CampaignPlugin.PickPriority.MOD_SPECIFIC
                 )
             }

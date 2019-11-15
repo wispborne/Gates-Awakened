@@ -24,6 +24,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     open class Option<S>(
         val text: S.() -> String,
         val shortcut: Shortcut? = null,
+        val showIf: S.() -> Boolean = { true },
         val onOptionSelected: S.(InteractionDefinition<*>.PageNavigator) -> Unit,
         val id: String = Misc.random.nextInt().toString()
     )
@@ -50,10 +51,25 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
         open fun showPage(page: Page<S>) {
             dialog.optionPanel.clearOptions()
 
-            page.onPageShown(this@InteractionDefinition as S)
-            page.options.forEach { option ->
-                dialog.optionPanel.addOption(option.text(this@InteractionDefinition as S), option.id)
+            if (page.image != null) {
+                dialog.visualPanel.showImagePortion(
+                    page.image.category,
+                    page.image.id,
+                    page.image.width,
+                    page.image.height,
+                    page.image.xOffset,
+                    page.image.yOffset,
+                    page.image.displayWidth,
+                    page.image.displayHeight
+                )
             }
+
+            page.onPageShown(this@InteractionDefinition as S)
+            page.options
+                .filter { it.showIf(this@InteractionDefinition) }
+                .forEach { option ->
+                    dialog.optionPanel.addOption(option.text(this@InteractionDefinition as S), option.id)
+                }
         }
     }
 
