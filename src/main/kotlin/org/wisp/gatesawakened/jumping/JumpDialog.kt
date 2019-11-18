@@ -1,4 +1,4 @@
-package org.wisp.gatesawakened.jumping
+package com.fs.starfarer.api.impl.campaign.rulecmd // Must use this package because this plugin is called by rules.csv
 
 
 import ch.tutteli.kbox.joinToString
@@ -16,6 +16,7 @@ import org.lwjgl.input.Keyboard
 import org.wisp.gatesawakened.*
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.jumping.Jump
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.wispLib.addPara
 import kotlin.math.absoluteValue

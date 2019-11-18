@@ -3,12 +3,12 @@ package org.wisp.gatesawakened
 import com.fs.starfarer.api.PluginPick
 import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.campaign.CampaignPlugin
+import com.fs.starfarer.api.impl.campaign.rulecmd.JumpDialog
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroQuestFinishedDialog
-import org.wisp.gatesawakened.jumping.JumpDialog
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameQuestFinishedDialog
 
@@ -53,10 +53,16 @@ class CampaignPlugin : BaseCampaignPlugin() {
                             )
                         } else {
                             // Show dialog to jump via an active gate
-                            PluginPick<InteractionDialogPlugin>(
-                                JumpDialog(),
-                                CampaignPlugin.PickPriority.MOD_SET
-                            )
+                            // Now triggered by rules.csv so that gates can be used by other mods.
+                            // Using rules.csv allows other mods to override GA's jump dialog with their own.
+                            // Note that this doesn't allow other mods to merge with GA's jump dialog; it's all or nothing.
+                            // I can do that if needed; it's just more work/complexity to move all that logic into rules.
+
+//                            PluginPick<InteractionDialogPlugin>(
+//                                JumpDialog(),
+//                                CampaignPlugin.PickPriority.MOD_SET
+//                            )
+                            null
                         }
                     }
                     !interactionTarget.isActive
