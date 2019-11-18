@@ -102,7 +102,7 @@ internal object Intro {
             ?.run { di.sector.intelManager.removeIntel(this) }
 
         // Pop up a dialog explaining how gates work
-        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog(), di.sector.playerFleet)
+        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog().build(), di.sector.playerFleet)
     }
 
     private fun findClosestInactiveGateToCenter(): GateInfo? {

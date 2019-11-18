@@ -22,7 +22,6 @@ class ShowIntroEpilogueAfterJumpCompletes : EveryFrameScript {
             if (playerEnteredSystemTimestamp != null
                 && Date().time - playerEnteredSystemTimestamp!! > 2000
             ) {
-                di.sector.isPaused = true
                 Intro.displayIntroQuestEpilogueWindow()
                 wasDialogShown = true
             } else if(playerEnteredSystemTimestamp == null) {
