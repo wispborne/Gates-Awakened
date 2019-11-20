@@ -9,11 +9,12 @@ import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
+import java.io.Serializable
 
 abstract class BarEventDefinition<S : InteractionDefinition<S>>(
-    @Transient private val shouldShowEvent: (MarketAPI) -> Boolean, // TODO these are getting inflated from saved game as null
-    @Transient val interactionPrompt: S.() -> Unit,
-    @Transient val textToStartInteraction: S.() -> String,
+    @Transient private var shouldShowEvent: (MarketAPI) -> Boolean, // TODO these are getting inflated from saved game as null
+    @Transient var interactionPrompt: S.() -> Unit,
+    @Transient var textToStartInteraction: S.() -> String,
     onInteractionStarted: S.() -> Unit,
     pages: List<Page<S>>,
     val personRank: String = Ranks.CITIZEN,
@@ -36,6 +37,20 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
      * when looking at [BarEventManager.getInstance().active.items].
      */
     abstract inner class BarEvent : BaseBarEventWithPerson()
+
+    /**
+     * When this class is created by deserializing from a save game,
+     * it can't deserialize the anonymous methods, so we mark them as transient,
+     * then manually assign them using this method, which gets called automagically
+     * by the XStream serializer.
+     */
+    override fun readResolve(): Any {
+        val newInstance = this::class.java.newInstance()
+        shouldShowEvent = newInstance.shouldShowEvent
+        interactionPrompt = newInstance.interactionPrompt
+        textToStartInteraction = newInstance.textToStartInteraction
+        return super.readResolve()
+    }
 
     fun buildBarEvent(): BarEvent {
         return object : BarEvent() {

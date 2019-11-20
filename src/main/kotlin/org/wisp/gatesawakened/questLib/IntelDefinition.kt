@@ -15,11 +15,11 @@ import org.wisp.gatesawakened.wispLib.addPara
  * @param iconPath get via [com.fs.starfarer.api.SettingsAPI.getSpriteName]
  */
 abstract class IntelDefinition(
-    @Transient val title: (() -> String)? = null,
-    @Transient val iconPath: (() -> String)? = null,
+    @Transient var title: (() -> String)? = null,
+    @Transient var iconPath: (() -> String)? = null,
     var durationInDays: Float = Float.NaN,
-    @Transient val infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
-    @Transient val smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
+    @Transient var infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
+    @Transient var smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
     val showDaysSinceCreated: Boolean = false,
     val intelTags: List<String>,
     startLocation: SectorEntityToken? = null,
@@ -28,10 +28,10 @@ abstract class IntelDefinition(
     var soundName: String? = null,
     important: Boolean = false
 ) : BaseIntelPlugin() {
-    @Transient
-    val padding = 3f
-    @Transient
-    val bulletPointPadding = 10f
+    companion object {
+        val padding = 3f
+        val bulletPointPadding = 10f
+    }
 
     private val startLocationCopy: SectorEntityToken?
     private val endLocationCopy: SectorEntityToken?
@@ -42,11 +42,24 @@ abstract class IntelDefinition(
         startLocationCopy = startLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
         endLocationCopy = endLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
 
-        if (iconPath != null) {
-            di.settings.loadTexture(iconPath.invoke())
-        }
+        iconPath?.run { di.settings.loadTexture(this.invoke()) }
 
         di.sector.addScript(this)
+    }
+
+    /**
+     * When this class is created by deserializing from a save game,
+     * it can't deserialize the anonymous methods, so we mark them as transient,
+     * then manually assign them using this method, which gets called automagically
+     * by the XStream serializer.
+     */
+    open fun readResolve(): Any {
+        val newInstance = this::class.java.newInstance()
+        title = newInstance.title
+        iconPath = newInstance.iconPath
+        infoCreator = newInstance.infoCreator
+        smallDescriptionCreator = newInstance.smallDescriptionCreator
+        return this
     }
 
     final override fun addGenericButton(info: TooltipMakerAPI?, width: Float, text: String?, data: Any?): ButtonAPI {
@@ -73,7 +86,7 @@ abstract class IntelDefinition(
     }
 
     final override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
-        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title.invoke() } }
+        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title!!.invoke() } }
         infoCreator?.invoke(this, info)
     }
 

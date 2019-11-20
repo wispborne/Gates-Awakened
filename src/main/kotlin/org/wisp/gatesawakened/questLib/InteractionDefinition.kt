@@ -10,9 +10,9 @@ import org.wisp.gatesawakened.wispLib.addPara
 import java.awt.Color
 
 abstract class InteractionDefinition<S : InteractionDefinition<S>>(
-    @Transient val onInteractionStarted: S.() -> Unit,
-    @Transient val pages: List<Page<S>>,
-    @Transient private val shouldValidateOnDialogStart: Boolean = true
+    @Transient var onInteractionStarted: S.() -> Unit,
+    @Transient var pages: List<Page<S>>,
+    private val shouldValidateOnDialogStart: Boolean = true
 ) {
     class Page<S>(
         val id: Any,
@@ -28,6 +28,19 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
         val onOptionSelected: S.(InteractionDefinition<*>.PageNavigator) -> Unit,
         val id: String = Misc.random.nextInt().toString()
     )
+
+    /**
+     * When this class is created by deserializing from a save game,
+     * it can't deserialize the anonymous methods, so we mark them as transient,
+     * then manually assign them using this method, which gets called automagically
+     * by the XStream serializer.
+     */
+    open fun readResolve(): Any {
+        val newInstance = this::class.java.newInstance()
+        onInteractionStarted = newInstance.onInteractionStarted
+        pages = newInstance.pages
+        return this
+    }
 
 //    interface PageNavigator<S> {
 //        fun goToPage(pageId: Any)

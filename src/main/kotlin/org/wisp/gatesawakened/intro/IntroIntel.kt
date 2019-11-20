@@ -39,7 +39,7 @@ class IntroIntel(target: SectorEntityToken) : BreadcrumbIntel(null, target) {
         } else {
             info.addPara {
                 "You followed a Gate in ${mark(target.starSystem.baseName)} that led to ${mark(target.starSystem.baseName)}, " +
-                        "a discovery best kept quiet, lest the factions interrogate you."
+                        "a discovery best kept quiet lest the factions interrogate you."
             }
             info.addPara {
                 "Perhaps you will stumble across more Gate findings in the " +
