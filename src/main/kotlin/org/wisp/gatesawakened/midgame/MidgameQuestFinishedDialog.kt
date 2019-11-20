@@ -33,9 +33,6 @@ class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDia
                 Midgame.remainingActivationCodes = Midgame.midgameRewardActivationCodeCount
 
                 di.memory[Memory.MID_QUEST_DONE] = true
-
-                (di.sector.intelManager.getFirstIntel(MidgameIntel::class.java) as? MidgameIntel?)
-                    ?.run { di.sector.intelManager.removeIntel(this) }
             },
             options = listOf(
                 Option(

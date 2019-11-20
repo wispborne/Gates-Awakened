@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    val kotlinVersionInLazyLib = "1.3.50"
+    val kotlinVersionInLazyLib = "1.3.60"
 
     // Get kotlin sdk from LazyLib during runtime, only use it here during compile time
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersionInLazyLib")

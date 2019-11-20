@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin
 import com.fs.starfarer.api.impl.campaign.intel.misc.BreadcrumbIntel
+import com.fs.starfarer.api.ui.ButtonAPI
 import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
@@ -13,12 +14,12 @@ import org.wisp.gatesawakened.wispLib.addPara
 /**
  * @param iconPath get via [com.fs.starfarer.api.SettingsAPI.getSpriteName]
  */
-open class IntelDefinition(
-    val title: String? = null,
-    var iconPath: String? = null,
+abstract class IntelDefinition(
+    @Transient val title: (() -> String)? = null,
+    @Transient val iconPath: (() -> String)? = null,
     var durationInDays: Float = Float.NaN,
-    val infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
-    val smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
+    @Transient val infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
+    @Transient val smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
     val showDaysSinceCreated: Boolean = false,
     val intelTags: List<String>,
     startLocation: SectorEntityToken? = null,
@@ -27,7 +28,9 @@ open class IntelDefinition(
     var soundName: String? = null,
     important: Boolean = false
 ) : BaseIntelPlugin() {
+    @Transient
     val padding = 3f
+    @Transient
     val bulletPointPadding = 10f
 
     private val startLocationCopy: SectorEntityToken?
@@ -40,8 +43,14 @@ open class IntelDefinition(
         endLocationCopy = endLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
 
         if (iconPath != null) {
-            di.settings.loadTexture(iconPath)
+            di.settings.loadTexture(iconPath.invoke())
         }
+
+        di.sector.addScript(this)
+    }
+
+    final override fun addGenericButton(info: TooltipMakerAPI?, width: Float, text: String?, data: Any?): ButtonAPI {
+        return super.addGenericButton(info, width, text, data)
     }
 
     override fun shouldRemoveIntel(): Boolean {
@@ -64,7 +73,7 @@ open class IntelDefinition(
     }
 
     final override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
-        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title } }
+        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title.invoke() } }
         infoCreator?.invoke(this, info)
     }
 
@@ -78,7 +87,7 @@ open class IntelDefinition(
 
     final override fun hasSmallDescription(): Boolean = smallDescriptionCreator != null
 
-    override fun getIcon(): String = iconPath
+    override fun getIcon(): String = iconPath?.invoke()
         ?: di.settings.getSpriteName("intel", "fleet_log")
         ?: super.getIcon()
 
@@ -95,7 +104,7 @@ open class IntelDefinition(
 
     override fun getSortString(): String = "Location"
 
-    override fun getSmallDescriptionTitle(): String? = title
+    override fun getSmallDescriptionTitle(): String? = title?.invoke()
 
     override fun getMapLocation(map: SectorMapAPI?): SectorEntityToken? =
         endLocationCopy?.starSystem?.center
@@ -117,5 +126,10 @@ open class IntelDefinition(
                 .apply {
                     color = factionForUIColors?.baseUIColor
                 })
+    }
+
+    override fun notifyEnded() {
+        super.notifyEnded()
+        di.sector.removeScript(this)
     }
 }

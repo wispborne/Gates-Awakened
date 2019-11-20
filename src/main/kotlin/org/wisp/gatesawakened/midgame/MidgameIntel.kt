@@ -8,6 +8,7 @@ import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.empty
 import org.wisp.gatesawakened.wispLib.addPara
 
 
@@ -27,7 +28,7 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     override fun getName(): String = getTitle()
 
-    override fun getTitle(): String = "Planet investigation"
+    override fun getTitle(): String = "Planet investigation" + if (Midgame.wasQuestCompleted) " - Completed" else String.empty
 
     override fun getIcon(): String = iconSpritePath
 
@@ -36,10 +37,16 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
         info.addPara {
             "You saw a decoded transmission detailing Gate activation codes."
         }
-        info.addPara {
-            "Perhaps it's worth a visit to " +
-                    mark(planet.name) +
-                    " in " + mark(target.starSystem.baseName) + "."
+        if (!Midgame.wasQuestCompleted) {
+            info.addPara {
+                "Perhaps it's worth a visit to ${mark(planet.name)} in ${mark(target.starSystem.baseName)}."
+            }
+        } else {
+            info.addPara {
+                "You visited a cave on ${mark(planet.name)}"
+                " in ${mark(target.starSystem.baseName)}" +
+                        " and found activation codes for ${Midgame.midgameRewardActivationCodeCount} Gates."
+            }
         }
 
         val days = daysSincePlayerVisible
@@ -56,8 +63,14 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     override fun hasSmallDescription() = true
 
-    override fun isDone(): Boolean = Midgame.wasQuestCompleted
-    override fun isEnded(): Boolean = Midgame.wasQuestCompleted
+    override fun advance(amount: Float) {
+        super.advance(amount)
+
+        // If it's not already ending or ended and the quest was completed, mark the quest as complete
+        if ((!isEnding || !isEnded) && Midgame.wasQuestCompleted) {
+            endAfterDelay()
+        }
+    }
 
     override fun getIntelTags(map: SectorMapAPI?): MutableSet<String> =
         super.getIntelTags(map)

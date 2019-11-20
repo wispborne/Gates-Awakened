@@ -36,21 +36,20 @@ class IntroQuestEpilogueDialog : InteractionDefinition<IntroQuestEpilogueDialog>
             onPageShown = {
                 addPara { "" }
                 addPara {
-                    "You may now jump instantly between " +
+                    "- You may now jump between the Gates in " +
                             mark(Intro.fringeGate?.starSystem?.baseName ?: String.empty) +
-                            " and " +
-                            mark(Intro.coreGate?.starSystem?.baseName ?: String.empty) + "."
+                            " and ${mark(Intro.coreGate?.starSystem?.baseName ?: String.empty)}."
                 }
                 addPara {
-                    "Each jump will incur a " + mark("fuel cost") + "to power the Gate relative to the cost of a direct flight."
+                    "- Each jump will incur a ${mark("fuel cost")} to power the Gate relative to the cost of a direct flight."
                 }
                 addPara {
-                    "You may only use a Gate when you are not being " + mark("tracked") + " by any other fleet."
+                    "- You may only use a Gate when you are not being ${mark("tracked")} by any other fleet."
                 }
             },
             options = listOf(
                 Option(
-                    text = { "Leave" },
+                    text = { "Close" },
                     onOptionSelected = {
                         di.sector.isPaused = false
                         it.close(hideQuestOfferAfterClose = true)

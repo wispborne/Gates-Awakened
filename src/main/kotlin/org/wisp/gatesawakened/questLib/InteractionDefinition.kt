@@ -10,9 +10,9 @@ import org.wisp.gatesawakened.wispLib.addPara
 import java.awt.Color
 
 abstract class InteractionDefinition<S : InteractionDefinition<S>>(
-    val onInteractionStarted: S.() -> Unit,
-    val pages: List<Page<S>>,
-    private val shouldValidateOnDialogStart: Boolean = true
+    @Transient val onInteractionStarted: S.() -> Unit,
+    @Transient val pages: List<Page<S>>,
+    @Transient private val shouldValidateOnDialogStart: Boolean = true
 ) {
     class Page<S>(
         val id: Any,

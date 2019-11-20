@@ -8,6 +8,7 @@ import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.empty
 import org.wisp.gatesawakened.isInsideCircle
 import org.wisp.gatesawakened.questLib.IntelDefinition
 import org.wisp.gatesawakened.questLib.InteractionDefinition
@@ -16,8 +17,8 @@ import kotlin.math.roundToInt
 
 
 class CreateGateQuestIntel : IntelDefinition(
-    title = "Place Gate",
-    iconPath = "graphics/intel/g8_gate_quest.png",
+    title = { "Place Gate" + if (CreateGateQuest.wasQuestCompleted) " - Completed" else String.empty },
+    iconPath = { "graphics/intel/g8_gate_quest.png" },
     infoCreator = { info: TooltipMakerAPI? ->
         //        info?.addPara(padding = 0f) {
 //            ""
@@ -43,7 +44,7 @@ class CreateGateQuestIntel : IntelDefinition(
                             di.sector.clock.getElapsedDaysSince(gateSummonedTimestamp)
                 "A Gate Hauler and its drone fleet is en route to deliver a Gate to " +
                         mark(CreateGateQuest.summonLocation!!.containingLocation.name) +
-                        " and will arrive in " + mark(Misc.getStringForDays(daysUntilGateIsDelivered.roundToInt())) + "."
+                        " and will arrive in ${mark(Misc.getStringForDays(daysUntilGateIsDelivered.roundToInt()))}."
             }
         }
     },
@@ -56,7 +57,6 @@ class CreateGateQuestIntel : IntelDefinition(
     companion object {
         private const val BUTTON_CHOOSE = MOD_PREFIX + "choose"
     }
-
     override fun doesButtonHaveConfirmDialog(buttonId: Any?): Boolean = true
 
     override fun createConfirmationPrompt(buttonId: Any?, prompt: TooltipMakerAPI) {
@@ -89,6 +89,15 @@ class CreateGateQuestIntel : IntelDefinition(
             ui.showDialog(di.sector.playerFleet, SummoningBegunDialog().build())
             CreateGateQuest.placeGateAtPlayerLocationAfterDelay()
             ui.recreateIntelUI()
+        }
+    }
+
+    override fun advance(amount: Float) {
+        super.advance(amount)
+
+        // If it's not already ending or ended and the quest was completed, mark the quest as complete
+        if ((!isEnding || !isEnded) && CreateGateQuest.wasQuestCompleted) {
+            endAfterDelay()
         }
     }
 
@@ -167,7 +176,4 @@ class CreateGateQuestIntel : IntelDefinition(
                 )
             )
         )
-
-    override fun isDone(): Boolean = CreateGateQuest.wasQuestCompleted
-    override fun isEnded(): Boolean = CreateGateQuest.wasQuestCompleted
 }

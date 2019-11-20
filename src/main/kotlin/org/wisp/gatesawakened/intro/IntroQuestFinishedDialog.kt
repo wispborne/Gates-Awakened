@@ -104,7 +104,7 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
     enum class Option(val text: String) {
         INIT(""),
         CONTINUE("Continue"),
-        FLY_THROUGH("Fly through the gate."),
+        FLY_THROUGH("Fly through the gate"),
         LEAVE("Leave")
     }
 }

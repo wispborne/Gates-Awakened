@@ -83,7 +83,7 @@ class LifecyclePlugin : BaseModPlugin() {
         val bar = BarEventManager.getInstance()
         bar.creators.removeAll { it is IntroBarEventCreator || it is MidgameBarEventCreator }
         bar.active.items
-            .filterIsInstance<BarEventDefinition<*>.BarEvent>()
+            .filter { it is BarEventDefinition<*>.BarEvent || it is BarEventDefinition<*> }
             .forEach { bar.active.remove(it) }
     }
 

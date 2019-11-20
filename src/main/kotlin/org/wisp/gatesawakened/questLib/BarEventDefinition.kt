@@ -11,9 +11,9 @@ import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
 
 abstract class BarEventDefinition<S : InteractionDefinition<S>>(
-    private val shouldShowEvent: (MarketAPI) -> Boolean,
-    val interactionPrompt: S.() -> Unit,
-    val textToStartInteraction: S.() -> String,
+    @Transient private val shouldShowEvent: (MarketAPI) -> Boolean, // TODO these are getting inflated from saved game as null
+    @Transient val interactionPrompt: S.() -> Unit,
+    @Transient val textToStartInteraction: S.() -> String,
     onInteractionStarted: S.() -> Unit,
     pages: List<Page<S>>,
     val personRank: String = Ranks.CITIZEN,
@@ -35,8 +35,7 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
      * Needed so we can figure out which BarEvents are part of this mod
      * when looking at [BarEventManager.getInstance().active.items].
      */
-    abstract inner class BarEvent : BaseBarEventWithPerson() {
-    }
+    abstract inner class BarEvent : BaseBarEventWithPerson()
 
     fun buildBarEvent(): BarEvent {
         return object : BarEvent() {
@@ -117,7 +116,7 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
 
 abstract class BarEventCreator(
     private val probability: Float? = null,
-    private val creator: () -> PortsideBarEvent
+    @Transient private val creator: () -> PortsideBarEvent
 ) : BaseBarEventCreator() {
     override fun createBarEvent(): PortsideBarEvent = creator()
 

@@ -8,8 +8,8 @@ import org.wisp.gatesawakened.questLib.IntelDefinition
 import org.wisp.gatesawakened.wispLib.addPara
 
 class GateCreatedIntel(locationOfGate: SectorEntityToken?) : IntelDefinition(
-    title = "Gate Placed",
-    iconPath = "graphics/intel/g8_gate.png",
+    title = {"Gate Placed"},
+    iconPath = { "graphics/intel/g8_gate.png"},
     durationInDays = 10f,
     smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
