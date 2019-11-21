@@ -58,7 +58,7 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
         super.createIntelInfo(info, mode)
-        info.addPara("Investigate a planet in %s", 0f, Misc.getHighlightColor(), target.starSystem.baseName)
+        info.addPara("Investigate a planet in %s", 0f, Misc.getGrayColor(), target.starSystem.baseName)
     }
 
     override fun hasSmallDescription() = true

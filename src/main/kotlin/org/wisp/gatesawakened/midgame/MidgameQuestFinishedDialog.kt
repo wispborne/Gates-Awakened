@@ -77,4 +77,6 @@ class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDia
         TAKE_DATA("Take the data"),
         LEAVE("Exit the cave")
     }
+
+    override fun createInstanceOfSelf() = MidgameQuestFinishedDialog()
 }

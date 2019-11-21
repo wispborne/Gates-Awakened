@@ -30,13 +30,21 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     )
 
     /**
+     * Create an instance of the implementing class. We then copy the transient fields in that class
+     * to this one in [readResolve], since they do not get created by the deserializer.
+     * We cannot use `this::class.java.newInstance()` because then the implementing class is required to have
+     * a no-args constructor.
+     */
+    abstract fun createInstanceOfSelf(): InteractionDefinition<S>
+
+    /**
      * When this class is created by deserializing from a save game,
      * it can't deserialize the anonymous methods, so we mark them as transient,
      * then manually assign them using this method, which gets called automagically
      * by the XStream serializer.
      */
     open fun readResolve(): Any {
-        val newInstance = this::class.java.newInstance()
+        val newInstance = createInstanceOfSelf()
         onInteractionStarted = newInstance.onInteractionStarted
         pages = newInstance.pages
         return this

@@ -15,8 +15,8 @@ import org.wisp.gatesawakened.wispLib.addPara
  * @param iconPath get via [com.fs.starfarer.api.SettingsAPI.getSpriteName]
  */
 abstract class IntelDefinition(
-    @Transient var title: (() -> String)? = null,
-    @Transient var iconPath: (() -> String)? = null,
+    @Transient var title: (IntelDefinition.() -> String)? = null,
+    @Transient var iconPath: (IntelDefinition.() -> String)? = null,
     var durationInDays: Float = Float.NaN,
     @Transient var infoCreator: (IntelDefinition.(info: TooltipMakerAPI?) -> Unit)? = null,
     @Transient var smallDescriptionCreator: (IntelDefinition.(info: TooltipMakerAPI, width: Float, height: Float) -> Unit)? = null,
@@ -42,10 +42,18 @@ abstract class IntelDefinition(
         startLocationCopy = startLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
         endLocationCopy = endLocation?.let { BreadcrumbIntel.makeDoubleWithSameOrbit(it) }
 
-        iconPath?.run { di.settings.loadTexture(this.invoke()) }
+        iconPath?.run { di.settings.loadTexture(this.invoke(this@IntelDefinition)) }
 
         di.sector.addScript(this)
     }
+
+    /**
+     * Create an instance of the implementing class. We then copy the transient fields in that class
+     * to this one in [readResolve], since they do not get created by the deserializer.
+     * We cannot use `this::class.java.newInstance()` because then the implementing class is required to have
+     * a no-args constructor.
+     */
+    abstract fun createInstanceOfSelf(): IntelDefinition
 
     /**
      * When this class is created by deserializing from a save game,
@@ -54,11 +62,14 @@ abstract class IntelDefinition(
      * by the XStream serializer.
      */
     open fun readResolve(): Any {
-        val newInstance = this::class.java.newInstance()
+        val newInstance = createInstanceOfSelf()
         title = newInstance.title
         iconPath = newInstance.iconPath
         infoCreator = newInstance.infoCreator
         smallDescriptionCreator = newInstance.smallDescriptionCreator
+
+
+        iconPath?.run { di.settings.loadTexture(this.invoke(this@IntelDefinition)) }
         return this
     }
 
@@ -86,7 +97,12 @@ abstract class IntelDefinition(
     }
 
     final override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
-        title?.let { info.addPara(textColor = getTitleColor(mode), padding = 0f) { title!!.invoke() } }
+        title?.let {
+            info.addPara(
+                textColor = getTitleColor(mode),
+                padding = 0f
+            ) { title!!.invoke(this@IntelDefinition) }
+        }
         infoCreator?.invoke(this, info)
     }
 
@@ -100,7 +116,7 @@ abstract class IntelDefinition(
 
     final override fun hasSmallDescription(): Boolean = smallDescriptionCreator != null
 
-    override fun getIcon(): String = iconPath?.invoke()
+    override fun getIcon(): String = iconPath?.invoke(this@IntelDefinition)
         ?: di.settings.getSpriteName("intel", "fleet_log")
         ?: super.getIcon()
 
@@ -117,7 +133,7 @@ abstract class IntelDefinition(
 
     override fun getSortString(): String = "Location"
 
-    override fun getSmallDescriptionTitle(): String? = title?.invoke()
+    override fun getSmallDescriptionTitle(): String? = title?.invoke(this@IntelDefinition)
 
     override fun getMapLocation(map: SectorMapAPI?): SectorEntityToken? =
         endLocationCopy?.starSystem?.center

@@ -19,4 +19,6 @@ class GateCreatedDialog : InteractionDefinition<GateCreatedDialog>(
             options = listOf()
         )
     )
-)
+) {
+    override fun createInstanceOfSelf() = GateCreatedDialog()
+}

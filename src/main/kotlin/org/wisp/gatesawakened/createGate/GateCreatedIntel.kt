@@ -7,9 +7,9 @@ import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.IntelDefinition
 import org.wisp.gatesawakened.wispLib.addPara
 
-class GateCreatedIntel(locationOfGate: SectorEntityToken?) : IntelDefinition(
-    title = {"Gate Placed"},
-    iconPath = { "graphics/intel/g8_gate.png"},
+class GateCreatedIntel(private val locationOfGate: SectorEntityToken?) : IntelDefinition(
+    title = { "Gate Placed" },
+    iconPath = { "graphics/intel/g8_gate.png" },
     durationInDays = 10f,
     smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
@@ -25,4 +25,6 @@ class GateCreatedIntel(locationOfGate: SectorEntityToken?) : IntelDefinition(
         Tags.INTEL_STORY,
         org.wisp.gatesawakened.constants.Tags.INTEL_ACTIVE_GATE
     )
-)
+) {
+    override fun createInstanceOfSelf() = GateCreatedIntel(locationOfGate)
+}

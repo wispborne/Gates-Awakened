@@ -57,4 +57,6 @@ class IntroQuestEpilogueDialog : InteractionDefinition<IntroQuestEpilogueDialog>
             )
         )
     )
-)
+) {
+    override fun createInstanceOfSelf() = IntroQuestEpilogueDialog()
+}

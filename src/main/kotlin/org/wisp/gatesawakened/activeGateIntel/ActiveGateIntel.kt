@@ -5,9 +5,14 @@ import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin
 import com.fs.starfarer.api.impl.campaign.intel.misc.BreadcrumbIntel
 import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
-import org.wisp.gatesawakened.*
+import com.fs.starfarer.api.util.Misc
+import org.wisp.gatesawakened.Gate
+import org.wisp.gatesawakened.appendPara
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.isActive
 import org.wisp.gatesawakened.midgame.Midgame
+import org.wisp.gatesawakened.wispLib.addPara
 
 
 class ActiveGateIntel(val activeGate: Gate) : BreadcrumbIntel(null, activeGate) {
@@ -30,18 +35,21 @@ class ActiveGateIntel(val activeGate: Gate) : BreadcrumbIntel(null, activeGate) 
 
     override fun createSmallDescription(info: TooltipMakerAPI, width: Float, height: Float) {
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
-        info.addPara(
-            "There is an active Gate in this system.",
-            10f
-        )
+        info.addPara {
+            "There is an active Gate in this system."
+        }
         if (Midgame.wasQuestCompleted) {
-            info.appendPara("${BaseIntelPlugin.BULLET}You have %s activation codes left.", 0f, Midgame.remainingActivationCodes.toString())
+            info.appendPara(
+                "${BaseIntelPlugin.BULLET}You have %s activation codes left.",
+                0f,
+                Midgame.remainingActivationCodes.toString()
+            )
         }
     }
 
     override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
         super.createIntelInfo(info, mode)
-        info.appendPara("${BaseIntelPlugin.BULLET}In %s", 0f, activeGate.starSystem.baseName)
+        info.addPara(textColor = Misc.getGrayColor(), padding = 0f) { "${BaseIntelPlugin.BULLET}In ${mark(activeGate.starSystem.baseName)}" }
     }
 
     override fun getSortTier(): IntelInfoPlugin.IntelSortTier = IntelInfoPlugin.IntelSortTier.TIER_1

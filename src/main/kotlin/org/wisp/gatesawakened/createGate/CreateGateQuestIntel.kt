@@ -17,12 +17,12 @@ import kotlin.math.roundToInt
 
 
 class CreateGateQuestIntel : IntelDefinition(
-    title = { "Place Gate" + if (CreateGateQuest.wasQuestCompleted) " - Completed" else String.empty },
+    title = { "Gate Delivery" + if (CreateGateQuest.wasQuestCompleted) " - Completed" else String.empty },
     iconPath = { "graphics/intel/g8_gate_quest.png" },
     infoCreator = { info: TooltipMakerAPI? ->
-        //        info?.addPara(padding = 0f) {
-//            ""
-//        }
+        info?.addPara(padding = 0f, textColor = Misc.getGrayColor()) {
+            "A Gate Hauler is standing by"
+        }
     },
     smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
@@ -57,6 +57,9 @@ class CreateGateQuestIntel : IntelDefinition(
     companion object {
         private const val BUTTON_CHOOSE = MOD_PREFIX + "choose"
     }
+
+    override fun createInstanceOfSelf(): IntelDefinition = CreateGateQuestIntel()
+
     override fun doesButtonHaveConfirmDialog(buttonId: Any?): Boolean = true
 
     override fun createConfirmationPrompt(buttonId: Any?, prompt: TooltipMakerAPI) {
@@ -147,9 +150,11 @@ class CreateGateQuestIntel : IntelDefinition(
                     )
                 )
             )
-        )
+        ) {
+        override fun createInstanceOfSelf() = SummoningBegunDialog()
+    }
 
-    private class CannotSummonGateHereDialog(reasonToShow: CreateGateQuest.Rules) :
+    private class CannotSummonGateHereDialog(private val reasonToShow: CreateGateQuest.Rules) :
         InteractionDefinition<CannotSummonGateHereDialog>(
             onInteractionStarted = {
                 dialog.visualPanel.showImagePortion("illustrations", "dead_gate", 640f, 400f, 0f, 0f, 480f, 300f)
@@ -175,5 +180,7 @@ class CreateGateQuestIntel : IntelDefinition(
                     )
                 )
             )
-        )
+        ) {
+        override fun createInstanceOfSelf() = CannotSummonGateHereDialog(reasonToShow)
+    }
 }

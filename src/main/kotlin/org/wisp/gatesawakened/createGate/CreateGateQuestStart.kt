@@ -158,4 +158,6 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
         Reach,
         Final
     }
+
+    override fun createInstanceOfSelf() = CreateGateQuestStart()
 }
