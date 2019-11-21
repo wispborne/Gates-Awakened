@@ -27,6 +27,7 @@ class GatesAwakenedViewInfo : BaseCommand {
         info.appendln("Midgame quest total codes allowed: ${Midgame.midgameRewardActivationCodeCount}")
         info.appendln("Midgame quest total codes remaining: ${Midgame.remainingActivationCodes}")
         info.appendln("-------")
+        info.appendln("Is considered endgame (big enough fleet or 3 established colonies)? ${CreateGateQuest.isEndgame()}")
         info.appendln("Create gate quest started? ${CreateGateQuest.hasQuestBeenStarted}")
         info.appendln("Create gate quest done? ${CreateGateQuest.wasQuestCompleted}")
         info.appendln("Create gate quest days needed to deliver a gate: ${CreateGateQuest.numberOfDaysToDeliverGate}")
