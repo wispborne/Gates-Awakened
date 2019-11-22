@@ -40,7 +40,9 @@ dependencies {
     })
 
     // Handy kotlin helpers
-    implementation("ch.tutteli.kbox:kbox:0.13.0")
+    implementation("ch.tutteli.kbox:kbox:0.13.0") {
+        exclude("org.jetbrains.kotlin")
+    }
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
