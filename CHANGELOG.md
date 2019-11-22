@@ -1,14 +1,21 @@
 # Changelog
 
+## 1.4.0
+
+- Added final quest
+- Added Console Command to spawn a gate
+- Added Console Commands to debug the mod
+- Polished existing quests and intel. New icon, intel is now marked as completed, better wording, etc
+- Readded LazyLib as dependency (to use its Kotlin stdlib)
+- Fixed compatibility issue with Vayra's Sector where a gate-related event in VS was not shown
+- Hopefully fixed bug where the dialog did not appear after jumping in the first quest
+- Way more refactoring than was necessary
+
 ## 1.3.1 (2019-10-9)
 
 - Fix for crash when completing a question after the intel has timed out
     - Thanks to Liork on Discord for the report
 - Known issue: intel can time out, apparently :(
-
-## 1.4.0
-
-- Readded LazyLib as dependency (to use its Kotlin stdlib)
 
 ## 1.3.0 (2019-10-02)
 
