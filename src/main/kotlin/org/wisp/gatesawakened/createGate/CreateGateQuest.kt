@@ -1,48 +1,40 @@
 package org.wisp.gatesawakened.createGate
 
 import com.fs.starfarer.api.campaign.FleetAssignment
-import com.fs.starfarer.api.campaign.OrbitAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactory
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3
 import com.fs.starfarer.api.impl.campaign.ids.Factions
-import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
-import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
 import com.fs.starfarer.api.util.Misc
-import org.wisp.gatesawakened.activate
+import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
+import org.wisp.gatesawakened.wispLib.PersistentData
 
 object CreateGateQuest {
-    private const val MEM_KEY_QUEST_IN_PROGRESS = "create_gate_in_progress"
-    private const val MEM_KEY_QUEST_DONE = "create_gate_done"
-    private const val MEM_KEY_HAULER_SUMMON_TIMESTAMP = "create_gate_hauler_summon_timestamp"
-    private const val MEM_KEY_LOCATION_FOR_GATE = "create_gate_location_for_gate"
-
     fun shouldOfferQuest(): Boolean =
         Midgame.wasQuestCompleted
-                && !hasQuestBeenStarted
-                && !wasQuestCompleted
+                && hasQuestBeenStarted != true
+                && wasQuestCompleted != true
                 && isEndgame()
                 && (1..3).random() == 1 // 33% chance.
     // If you are at endgame and really want to trigger the quest, just keep interacting with a Gate, then leaving
 
-    val gateSummonedTimestamp: Long?
-        get() = di.persistentData[MEM_KEY_HAULER_SUMMON_TIMESTAMP] as? Long
+    var gateSummonedTimestamp: Long? by PersistentData("create_gate_hauler_summon_timestamp")
 
-    val summonLocation: SectorEntityToken?
-        get() = di.persistentData[MEM_KEY_LOCATION_FOR_GATE] as? SectorEntityToken
+    var wasGateSummoned: Boolean? by PersistentData("create_gate_was_gate_summoned")
 
-    val hasQuestBeenStarted: Boolean
-        get() = di.persistentData[MEM_KEY_QUEST_IN_PROGRESS] == true
-                || di.persistentData[MEM_KEY_QUEST_DONE] == true
+    var summonLocation: SectorEntityToken? by PersistentData("create_gate_location_for_gate")
 
-    val wasQuestCompleted: Boolean
-        get() = di.persistentData[MEM_KEY_QUEST_DONE] == true
+    var hasQuestBeenStarted: Boolean? by PersistentData("create_gate_in_progress", defaultValue = false)
 
-    val numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
+    var wasGateDelivered: Boolean? by PersistentData("create_gate_gate_delivered", defaultValue = false)
+
+    var wasQuestCompleted: Boolean? by PersistentData("create_gate_done", defaultValue = false)
+
+    var numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
 
     /**
      * We are defining midgame as either:
@@ -68,41 +60,29 @@ object CreateGateQuest {
 
     fun startQuest() {
         di.intelManager.addIntel(CreateGateQuestIntel())
-        di.persistentData[MEM_KEY_QUEST_IN_PROGRESS] = true
+        hasQuestBeenStarted = true
     }
 
     fun placeGateAtPlayerLocationAfterDelay() {
-        di.persistentData[MEM_KEY_LOCATION_FOR_GATE] = di.sector.playerFleet.createToken()
-        di.persistentData[MEM_KEY_HAULER_SUMMON_TIMESTAMP] = di.sector.clock.timestamp
+        summonLocation = di.sector.playerFleet.createToken()
+        gateSummonedTimestamp = di.sector.clock.timestamp
 
         di.sector.addScript(CountdownToGateHaulerScript())
+        wasGateSummoned = true
     }
 
-    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): Boolean {
-        if (location == null) {
-            di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
-            return false
-        }
-
-        val newGate = BaseThemeGenerator.addNonSalvageEntity(
-            location.starSystem,
-            BaseThemeGenerator.EntityLocation()
-                .apply {
-                    this.location = location.location
-                    this.orbit = createOrbit(location)
-                },
-            "inactive_gate",
-            Factions.DERELICT
-        )
-
-        if (activateAfterSpawning) {
-            newGate.entity?.activate()
-        }
-
-        return true
+    fun spawnGateQuestStep() {
+        Common.spawnGateAtLocation(summonLocation, activateAfterSpawning = true)
+        addGateDefenceFleet(summonLocation)
+        wasGateDelivered = true
+        di.intelManager.addIntel(GateDeliveredIntel(summonLocation))
     }
 
-    fun addGateDefenceFleet(gateToDefend: SectorEntityToken?) {
+    fun completeQuest() {
+        wasQuestCompleted = true
+    }
+
+    private fun addGateDefenceFleet(gateToDefend: SectorEntityToken?) {
         if (gateToDefend == null) {
             di.errorReporter.reportCrash(NullPointerException("Gate to defend cannot be null"))
             return
@@ -126,38 +106,16 @@ object CreateGateQuest {
         val fleet = FleetFactoryV3.createFleet(fleetParams)
             .apply {
                 isTransponderOn = false
-                name = "Gate Drone Fleet"
+                name = "Gate Drone Fleet © The Reach"
             }
         gateToDefend.starSystem.addEntity(fleet)
         Misc.makeHostile(fleet)
         fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, gateToDefend, 1000f)
     }
 
-    fun completeQuest() {
-        val locationOfGate = summonLocation
-        di.intelManager.addIntel(GateCreatedIntel(locationOfGate))
-        di.persistentData.unset(MEM_KEY_LOCATION_FOR_GATE)
-        di.persistentData.unset(MEM_KEY_HAULER_SUMMON_TIMESTAMP)
-        di.persistentData[MEM_KEY_QUEST_DONE] = true
-    }
-
     enum class Rules(val text: String) {
         Proximity("\" - May not be located at an unsafe proximity to a celestial body.\""),
         Hyperspace("\" - May not be located in hyperspace. Doing so will collapse hyperspace in a 10 ly radius.\""),
         MultipleGates("\" - Multiple Gates within the same star system will result in total system hyperwave collapse.\"")
-    }
-
-    private fun createOrbit(
-        targetLocation: SectorEntityToken,
-        orbitCenter: SectorEntityToken = targetLocation.starSystem.center
-    ): OrbitAPI {
-        val orbitRadius = Misc.getDistance(targetLocation, orbitCenter)
-
-        return di.factory.createCircularOrbit(
-            orbitCenter,
-            Misc.getAngleInDegrees(orbitCenter.location, targetLocation.location),
-            orbitRadius,
-            orbitRadius / (20f + StarSystemGenerator.random.nextFloat() * 5f) // taken from StarSystemGenerator:1655
-        )
     }
 }

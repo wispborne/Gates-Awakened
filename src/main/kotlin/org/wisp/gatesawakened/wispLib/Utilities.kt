@@ -4,7 +4,9 @@ import com.fs.starfarer.api.GameState
 import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.campaign.CampaignUIAPI
 import org.wisp.gatesawakened.Di
+import org.wisp.gatesawakened.di
 import java.awt.Color
+import kotlin.reflect.KProperty
 
 
 class CrashReporter(private val modName: String, private val modAuthor: String?, private val di: Di) {
@@ -35,5 +37,15 @@ class CrashReporter(private val modName: String, private val modAuthor: String?,
         } catch (e: Exception) {
             return false
         }
+    }
+}
+
+class PersistentData<T>(private val prefKey: String?, private val defaultValue: T? = null) {
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T? {
+        return di.persistentData[prefKey ?: property.name] as? T ?: defaultValue
+    }
+
+    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+        di.persistentData[prefKey ?: property.name] = value
     }
 }

@@ -26,7 +26,6 @@ class GatesAwakenedForceStartMidgameQuest : BaseCommand {
             )
         ) {
             Console.showMessage("Quest started. Enjoy!")
-            Console.showMessage("- Wisp")
             BaseCommand.CommandResult.SUCCESS
         } else {
             BaseCommand.CommandResult.ERROR

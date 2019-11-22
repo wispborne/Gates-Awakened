@@ -28,7 +28,8 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     override fun getName(): String = getTitle()
 
-    override fun getTitle(): String = "Planet investigation" + if (Midgame.wasQuestCompleted) " - Completed" else String.empty
+    override fun getTitle(): String =
+        "Planet investigation" + if (Midgame.wasQuestCompleted) " - Completed" else String.empty
 
     override fun getIcon(): String = iconSpritePath
 
@@ -58,7 +59,9 @@ class MidgameIntel(val planet: SectorEntityToken) : BreadcrumbIntel(null, planet
 
     override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
         super.createIntelInfo(info, mode)
-        info.addPara("Investigate a planet in %s", 0f, Misc.getGrayColor(), target.starSystem.baseName)
+        if (!isEnding) {
+            info.addPara("Investigate a planet in %s", 0f, Misc.getGrayColor(), target.starSystem.baseName)
+        }
     }
 
     override fun hasSmallDescription() = true

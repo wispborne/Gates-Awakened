@@ -13,6 +13,8 @@ import org.wisp.gatesawakened.wispLib.addPara
 
 /**
  * @param iconPath get via [com.fs.starfarer.api.SettingsAPI.getSpriteName]
+ * @param infoCreator the small summary on the left Intel panel sidebar
+ * @param smallDescriptionCreator the intel description on the right Intel panel sidebar
  */
 abstract class IntelDefinition(
     @Transient var title: (IntelDefinition.() -> String)? = null,

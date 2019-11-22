@@ -8,7 +8,10 @@ object PersistentData {
         return di.sector.persistentData[keyWithPrefix] as? Any?
     }
 
-    operator fun set(key: String, value: Any) {
+    /**
+     * Automatically adds mod prefix.
+     */
+    operator fun set(key: String, value: Any?) {
         di.sector.persistentData[createPrefixedKey(key)] = value
     }
 

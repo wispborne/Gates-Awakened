@@ -9,7 +9,7 @@ import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createGate.CountdownToGateHaulerScript
 import org.wisp.gatesawakened.createGate.CreateGateQuestIntel
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
-import org.wisp.gatesawakened.createGate.GateCreatedIntel
+import org.wisp.gatesawakened.createGate.GateDeliveredIntel
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroBarEventCreator
 import org.wisp.gatesawakened.intro.IntroIntel
@@ -165,7 +165,7 @@ class LifecyclePlugin : BaseModPlugin() {
             MidgameIntel::class to "MidgameIntel",
             CreateGateQuestStart::class to "CreateGateQuestStart",
             CreateGateQuestIntel::class to "CreateGateQuestIntel",
-            GateCreatedIntel::class to "GateCreatedIntel",
+            GateDeliveredIntel::class to "GateCreatedIntel",
             CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
             ActiveGateIntel::class to "ActiveGateIntel",
             CampaignPlugin::class to "CampaignPlugin"

@@ -10,14 +10,13 @@ class GatesAwakenedForceStartCreateGateQuest : BaseCommand {
             return BaseCommand.CommandResult.WRONG_CONTEXT
         }
 
-        if (CreateGateQuest.hasQuestBeenStarted) {
+        if (CreateGateQuest.hasQuestBeenStarted == true) {
             Console.showMessage("CreateGateQuest has already been started!")
             return BaseCommand.CommandResult.ERROR
         }
 
         CreateGateQuest.startQuest()
         Console.showMessage("Quest started. Enjoy!")
-        Console.showMessage("- Wisp")
         return BaseCommand.CommandResult.SUCCESS
     }
 }

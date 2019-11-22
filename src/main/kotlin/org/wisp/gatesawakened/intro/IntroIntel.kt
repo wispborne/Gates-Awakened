@@ -19,7 +19,12 @@ class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
     title = { "Gate Investigation" + if (isEnding) " - Completed" else String.empty },
     iconPath = { "graphics/intel/g8_gate_quest.png" },
     infoCreator = { info ->
-        info?.addPara(padding = 0f, textColor = Misc.getGrayColor()) { "Investigate a possible gate at ${mark(target.starSystem.baseName)}" }
+        if (!isEnding) {
+            info?.addPara(
+                padding = 0f,
+                textColor = Misc.getGrayColor()
+            ) { "Investigate a possible gate at ${mark(target.starSystem.baseName)}" }
+        }
     },
     smallDescriptionCreator = { info, width, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
@@ -30,7 +35,9 @@ class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
             info.addPara { "Perhaps it's worth a visit to ${mark(target.starSystem.baseName)} to search for a Gate." }
         } else {
             info.addPara {
-                "You followed a Gate in ${mark(Intro.fringeGate?.starSystem?.baseName ?: "the fringe")} that led to ${mark(Intro.coreGate?.starSystem?.baseName ?: "the core")}, " +
+                "You followed a Gate in ${mark(
+                    Intro.fringeGate?.starSystem?.baseName ?: "the fringe"
+                )} that led to ${mark(Intro.coreGate?.starSystem?.baseName ?: "the core")}, " +
                         "a discovery best kept quiet lest the factions interrogate you."
             }
             info.addPara {

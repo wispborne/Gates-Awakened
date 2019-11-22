@@ -17,18 +17,21 @@ import kotlin.math.roundToInt
 
 
 class CreateGateQuestIntel : IntelDefinition(
-    title = { "Gate Delivery" + if (CreateGateQuest.wasQuestCompleted) " - Completed" else String.empty },
+    title = { "Gate Delivery" + if (CreateGateQuest.wasQuestCompleted == true) " - Completed" else String.empty },
     iconPath = { "graphics/intel/g8_gate_quest.png" },
     infoCreator = { info: TooltipMakerAPI? ->
-        info?.addPara(padding = 0f, textColor = Misc.getGrayColor()) {
-            "A Gate Hauler is standing by"
+        if (!isEnding) {
+            info?.addPara(padding = 0f, textColor = Misc.getGrayColor()) {
+                "A Gate Hauler is standing by"
+            }
         }
     },
     smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
         val gateSummonedTimestamp = CreateGateQuest.gateSummonedTimestamp
+        val wasGateSummoned = CreateGateQuest.wasGateSummoned
 
-        if (gateSummonedTimestamp == null) {
+        if (wasGateSummoned == null) {
             info.addPara {
                 "A TriPad found in a cave turned out to be the key to the Gates. When it activated, signaling a nearby Gate Hauler, " +
                         "it gave you the ability to choose a location for the Gate."
@@ -41,7 +44,7 @@ class CreateGateQuestIntel : IntelDefinition(
             info.addPara {
                 val daysUntilGateIsDelivered =
                     CreateGateQuest.numberOfDaysToDeliverGate -
-                            di.sector.clock.getElapsedDaysSince(gateSummonedTimestamp)
+                            di.sector.clock.getElapsedDaysSince(gateSummonedTimestamp ?: di.sector.clock.day.toLong())
                 "A Gate Hauler and its drone fleet is en route to deliver a Gate to " +
                         mark(CreateGateQuest.summonLocation!!.containingLocation.name) +
                         " and will arrive in ${mark(Misc.getStringForDays(daysUntilGateIsDelivered.roundToInt()))}."
@@ -99,7 +102,7 @@ class CreateGateQuestIntel : IntelDefinition(
         super.advance(amount)
 
         // If it's not already ending or ended and the quest was completed, mark the quest as complete
-        if ((!isEnding || !isEnded) && CreateGateQuest.wasQuestCompleted) {
+        if ((!isEnding || !isEnded) && CreateGateQuest.wasGateDelivered == true) {
             endAfterDelay()
         }
     }

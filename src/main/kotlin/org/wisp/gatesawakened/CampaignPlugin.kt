@@ -7,6 +7,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.JumpDialog
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
+import org.wisp.gatesawakened.createGate.GateCreatedDialog
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroQuestFinishedDialog
 import org.wisp.gatesawakened.midgame.Midgame
@@ -42,6 +43,15 @@ class CampaignPlugin : BaseCampaignPlugin() {
                         // Show dialog to complete the intro quest
                         PluginPick<InteractionDialogPlugin>(
                             IntroQuestFinishedDialog(),
+                            CampaignPlugin.PickPriority.MOD_SPECIFIC
+                        )
+                    }
+                    CreateGateQuest.hasQuestBeenStarted == true
+                            && CreateGateQuest.wasGateDelivered == true
+                            && CreateGateQuest.wasQuestCompleted != true -> {
+                        // Show dialog to complete the final, create gate quest
+                        PluginPick<InteractionDialogPlugin>(
+                            GateCreatedDialog().build(),
                             CampaignPlugin.PickPriority.MOD_SPECIFIC
                         )
                     }

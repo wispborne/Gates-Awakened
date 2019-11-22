@@ -1,7 +1,12 @@
 package org.wisp.gatesawakened
 
+import com.fs.starfarer.api.campaign.OrbitAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
+import com.fs.starfarer.api.impl.campaign.ids.Factions
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
+import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
+import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
@@ -78,6 +83,44 @@ internal object Common {
         currentGateIntels
             .filter { it.activeGate !in activeGates }
             .forEach { di.intelManager.removeIntel(it) }
+    }
+
+    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): Boolean {
+        if (location == null) {
+            di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
+            return false
+        }
+
+        val newGate = BaseThemeGenerator.addNonSalvageEntity(
+            location.starSystem,
+            BaseThemeGenerator.EntityLocation()
+                .apply {
+                    this.location = location.location
+                    this.orbit = createOrbit(location)
+                },
+            "inactive_gate",
+            Factions.DERELICT
+        )
+
+        if (activateAfterSpawning) {
+            newGate.entity?.activate()
+        }
+
+        return true
+    }
+
+    fun createOrbit(
+        targetLocation: SectorEntityToken,
+        orbitCenter: SectorEntityToken = targetLocation.starSystem.center
+    ): OrbitAPI {
+        val orbitRadius = Misc.getDistance(targetLocation, orbitCenter)
+
+        return di.factory.createCircularOrbit(
+            orbitCenter,
+            Misc.getAngleInDegrees(orbitCenter.location, targetLocation.location),
+            orbitRadius,
+            orbitRadius / (20f + StarSystemGenerator.random.nextFloat() * 5f) // taken from StarSystemGenerator:1655
+        )
     }
 }
 
