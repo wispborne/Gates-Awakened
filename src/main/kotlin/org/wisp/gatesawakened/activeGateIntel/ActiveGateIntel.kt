@@ -1,6 +1,6 @@
 package org.wisp.gatesawakened.activeGateIntel
 
-import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin
+import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.Gate
 import org.wisp.gatesawakened.appendPara
@@ -19,7 +19,7 @@ class ActiveGateIntel(val activeGate: Gate) : IntelDefinition(
         text?.addPara(
             textColor = Misc.getGrayColor(),
             padding = 0f
-        ) { "${BaseIntelPlugin.BULLET}In ${mark(activeGate.starSystem.baseName)}" }
+        ) { "${BULLET}In ${mark(activeGate.starSystem.baseName)}" }
     },
     smallDescriptionCreator = { text, width, _ ->
         text.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
@@ -28,7 +28,7 @@ class ActiveGateIntel(val activeGate: Gate) : IntelDefinition(
         }
         if (Midgame.wasQuestCompleted) {
             text.appendPara(
-                "${BaseIntelPlugin.BULLET}You have %s activation codes left.",
+                "${BULLET}You have %s activation codes left.",
                 0f,
                 Midgame.remainingActivationCodes.toString()
             )
@@ -38,4 +38,5 @@ class ActiveGateIntel(val activeGate: Gate) : IntelDefinition(
 ) {
     override fun isEnded(): Boolean = !activeGate.isActive
     override fun createInstanceOfSelf() = ActiveGateIntel(activeGate)
+    override fun getSortTier() = IntelInfoPlugin.IntelSortTier.TIER_1
 }
