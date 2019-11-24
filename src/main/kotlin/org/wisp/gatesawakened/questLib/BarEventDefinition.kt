@@ -5,11 +5,8 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import com.fs.starfarer.api.characters.FullName
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
-import com.fs.starfarer.api.impl.campaign.intel.bar.PortsideBarEvent
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
-import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
-import java.io.Serializable
 
 abstract class BarEventDefinition<S : InteractionDefinition<S>>(
     @Transient private var shouldShowEvent: (MarketAPI) -> Boolean, // TODO these are getting inflated from saved game as null
@@ -127,14 +124,4 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
             }
         }
     }
-}
-
-abstract class BarEventCreator(
-    private val probability: Float? = null,
-    @Transient private val creator: () -> PortsideBarEvent
-) : BaseBarEventCreator() {
-    override fun createBarEvent(): PortsideBarEvent = creator()
-
-    override fun getBarEventFrequencyWeight(): Float =
-        probability ?: super.getBarEventFrequencyWeight()
 }

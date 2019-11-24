@@ -2,18 +2,18 @@ package org.wisp.gatesawakened.intro
 
 import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
+import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.util.Misc
 import org.lazywizard.lazylib.ModUtils
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.questLib.BarEventCreator
 import org.wisp.gatesawakened.questLib.BarEventDefinition
 
 /**
  * Creates the intro quest at the bar.
  */
-class IntroBarEventCreator : BarEventCreator(
-    creator = { IntroQuestBeginning().buildBarEvent() }
-)
+class IntroBarEventCreator : BaseBarEventCreator() {
+    override fun createBarEvent() = IntroQuestBeginning().buildBarEvent()
+}
 
 /**
  * Facilitates the intro quest at the bar.

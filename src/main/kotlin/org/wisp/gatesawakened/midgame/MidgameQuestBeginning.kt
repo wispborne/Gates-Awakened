@@ -2,16 +2,16 @@ package org.wisp.gatesawakened.midgame
 
 import com.fs.starfarer.api.campaign.PlanetAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
-import org.wisp.gatesawakened.questLib.BarEventCreator
+import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import org.wisp.gatesawakened.questLib.BarEventDefinition
 import org.wisp.gatesawakened.questLib.InteractionDefinition.Page
 
 /**
  * Creates the midgame quest at the bar.
  */
-class MidgameBarEventCreator : BarEventCreator(creator = {
-    MidgameQuestBeginning().buildBarEvent()
-})
+class MidgameBarEventCreator : BaseBarEventCreator() {
+    override fun createBarEvent() = MidgameQuestBeginning().buildBarEvent()
+}
 
 class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
     shouldShowEvent = { Midgame.shouldOfferQuest(it) },
