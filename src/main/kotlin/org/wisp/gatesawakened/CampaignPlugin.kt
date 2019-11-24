@@ -23,7 +23,6 @@ class CampaignPlugin : BaseCampaignPlugin() {
     // No need to add to saves
     override fun isTransient(): Boolean = true
 
-
     /**
      * When the player interacts with a dialog, override the default interaction with a
      * mod-specific one if necessary.

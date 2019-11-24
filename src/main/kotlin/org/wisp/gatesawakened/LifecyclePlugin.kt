@@ -81,7 +81,6 @@ class LifecyclePlugin : BaseModPlugin() {
         // It's a pain to migrate after refactoring and they are stateless
         // so there's no reason for them to be in the save file.
         val bar = BarEventManager.getInstance()
-        bar.creators.removeAll { it is IntroBarEventCreator || it is MidgameBarEventCreator }
         bar.active.items
             .filter { it is BarEventDefinition<*>.BarEvent || it is BarEventDefinition<*> }
             .forEach { bar.active.remove(it) }

@@ -9,7 +9,7 @@ import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventWithPerson
 
 abstract class BarEventDefinition<S : InteractionDefinition<S>>(
-    @Transient private var shouldShowEvent: (MarketAPI) -> Boolean, // TODO these are getting inflated from saved game as null
+    @Transient private var shouldShowEvent: (MarketAPI) -> Boolean,
     @Transient var interactionPrompt: S.() -> Unit,
     @Transient var textToStartInteraction: S.() -> String,
     onInteractionStarted: S.() -> Unit,
