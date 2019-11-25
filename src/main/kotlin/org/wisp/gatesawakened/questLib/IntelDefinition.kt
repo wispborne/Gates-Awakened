@@ -69,7 +69,8 @@ abstract class IntelDefinition(
         iconPath = newInstance.iconPath
         infoCreator = newInstance.infoCreator
         smallDescriptionCreator = newInstance.smallDescriptionCreator
-
+        @Suppress("SENSELESS_COMPARISON")
+        if (removeIntelIfAnyOfTheseEntitiesDie == null) removeIntelIfAnyOfTheseEntitiesDie = emptyList()
 
         iconPath?.run { di.settings.loadTexture(this.invoke(this@IntelDefinition)) }
         return this

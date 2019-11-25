@@ -1,3 +1,3 @@
 package org.wisp.gatesawakened.constants
 
-internal const val MOD_PREFIX = "g8_"
+internal const val MOD_PREFIX = "GatesAwakened_"

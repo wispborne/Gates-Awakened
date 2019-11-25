@@ -18,7 +18,7 @@ import kotlin.math.roundToInt
 
 class CreateGateQuestIntel : IntelDefinition(
     title = { "Gate Delivery" + if (CreateGateQuest.wasQuestCompleted == true) " - Completed" else String.empty },
-    iconPath = { "graphics/intel/g8_gate_quest.png" },
+    iconPath = { "graphics/intel/GatesAwakened_gate_quest.png" },
     infoCreator = { info: TooltipMakerAPI? ->
         if (!isEnding) {
             info?.addPara(padding = 0f, textColor = Misc.getGrayColor()) {

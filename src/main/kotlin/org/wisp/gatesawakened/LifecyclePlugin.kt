@@ -4,6 +4,7 @@ import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
+import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createGate.CountdownToGateHaulerScript
@@ -170,8 +171,8 @@ class LifecyclePlugin : BaseModPlugin() {
             CampaignPlugin::class to "CampaignPlugin"
         )
 
-        // Prepend "g8_" so the classes don't conflict with anything else getting serialized
-        aliases.forEach { x.alias("g8_${it.second}", it.first.java) }
+        // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
+        aliases.forEach { x.alias("$MOD_PREFIX${it.second}", it.first.java) }
     }
 
     /**

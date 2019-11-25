@@ -37,7 +37,7 @@ object Midgame {
     val wasQuestCompleted: Boolean
         get() = di.memory[Memory.MID_QUEST_DONE] == true
 
-    val midgameRewardActivationCodeCount = di.settings.getInt("gatesAwakened_midgameQuestRewardCodeCount")
+    val midgameRewardActivationCodeCount = di.settings.getInt("GatesAwakened_midgameQuestRewardCodeCount")
 
     var remainingActivationCodes: Int
         get() = di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0

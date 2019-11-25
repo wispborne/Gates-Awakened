@@ -19,7 +19,7 @@ class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
         addPara {
             "You spot a familiar tattoo; a grey circle around the eye of a $manOrWoman" +
                     " in the corner of the bar, glowing a faint white. " +
-                    "You realize that it looks a bit like a " + mark("Gate") + "."
+                    "You realize that it looks a bit like a ${mark("Gate")}."
         }
     },
     textToStartInteraction = {
@@ -37,12 +37,12 @@ class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
                             "reading from $hisOrHer screen."
                 }
                 addPara {
-                    "\"The alpha core has decoded another section of the " + mark("transmission") + ". " +
+                    "\"The alpha core has decoded another section of the transmission. " +
                             "It mentions the location of a cache which, apparently, " +
-                            "contains " + mark("Gate activation codes") + ". Absolutely incredible. We haven't shared this information, " +
+                            "contains ${mark("Gate activation codes")}. Absolutely incredible. We haven't shared this information, " +
                             "so there is no rush, but when possible, please retrieve the cache. " +
-                            "It is located on " + mark(planetWithCache.name) +
-                            " at 56.4314° N, 6.3414° W in " + mark(planetWithCache.starSystem.baseName) + ".\""
+                            "It is located on ${mark(planetWithCache.name)}" +
+                            " at 56.4314° N, 6.3414° W in ${mark(planetWithCache.starSystem.baseName)}.\""
                 }
             },
             options = listOf(
@@ -72,7 +72,7 @@ class MidgameQuestBeginning : BarEventDefinition<MidgameQuestBeginning>(
             },
             options = listOf(
                 Option(
-                    text = { "Continue" },
+                    text = { "Leave" },
                     onOptionSelected = {
                         it.close(hideQuestOfferAfterClose = true)
                     }

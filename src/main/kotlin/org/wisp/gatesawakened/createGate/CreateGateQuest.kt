@@ -34,7 +34,7 @@ object CreateGateQuest {
 
     var wasQuestCompleted: Boolean? by PersistentData("create_gate_done", defaultValue = false)
 
-    var numberOfDaysToDeliverGate = di.settings.getInt("gatesAwakened_numberOfDaysToDeliverGate")
+    var numberOfDaysToDeliverGate = di.settings.getInt("GatesAwakened_numberOfDaysToDeliverGate")
 
     /**
      * We are defining midgame as either:

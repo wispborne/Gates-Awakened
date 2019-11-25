@@ -4,6 +4,7 @@ import com.fs.starfarer.api.PluginPick
 import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.campaign.CampaignPlugin
 import com.fs.starfarer.api.impl.campaign.rulecmd.JumpDialog
+import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
@@ -18,7 +19,7 @@ import org.wisp.gatesawakened.midgame.MidgameQuestFinishedDialog
  */
 class CampaignPlugin : BaseCampaignPlugin() {
 
-    override fun getId() = "g8_GateInteractionPlugin"
+    override fun getId() = "${MOD_PREFIX}_GateInteractionPlugin"
 
     // No need to add to saves
     override fun isTransient(): Boolean = true

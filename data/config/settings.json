@@ -2,14 +2,14 @@
   "ruleCommandPackages": [
     "org.wisp.gatesawakened"
   ],
-  "gatesAwakened_Debug": false,
-  "gatesAwakened_FuelMultiplier": 0.8,
-  "gatesAwakened_midgameQuestRewardCodeCount": 6,
-  "gatesAwakened_numberOfDaysToDeliverGate": 10,
+  "GatesAwakened_Debug": false,
+  "GatesAwakened_FuelMultiplier": 0.8,
+  "GatesAwakened_midgameQuestRewardCodeCount": 6,
+  "GatesAwakened_numberOfDaysToDeliverGate": 10,
   
   "graphics": {
     "intel": {
-      "GatesAwakened_gate_quest": "graphics/intel/g8_gate_quest.png"
+      "GatesAwakened_gate_quest": "graphics/intel/GatesAwakened_gate_quest.png"
     }
   }
 }

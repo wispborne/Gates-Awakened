@@ -17,7 +17,7 @@ import java.awt.Color
 
 class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
     title = { "Gate Investigation" + if (isEnding) " - Completed" else String.empty },
-    iconPath = { "graphics/intel/g8_gate_quest.png" },
+    iconPath = { "graphics/intel/GatesAwakened_gate_quest.png" },
     infoCreator = { info ->
         if (!isEnding) {
             info?.addPara(

@@ -10,7 +10,7 @@ import org.wisp.gatesawakened.wispLib.addPara
 
 class GateDeliveredIntel(private val locationOfGate: SectorEntityToken?) : IntelDefinition(
     title = { if (CreateGateQuest.wasQuestCompleted == true) "Gates Awakened - Completed" else "Gate Placed" },
-    iconPath = { "graphics/intel/g8_gate.png" },
+    iconPath = { "graphics/intel/GatesAwakened_gate.png" },
     smallDescriptionCreator = { info: TooltipMakerAPI, width: Float, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
         val initialTextColor = if (isEnding) Misc.getGrayColor() else Misc.getTextColor()

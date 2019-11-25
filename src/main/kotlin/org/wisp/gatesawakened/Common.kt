@@ -18,11 +18,11 @@ import kotlin.math.roundToInt
  */
 internal object Common {
     val isDebugModeEnabled: Boolean
-        get() = di.settings.getBoolean("gatesAwakened_Debug")
+        get() = di.settings.getBoolean("GatesAwakened_Debug")
 
     private val fuelCostPerLY: Float
         get() {
-            val fuelMultiplierFromSettings = di.settings.getFloat("gatesAwakened_FuelMultiplier")
+            val fuelMultiplierFromSettings = di.settings.getFloat("GatesAwakened_FuelMultiplier")
             return max(
                 1F,
                 (di.sector.playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
