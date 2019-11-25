@@ -1,3 +1,5 @@
 #!/bin/bash
 
-git archive master -o Gates-Awakened.zip --prefix Gates-Awakened/
+read -p "Enter version: " version
+
+git archive master -o Gates-Awakened-$version.zip --prefix Gates-Awakened-$version/
