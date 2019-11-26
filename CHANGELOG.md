@@ -4,6 +4,7 @@
 
 - Fixed bug where you couldn't use gates :S
     - Caused by a last-minute change to mod prefix that wasn't correctly updated in rules.csv
+    - Thanks to Sunflare#3581 on Discord for the report!
 
 ## 2.0.0 (2019-11-24) (not compatible with previous versions)
 
