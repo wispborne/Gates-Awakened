@@ -8,58 +8,62 @@ import com.fs.starfarer.api.ui.SectorMapAPI
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.empty
+import org.wisp.gatesawakened.midgame.Midgame
+import org.wisp.gatesawakened.questLib.IntelDefinition
+import org.wisp.gatesawakened.wispLib.addPara
+import java.awt.Color
 
 
-class IntroIntel(foundAt: SectorEntityToken, target: SectorEntityToken) : BreadcrumbIntel(foundAt, target) {
-
-    companion object {
-        private val iconSpritePath: String by lazy(LazyThreadSafetyMode.NONE) {
-            val path = "graphics/intel/g8_gate.png"
-            di.settings.loadTexture(path)
-            path
+class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
+    title = { "Gate Investigation" + if (isEnding) " - Completed" else String.empty },
+    iconPath = { "graphics/intel/GatesAwakened_gate_quest.png" },
+    infoCreator = { info ->
+        if (!isEnding) {
+            info?.addPara(
+                padding = 0f,
+                textColor = Misc.getGrayColor()
+            ) { "Investigate a possible gate at ${mark(target.starSystem.baseName)}" }
         }
-    }
-
-    override fun getName(): String = getTitle()
-
-    override fun getTitle(): String = "Gate investigation"
-
-    override fun getIcon(): String = iconSpritePath
-
-    override fun createSmallDescription(info: TooltipMakerAPI, width: Float, height: Float) {
+    },
+    smallDescriptionCreator = { info, width, _ ->
         info.addImage(di.settings.getSpriteName("illustrations", "dead_gate"), width, 10f)
-        info.addPara(
-            "You saw an image of a Gate and the name of a system on a tripad in a bar.",
-            10f
-        )
-        info.addPara(
-            "Perhaps it's worth a visit to %s to search for a Gate.",
-            10f,
-            Misc.getHighlightColor(),
-            target.starSystem.baseName
-        )
 
-        val days = daysSincePlayerVisible
+        info.addPara { "You saw an image of a Gate and the name of a system on a tripad in a bar." }
 
-        if (days >= 1) {
-            addDays(info, "ago.", days, Misc.getTextColor(), 10f)
+        if (!Intro.wasQuestCompleted) {
+            info.addPara { "Perhaps it's worth a visit to ${mark(target.starSystem.baseName)} to search for a Gate." }
+        } else {
+            info.addPara {
+                "You followed a Gate in ${mark(
+                    Intro.fringeGate?.starSystem?.baseName ?: "the fringe"
+                )} that led to ${mark(Intro.coreGate?.starSystem?.baseName ?: "the core")}, " +
+                        "a discovery best kept quiet lest the factions interrogate you."
+            }
+            info.addPara {
+                "Perhaps you will stumble across more Gate information in the " +
+                        if (Midgame.isMidgame()) "near future."
+                        else "future, when you are more established."
+            }
+        }
+    },
+    showDaysSinceCreated = true,
+    startLocation = null,
+    endLocation = target,
+    intelTags = listOf(
+        Tags.INTEL_EXPLORATION,
+        Tags.INTEL_STORY,
+        org.wisp.gatesawakened.constants.Tags.INTEL_ACTIVE_GATE
+    )
+) {
+    override fun advance(amount: Float) {
+        super.advance(amount)
+
+        // If it's not already ending or ended and the quest was completed, mark the quest as complete
+        if ((!isEnding || !isEnded) && Intro.wasQuestCompleted) {
+            endAfterDelay()
         }
     }
 
-    override fun createIntelInfo(info: TooltipMakerAPI, mode: IntelInfoPlugin.ListInfoMode?) {
-        super.createIntelInfo(info, mode)
-        info.addPara("Investigate a possible gate at %s", 0f, Misc.getHighlightColor(), target.starSystem.baseName)
-    }
-
-    override fun hasSmallDescription() = true
-
-    override fun isEnded(): Boolean = Intro.wasQuestCompleted
-    override fun isDone(): Boolean = Intro.wasQuestCompleted
-
-    override fun getIntelTags(map: SectorMapAPI?): MutableSet<String> =
-        super.getIntelTags(map)
-            .apply {
-                add(Tags.INTEL_EXPLORATION)
-                add(Tags.INTEL_STORY)
-            }
+    override fun createInstanceOfSelf() = IntroIntel(target)
 }

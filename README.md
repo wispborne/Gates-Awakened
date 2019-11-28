@@ -4,7 +4,7 @@
 
 Gates Awakened is a mod for the excellent game [Starsector](https://fractalsoftworks.com/).
 
-It adds two short missions that open up instantaneous travel between Gates from the ancient Domain of Man - but you are limited to only a small number of Gates, so adjust accordingly.
+It adds three short quests that open up instantaneous travel between Gates from the ancient Domain of Man - but you are limited to only a small number of Gates, so adjust accordingly.
 
 Gates Awakened tries to encourage early exploration and ease later-game traveling, without feeling like a cheat. While it is, of course, not canon, it fits smoothly into lore of the game.
 
@@ -21,7 +21,7 @@ There are two ways to tell Gates Awakened never to touch your systems.
 1. Add your system(s) here: `data/gates-awakened/gates_awakened_system_blacklist.csv`.
 There is [a template here](https://github.com/davidwhitman/Gates-Awakened/blob/7f31059f438653c753bf2984d2bc38488b336ff2/data/gates-awakened/gates_awakened_system_blacklist.csv).
 
-1. Or, to change blacklisted systems dynamically, add or remove this tag from the system: `g8_blacklisted_system`.
+1. Or, to change blacklisted systems dynamically, add or remove this tag from the system: `GatesAwakened_blacklisted_system`.
 The code that drives this logic is around [here](https://github.com/davidwhitman/Gates-Awakened/blob/master/src/main/kotlin/org/wisp/gatesawakened/constants/Tags.kt#L22).
 
 ## Compiling this Mod

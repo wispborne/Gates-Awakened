@@ -4,8 +4,13 @@ import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
+import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.createGate.CountdownToGateHaulerScript
+import org.wisp.gatesawakened.createGate.CreateGateQuestIntel
+import org.wisp.gatesawakened.createGate.CreateGateQuestStart
+import org.wisp.gatesawakened.createGate.GateDeliveredIntel
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.intro.IntroBarEventCreator
 import org.wisp.gatesawakened.intro.IntroIntel
@@ -15,6 +20,7 @@ import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameBarEventCreator
 import org.wisp.gatesawakened.midgame.MidgameIntel
 import org.wisp.gatesawakened.midgame.MidgameQuestBeginning
+import org.wisp.gatesawakened.questLib.BarEventDefinition
 
 class LifecyclePlugin : BaseModPlugin() {
 
@@ -49,16 +55,46 @@ class LifecyclePlugin : BaseModPlugin() {
             Intro.findAndTagIntroGatePair()
         }
 
+        // Midgame quest
+        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
+            Midgame.findAndTagMidgameCacheLocation()
+        }
+
+        addQuestStarts()
+
+        adjustPlayerActivationCodesToMatchSettings()
+
+        Common.updateActiveGateIntel()
+
+        // Register this so we can intercept and replace interactions, such as with a gate
+        di.sector.registerPlugin(CampaignPlugin())
+    }
+
+    override fun afterGameSave() {
+        super.afterGameSave()
+        addQuestStarts()
+    }
+
+    override fun beforeGameSave() {
+        super.beforeGameSave()
+
+        // Remove quest bar events so they don't get into save file.
+        // It's a pain to migrate after refactoring and they are stateless
+        // so there's no reason for them to be in the save file.
+        val bar = BarEventManager.getInstance()
+        bar.active.items
+            .filter { it is BarEventDefinition<*>.BarEvent || it is BarEventDefinition<*> }
+            .forEach { bar.active.remove(it) }
+    }
+
+    private fun addQuestStarts() {
+        val bar = BarEventManager.getInstance()
+
         if (Intro.haveGatesBeenTagged()
             && !Intro.hasQuestBeenStarted
             && !bar.hasEventCreator(IntroBarEventCreator::class.java)
         ) {
             bar.addEventCreator(IntroBarEventCreator())
-        }
-
-        // Midgame quest
-        if (!Midgame.hasPlanetWithCacheBeenTagged()) {
-            Midgame.findAndTagMidgameCacheLocation()
         }
 
         if (Midgame.hasPlanetWithCacheBeenTagged()
@@ -67,13 +103,6 @@ class LifecyclePlugin : BaseModPlugin() {
         ) {
             bar.addEventCreator(MidgameBarEventCreator())
         }
-
-        adjustPlayerActivationCodesToMatchSettings()
-
-        Common.updateActiveGateIntel()
-
-        // Register this so we can intercept and replace interactions, such as with a gate
-        di.sector.registerPlugin(CampaignPlugin())
     }
 
     private fun applyBlacklistTagsToSystems() {
@@ -134,12 +163,16 @@ class LifecyclePlugin : BaseModPlugin() {
             MidgameQuestBeginning::class to "MidgameQuestBeginning",
             MidgameBarEventCreator::class to "MidgameBarEventCreator",
             MidgameIntel::class to "MidgameIntel",
+            CreateGateQuestStart::class to "CreateGateQuestStart",
+            CreateGateQuestIntel::class to "CreateGateQuestIntel",
+            GateDeliveredIntel::class to "GateCreatedIntel",
+            CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
             ActiveGateIntel::class to "ActiveGateIntel",
             CampaignPlugin::class to "CampaignPlugin"
         )
 
-        // Prepend "g8_" so the classes don't conflict with anything else getting serialized
-        aliases.forEach { x.alias("g8_${it.second}", it.first.java) }
+        // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
+        aliases.forEach { x.alias("$MOD_PREFIX${it.second}", it.first.java) }
     }
 
     /**
@@ -151,12 +184,12 @@ class LifecyclePlugin : BaseModPlugin() {
         val activeGateCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
             .filter { it.gate.canBeDeactivated }
             .count()
-        val currentTotalActivateCodeCount = activeGateCount + Common.remainingActivationCodes
-        val expectedTotalActivationCodeCount = Common.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
+        val currentTotalActivateCodeCount = activeGateCount + Midgame.remainingActivationCodes
+        val expectedTotalActivationCodeCount = Midgame.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
 
         if (Midgame.wasQuestCompleted && currentTotalActivateCodeCount != expectedTotalActivationCodeCount
         ) {
-            Common.remainingActivationCodes =
+            Midgame.remainingActivationCodes =
                 (expectedTotalActivationCodeCount - activeGateCount)
                     .coerceAtLeast(minimumValue = 0)
         }

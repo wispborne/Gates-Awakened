@@ -2,9 +2,16 @@
   "ruleCommandPackages": [
     "org.wisp.gatesawakened"
   ],
-  "gatesAwakened_Debug": false,
-  "gatesAwakened_FuelMultiplier": 0.8,
-  "gatesAwakened_midgameQuestRewardCodeCount": 3
+  "GatesAwakened_Debug": false,
+  "GatesAwakened_FuelMultiplier": 0.8,
+  "GatesAwakened_midgameQuestRewardCodeCount": 6,
+  "GatesAwakened_numberOfDaysToDeliverGate": 10,
+  
+  "graphics": {
+    "intel": {
+      "GatesAwakened_gate_quest": "graphics/intel/GatesAwakened_gate_quest.png"
+    }
+  }
 }
 # where rule commands called from rules.csv can be implemented.
 # rules from multiple packages CAN NOT share the same name

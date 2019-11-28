@@ -8,7 +8,7 @@ import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.distanceFromCenter
+import org.wisp.gatesawakened.distanceFromCenterOfSector
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.logging.i
 
@@ -22,6 +22,8 @@ object Midgame {
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
                 && isMidgame()
+                && planetWithCache != null
+                && midgameRewardActivationCodeCount > 0 // Player can disable this quest by setting to 0
 
     val planetWithCache: PlanetAPI?
         get() = Common.getSystems()
@@ -34,6 +36,14 @@ object Midgame {
 
     val wasQuestCompleted: Boolean
         get() = di.memory[Memory.MID_QUEST_DONE] == true
+
+    val midgameRewardActivationCodeCount = di.settings.getInt("GatesAwakened_midgameQuestRewardCodeCount")
+
+    var remainingActivationCodes: Int
+        get() = di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
+        set(value) {
+            di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
+        }
 
     fun findAndTagMidgameCacheLocation() {
         if (!Common.isDebugModeEnabled && hasPlanetWithCacheBeenTagged()) {
@@ -83,7 +93,7 @@ object Midgame {
         var success = false
 
         if (destination != null && !hasQuestBeenStarted) {
-            val intel = MidgameIntel(foundAt, destination)
+            val intel = MidgameIntel(destination)
 
             if (!intel.isDone) {
                 di.memory[Memory.MID_QUEST_IN_PROGRESS] = true
@@ -104,7 +114,7 @@ object Midgame {
         }
 
         return Common.getSystems()
-            .sortedByDescending { it.distanceFromCenter }
+            .sortedByDescending { it.distanceFromCenterOfSector }
             .filter {
                 !it.isBlacklisted
                         && it.hasTag(com.fs.starfarer.api.impl.campaign.ids.Tags.THEME_REMNANT)

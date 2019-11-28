@@ -9,7 +9,7 @@ internal object Tags {
     const val TAG_GATE = com.fs.starfarer.api.impl.campaign.ids.Tags.GATE
 
     /** A gate that has been activated by the player **/
-    const val TAG_GATE_ACTIVATED = "g8_gate_activated"
+    const val TAG_GATE_ACTIVATED = "${MOD_PREFIX}_gate_activated"
 
     /** The tag used by the Active Gates mod, added so those gates may be used as well **/
     const val TAG_ACTIVE_GATES_GATE_ACTIVATED = "gate_activated"
@@ -18,14 +18,14 @@ internal object Tags {
     const val INTEL_ACTIVE_GATE = "Gates"
 
     /** The gate in the Core that is activated for the intro event **/
-    const val TAG_GATE_INTRO_CORE = "g8_gate_intro_core"
+    const val TAG_GATE_INTRO_CORE = "${MOD_PREFIX}_gate_intro_core"
 
     /** The gate near the edge of the sector that is activated for the intro event **/
-    const val TAG_GATE_INTRO_FRINGE = "g8_gate_intro_fringe"
+    const val TAG_GATE_INTRO_FRINGE = "${MOD_PREFIX}_gate_intro_fringe"
 
-    const val TAG_PLANET_WITH_CACHE = "g8_planet_with_cache"
+    const val TAG_PLANET_WITH_CACHE = "${MOD_PREFIX}_planet_with_cache"
 
-    const val TAG_BLACKLISTED_SYSTEM = "g8_blacklisted_system"
+    const val TAG_BLACKLISTED_SYSTEM = "${MOD_PREFIX}_blacklisted_system"
 
     private val Dme = listOf(
         "theme_breakers",

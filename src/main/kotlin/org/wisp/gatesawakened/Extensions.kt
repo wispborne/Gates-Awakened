@@ -1,12 +1,13 @@
 package org.wisp.gatesawakened
 
-import com.fs.starfarer.api.campaign.SectorEntityToken
-import com.fs.starfarer.api.campaign.StarSystemAPI
-import com.fs.starfarer.api.campaign.TextPanelAPI
+import com.fs.starfarer.api.campaign.*
 import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
+import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.constants.Tags
+import kotlin.math.pow
 
+@Deprecated("Replace with the one in WispText")
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
     this.addPara(text, Misc.getHighlightColor(), *highlights)
 
@@ -35,19 +36,19 @@ internal fun Gate.activate(): Boolean = GateActivation.activate(this)
  */
 internal fun Gate.deactivate(): Boolean = GateActivation.deactivate(this)
 
-internal val SectorEntityToken.distanceFromCenter: Float
-    get() = this.starSystem.distanceFromCenter
+internal val SectorEntityToken.distanceFromCenterOfSector: Float
+    get() = this.starSystem.distanceFromCenterOfSector
 
-internal val StarSystemAPI.distanceFromCenter: Float
+internal val StarSystemAPI.distanceFromCenterOfSector: Float
     get() = Misc.getDistanceLY(
         this.location,
         di.sector.hyperspace.location
     )
 
-internal val SectorEntityToken.distanceFromPlayer: Float
-    get() = this.starSystem.distanceFromPlayer
+internal val SectorEntityToken.distanceFromPlayerInHyperspace: Float
+    get() = this.starSystem.distanceFromPlayerInHyperspace
 
-internal val StarSystemAPI.distanceFromPlayer: Float
+internal val StarSystemAPI.distanceFromPlayerInHyperspace: Float
     get() = Misc.getDistanceLY(
         this.location,
         di.sector.playerFleet.locationInHyperspace
@@ -55,3 +56,20 @@ internal val StarSystemAPI.distanceFromPlayer: Float
 
 internal val String.Companion.empty
     get() = ""
+
+internal fun CampaignFleetAPI.createToken(): SectorEntityToken = this.containingLocation.createToken(this.location)
+
+internal fun isPointInsideCircle(
+    point: Vector2f,
+    circleCenter: Vector2f,
+    circleRadius: Float
+): Boolean = (point.x - circleCenter.x).pow(2) +
+        (point.y - circleCenter.y).pow(2) < circleRadius.pow(2)
+
+internal fun Vector2f.isInsideCircle(
+    center: Vector2f,
+    radius: Float
+) = isPointInsideCircle(this, center, radius)
+
+internal fun InteractionDialogPlugin.show(campaignUIAPI: CampaignUIAPI, targetEntity: SectorEntityToken) =
+    campaignUIAPI.showInteractionDialog(this, targetEntity)

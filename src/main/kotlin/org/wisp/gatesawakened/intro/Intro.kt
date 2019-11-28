@@ -76,7 +76,7 @@ internal object Intro {
         var success = false
 
         if (destination != null && !hasQuestBeenStarted) {
-            val intel = IntroIntel(foundAt, destination)
+            val intel = IntroIntel(destination)
 
             if (!intel.isDone) {
                 di.memory[Memory.INTRO_QUEST_IN_PROGRESS] = true
@@ -98,11 +98,9 @@ internal object Intro {
         fringeGate?.activate()
         coreGate?.activate()
         di.memory[Memory.INTRO_QUEST_DONE] = true
-        (di.sector.intelManager.getFirstIntel(IntroIntel::class.java) as? IntroIntel?)
-            ?.run { di.sector.intelManager.removeIntel(this) }
 
         // Pop up a dialog explaining how gates work
-        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog(), di.sector.playerFleet)
+        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog().build(), di.sector.playerFleet)
     }
 
     private fun findClosestInactiveGateToCenter(): GateInfo? {
@@ -137,12 +135,12 @@ internal object Intro {
 
         @Suppress("SimplifiableCallChain")
         return Common.getGates(GateFilter.Inactive, excludeCurrentGate = false)
-            .sortedByDescending { it.gate.distanceFromCenter }
+            .sortedByDescending { it.gate.distanceFromCenterOfSector }
             .filter {
                 val isValid = it.gate.starSystem.isValidSystemForRandomActivation
 
                 di.logger.i {
-                    val distanceFromCenter = it.gate.distanceFromCenter
+                    val distanceFromCenter = it.gate.distanceFromCenterOfSector
                     val validOrInvalid = if (isValid) "valid" else "invalid"
 
                     "$distanceFromCenter LY, ${it.gate.starSystem}, $validOrInvalid, tags: ${it.gate.starSystem.tags}"

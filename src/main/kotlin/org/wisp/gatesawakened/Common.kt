@@ -1,9 +1,13 @@
 package org.wisp.gatesawakened
 
+import com.fs.starfarer.api.campaign.OrbitAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.campaign.StarSystemAPI
+import com.fs.starfarer.api.impl.campaign.ids.Factions
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
+import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
+import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
-import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
 import kotlin.math.max
@@ -14,23 +18,15 @@ import kotlin.math.roundToInt
  */
 internal object Common {
     val isDebugModeEnabled: Boolean
-        get() = di.settings.getBoolean("gatesAwakened_Debug")
+        get() = di.settings.getBoolean("GatesAwakened_Debug")
 
     private val fuelCostPerLY: Float
         get() {
-            val fuelMultiplierFromSettings = di.settings.getFloat("gatesAwakened_FuelMultiplier")
+            val fuelMultiplierFromSettings = di.settings.getFloat("GatesAwakened_FuelMultiplier")
             return max(
                 1F,
                 (di.sector.playerFleet.logistics.fuelCostPerLightYear * fuelMultiplierFromSettings)
             )
-        }
-
-    val midgameRewardActivationCodeCount = di.settings.getInt("gatesAwakened_midgameQuestRewardCodeCount")
-
-    var remainingActivationCodes: Int
-        get() = di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] as? Int ?: 0
-        set(value) {
-            di.memory[Memory.GATE_ACTIVATION_CODES_REMAINING] = value
         }
 
     fun jumpCostInFuel(distanceInLY: Float): Int = (fuelCostPerLY * distanceInLY).roundToInt()
@@ -64,11 +60,11 @@ internal object Common {
             }
             .filter {
                 if (excludeCurrentGate)
-                    it.gate.distanceFromPlayer > 0
+                    it.gate.distanceFromPlayerInHyperspace > 0
                 else
                     true
             }
-            .sortedBy { it.gate.distanceFromPlayer }
+            .sortedBy { it.gate.distanceFromPlayerInHyperspace }
             .toList()
     }
 
@@ -87,6 +83,44 @@ internal object Common {
         currentGateIntels
             .filter { it.activeGate !in activeGates }
             .forEach { di.intelManager.removeIntel(it) }
+    }
+
+    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): Boolean {
+        if (location == null) {
+            di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
+            return false
+        }
+
+        val newGate = BaseThemeGenerator.addNonSalvageEntity(
+            location.starSystem,
+            BaseThemeGenerator.EntityLocation()
+                .apply {
+                    this.location = location.location
+                    this.orbit = createOrbit(location)
+                },
+            "inactive_gate",
+            Factions.DERELICT
+        )
+
+        if (activateAfterSpawning) {
+            newGate.entity?.activate()
+        }
+
+        return true
+    }
+
+    fun createOrbit(
+        targetLocation: SectorEntityToken,
+        orbitCenter: SectorEntityToken = targetLocation.starSystem.center
+    ): OrbitAPI {
+        val orbitRadius = Misc.getDistance(targetLocation, orbitCenter)
+
+        return di.factory.createCircularOrbit(
+            orbitCenter,
+            Misc.getAngleInDegrees(orbitCenter.location, targetLocation.location),
+            orbitRadius,
+            orbitRadius / (20f + StarSystemGenerator.random.nextFloat() * 5f) // taken from StarSystemGenerator:1655
+        )
     }
 }
 
