@@ -1,5 +1,6 @@
 command,class,tags,syntax,help
 GatesAwakenedViewInfo,org.wisp.gatesawakened.consoleCommands.GatesAwakenedViewInfo,"gates,campaign",gatesawakenedviewinfo,Prints debug info for the Gates Awakened mod.
+GatesAwakenedForceStartIntroQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartIntroQuest,"gates,campaign",gatesawakenedforcestartintroquest,Attempt to force a start of the first Gates Awakened quest.
 GatesAwakenedForceStartMidgameQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartMidgameQuest,"gates,campaign",gatesawakenedforcestartmidgamequest,Attempt to force a start of the second Gates Awakened quest.
 GatesAwakenedForceStartCreateGateQuest,org.wisp.gatesawakened.consoleCommands.GatesAwakenedForceStartCreateGateQuest,"gates,campaign",gatesawakenedforcestartcreategatequest,Attempt to force a start of the third Gates Awakened quest.
 SpawnGate,org.wisp.gatesawakened.consoleCommands.SpawnGate,"gates,campaign",spawngate,Spawns a Gate at your current location (from Gates Awakened).

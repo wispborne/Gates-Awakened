@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.2 (2019-11-30)
+
+- Added console command to force start the first quest
+- Fixed bug where some players were kicked out of the planet dialog when trying to start
+ the first quest
+
 ## 2.0.1 (2019-11-26)
 
 - Fixed bug where you couldn't use gates :S

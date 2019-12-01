@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.impl.campaign.ids.Ranks
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BaseBarEventCreator
 import com.fs.starfarer.api.util.Misc
-import org.lazywizard.lazylib.ModUtils
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.questLib.BarEventDefinition
 
@@ -88,7 +87,7 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     private var destinationSystem: StarSystemAPI? = null
     private val errorReporter = di.errorReporter
 
-    private val isNaziShitEnabled = ModUtils.isModEnabled("new_galactic_order")
+    private val isNaziShitEnabled = false
 
     override fun createInstanceOfSelf() = IntroQuestBeginning()
 }
