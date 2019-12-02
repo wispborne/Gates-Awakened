@@ -4,7 +4,7 @@
 
 - Added console command to force start the first quest
 - Fixed bug where some players were kicked out of the planet dialog when trying to start
- the first quest
+ the first quest (thanks to Kraosdada#8765 on Discord and Sartek on the forums for the reports)
 
 ## 2.0.1 (2019-11-26)
 
