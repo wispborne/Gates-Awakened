@@ -6,9 +6,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
-import org.wisp.gatesawakened.constants.isBlacklisted
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.distanceFromCenterOfSector
 import org.wisp.gatesawakened.intro.Intro
 import org.wisp.gatesawakened.logging.i
 
@@ -114,11 +112,20 @@ object Midgame {
         }
 
         return Common.getSystems()
-            .sortedByDescending { it.distanceFromCenterOfSector }
             .filter {
-                !it.isBlacklisted
-                        && it.hasTag(com.fs.starfarer.api.impl.campaign.ids.Tags.THEME_REMNANT)
+                it.hasTag(com.fs.starfarer.api.impl.campaign.ids.Tags.THEME_REMNANT)
                         && filterPlanets(it.planets).any()
+            }
+            .ifEmpty {
+                Common.getSystems()
+                    .filter {
+                        it.hasTag(com.fs.starfarer.api.impl.campaign.ids.Tags.THEME_DERELICT)
+                                && filterPlanets(it.planets).any()
+                    }
+            }
+            .ifEmpty {
+                Common.getSystems()
+                    .filter { filterPlanets(it.planets).any() }
             }
             .ifEmpty { null }
             ?.flatMap { filterPlanets(it.planets) }
