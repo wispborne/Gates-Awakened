@@ -7,6 +7,6 @@ jobs:
             - run:
                   name: Zipping mod...
                   command: |
-                    chmod +x /circleci/zipMod.sh
-                    ./.circleci/zipMod.sh
+                    chmod +x .circleci/zipMod.sh
+                    .circleci/zipMod.sh
                   shell: /bin/sh
