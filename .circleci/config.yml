@@ -1,8 +1,10 @@
 version: 2.1
 jobs:
     build:
+        docker: 
+            - image: alpine 3.0.2
         steps:
-            run:
-                name: Zipping mod...
-                command: .circleci/zipMod.sh
-                shell: /bin/bash
+            - run:
+                  name: Zipping mod...
+                  command: .circleci/zipMod.sh
+                  shell: /bin/bash
