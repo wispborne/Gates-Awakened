@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 modFolderName="Gates-Awakened"
 version=$(git describe --tags)

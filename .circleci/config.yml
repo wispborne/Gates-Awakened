@@ -9,4 +9,4 @@ jobs:
                   command: |
                     chmod +x /circleci/zipMod.sh
                     .circleci/zipMod.sh
-                  shell: /bin/bash
+                  shell: /bin/sh
