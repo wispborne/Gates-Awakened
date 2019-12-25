@@ -2,7 +2,7 @@ version: 2.1
 jobs:
     build:
         docker: 
-            - image: alpine 3.11.2
+            - image: circleci/alpine:3.11.2
         steps:
             - run:
                   name: Zipping mod...
