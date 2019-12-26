@@ -8,6 +8,7 @@ jobs:
                   name: Zipping mod...
                   command: |
                     pwd
+                    ls
                     chmod +x ./.circleci/zipMod.sh
                     ./.circleci/zipMod.sh
                   shell: /bin/sh
