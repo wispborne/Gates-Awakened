@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.3
+
+- Fixed third quest intel showing planet type instead of name (thanks to @Avanitia#5323)
+
 ## 2.0.2 (2019-11-30)
 
 - Added console command to force start the first quest

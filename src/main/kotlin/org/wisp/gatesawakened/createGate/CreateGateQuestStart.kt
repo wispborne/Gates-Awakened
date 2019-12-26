@@ -18,7 +18,7 @@ class CreateGateQuestStart : InteractionDefinition<CreateGateQuestStart>(
                             "least of all when nearing an ancient, massive relic of the Domain - one that you activated."
                 }
                 addPara {
-                    "It turns out that the soft chiming is coming from the Tripad found in the cave back on ${Midgame.planetWithCache?.spec?.name
+                    "It turns out that the soft chiming is coming from the Tripad found in the cave back on ${Midgame.planetWithCache?.name
                         ?: "a seemingly unremarkable planet"}. The display shows three words: " + mark("\"Gate Hauler Detected\"") + "."
                 }
                 addPara {
