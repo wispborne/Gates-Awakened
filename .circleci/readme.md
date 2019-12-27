@@ -2,7 +2,7 @@
 
 ## Description
 
-This setup will automate Github releases by creating a new release every time a git tag is pushed to your GitHub repository.
+This setup will automate Github releases by creating a new release with a ready-for-users zipfile of your mod every time a git tag is pushed to your GitHub repository.
 
 ## Steps
 
