@@ -2,7 +2,7 @@ version: 2.1
 jobs:
     build:
         docker: 
-            - image: alpine:latest
+            - image: alpine/git:1.0.7
         steps:
             - checkout
             - run:
