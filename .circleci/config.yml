@@ -4,6 +4,7 @@ jobs:
         docker: 
             - image: alpine:latest
         steps:
+            - checkout
             - run:
                   name: Zipping mod...
                   command: |
