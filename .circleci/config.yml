@@ -12,4 +12,4 @@ jobs:
                     ./.circleci/zipMod.sh
                   shell: /bin/sh
             - store_artifacts:
-                path: artifacts/*
+                path: artifacts/
