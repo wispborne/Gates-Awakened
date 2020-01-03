@@ -13,7 +13,7 @@ import org.wisp.gatesawakened.wispLib.addPara
 
 class ActiveGateIntel(val activeGate: Gate) : IntelDefinition(
     title = { "Active Gate" },
-    iconPath = { "graphics/icons/icon_portal.png" },
+    iconPath = { "graphics/intel/GatesAwakened_gate.png" },
     endLocation = activeGate,
     infoCreator = { text ->
         text?.addPara(
