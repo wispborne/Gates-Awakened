@@ -2,7 +2,11 @@
 
 ## 2.0.3
 
+- If no Remnant systems exist, second quest uses a non-Remnant system
 - Fixed third quest intel showing planet type instead of name (thanks to @Avanitia#5323)
+- Possibly fixed quest intel icon showing incorrectly (unconfirmed)
+- Fixed bug where declining a quest, then trying to start it again would crash
+- Adds forum id to version checker
 
 ## 2.0.2 (2019-11-30)
 
