@@ -12,7 +12,10 @@ internal object Tags {
     const val TAG_GATE_ACTIVATED = "${MOD_PREFIX}_gate_activated"
 
     /** The tag used by the Active Gates mod, added so those gates may be used as well **/
-    const val TAG_ACTIVE_GATES_GATE_ACTIVATED = "gate_activated"
+    const val TAG_ACTIVE_GATES_GATE = "gate_activated"
+
+    /** The tag used by Boggled's Player Constructed Gates mod, added so those gates may be used as well **/
+    const val TAG_BOGGLED_GATE = "boggled_astral_gate"
 
     /** Displays as a tag in the Intel Manager screen */
     const val INTEL_ACTIVE_GATE = "Gates"

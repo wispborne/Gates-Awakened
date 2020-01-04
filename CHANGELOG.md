@@ -1,8 +1,9 @@
 # Changelog
 
-## 2.0.3
+## 2.0.3 (2020-1-3)
 
-- If no Remnant systems exist, second quest uses a non-Remnant system
+- Added support for jumping to Boggled's player constructed gates
+- If no Remnant systems exist, second quest uses a non-Remnant system instead
 - Fixed third quest intel showing planet type instead of name (thanks to @Avanitia#5323)
 - Possibly fixed quest intel icon showing incorrectly (unconfirmed)
 - Fixed bug where declining a quest, then trying to start it again would crash

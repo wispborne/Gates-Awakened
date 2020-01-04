@@ -38,9 +38,19 @@ internal object Common {
     /**
      * List of non-blacklisted gates (filterable), sorted by shortest distance from player first
      */
-    fun getGates(filter: GateFilter, excludeCurrentGate: Boolean): List<GateInfo> {
+    fun getGates(
+        filter: GateFilter,
+        excludeCurrentGate: Boolean,
+        includeGatesFromOtherMods: Boolean = false
+    ): List<GateInfo> {
         return getSystems()
-            .flatMap { system -> system.getEntitiesWithTag(Tags.TAG_GATE) }
+            .flatMap { system ->
+                system.getEntitiesWithTag(Tags.TAG_GATE) +
+                        if (includeGatesFromOtherMods)
+                            system.getEntitiesWithTag(Tags.TAG_BOGGLED_GATE)
+                        else
+                            emptyList()
+            }
             .asSequence()
             .filter { gate ->
                 when (filter) {
@@ -55,7 +65,13 @@ internal object Common {
                 GateInfo(
                     gate = it,
                     systemId = it.starSystem.id,
-                    systemName = it.starSystem.baseName
+                    systemName = it.starSystem.baseName,
+                    sourceMod = when {
+                        it.tags.contains(Tags.TAG_ACTIVE_GATES_GATE) -> GateMod.ActiveGates
+                        it.tags.contains(Tags.TAG_BOGGLED_GATE) -> GateMod.BoggledPlayerGateConstruction
+                        it.tags.contains(Tags.TAG_GATE_ACTIVATED) -> GateMod.GatesAwakened
+                        else -> GateMod.Unknown
+                    }
                 )
             }
             .filter {
@@ -127,7 +143,8 @@ internal object Common {
 internal data class GateInfo(
     val gate: Gate,
     val systemId: String,
-    val systemName: String
+    val systemName: String,
+    val sourceMod: GateMod
 )
 
 internal enum class GateFilter {
@@ -136,6 +153,13 @@ internal enum class GateFilter {
     Inactive,
     IntroCore,
     IntroFringe
+}
+
+enum class GateMod {
+    GatesAwakened,
+    ActiveGates,
+    BoggledPlayerGateConstruction,
+    Unknown
 }
 
 val Any?.exhaustiveWhen: Unit?

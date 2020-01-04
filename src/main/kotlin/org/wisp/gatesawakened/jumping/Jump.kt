@@ -11,7 +11,11 @@ internal object Jump {
     /**
      * @return whether jump was successful
      */
-    fun jumpPlayer(sourceLocation: SectorEntityToken?, destinationGate: Gate, isFuelRequired: Boolean = true): JumpResult {
+    fun jumpPlayer(
+        sourceLocation: SectorEntityToken?,
+        destinationGate: Gate,
+        isFuelRequired: Boolean = true
+    ): JumpResult {
         val playerFleet = di.sector.playerFleet
 
         // Pay fuel cost (or show error if player lacks fuel)
@@ -32,7 +36,11 @@ internal object Jump {
         }
 
         // Jump player fleet to new system
-        di.sector.doHyperspaceTransition(di.sector.playerFleet, sourceLocation, JumpPointAPI.JumpDestination(destinationGate, null))
+        di.sector.doHyperspaceTransition(
+            di.sector.playerFleet,
+            sourceLocation,
+            JumpPointAPI.JumpDestination(destinationGate, null)
+        )
         return JumpResult.Success
     }
 
