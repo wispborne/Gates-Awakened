@@ -41,7 +41,7 @@ class GateCreatedDialog : InteractionDefinition<GateCreatedDialog>(
                 Option(
                     text = { "Close" },
                     onOptionSelected = {
-                        CreateGateQuest.completeQuest()
+                        CreateGateQuest.completeQuest(this.dialog.interactionTarget)
                         it.close(hideQuestOfferAfterClose = true)
                     }
                 )

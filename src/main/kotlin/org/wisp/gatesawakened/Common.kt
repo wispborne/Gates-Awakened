@@ -101,10 +101,10 @@ internal object Common {
             .forEach { di.intelManager.removeIntel(it) }
     }
 
-    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): Boolean {
+    fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): SectorEntityToken? {
         if (location == null) {
             di.errorReporter.reportCrash(NullPointerException("Tried to spawn gate but target location was null!"))
-            return false
+            return null
         }
 
         val newGate = BaseThemeGenerator.addNonSalvageEntity(
@@ -122,7 +122,7 @@ internal object Common {
             newGate.entity?.activate()
         }
 
-        return true
+        return newGate.entity
     }
 
     fun createOrbit(

@@ -17,7 +17,7 @@ class SpawnGate : BaseCommand {
             return BaseCommand.CommandResult.ERROR
         }
 
-        return if (Common.spawnGateAtLocation(di.sector.playerFleet, activateAfterSpawning = false)) {
+        return if (Common.spawnGateAtLocation(di.sector.playerFleet, activateAfterSpawning = false) != null) {
             Console.showMessage("Gate created!")
             BaseCommand.CommandResult.SUCCESS
         } else {
