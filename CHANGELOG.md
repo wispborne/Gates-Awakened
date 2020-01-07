@@ -1,8 +1,14 @@
 # Changelog
 
-## 2.0.3
+## 2.0.3 (2020-1-5)
 
-- Fixed third quest intel showing planet type instead of name (thanks to @Avanitia#5323)
+- Added support for jumping to Boggled's player constructed gates
+- If no Remnant systems exist, second quest uses a non-Remnant system instead
+- Fixed third quest intel showing planet type instead of name (reported by @Avanitia)
+- Possibly fixed quest intel icon showing incorrectly (unconfirmed)
+- Fixed bug where declining a quest, then trying to start it again would crash
+- Fixed bug where final quest epilogue could be triggered by interacting with any active gate  (reported by @Histidine)
+- Adds forum id to version checker
 
 ## 2.0.2 (2019-11-30)
 

@@ -1,4 +1,6 @@
-package com.fs.starfarer.api.impl.campaign.rulecmd // Must use this package because this plugin is called by rules.csv
+package com.fs.starfarer.api.impl.campaign.rulecmd
+
+// Must use this package because this plugin is called by rules.csv
 
 
 import ch.tutteli.kbox.joinToString
@@ -9,13 +11,11 @@ import com.fs.starfarer.api.campaign.TextPanelAPI
 import com.fs.starfarer.api.impl.campaign.abilities.TransponderAbility
 import com.fs.starfarer.api.impl.campaign.ids.Abilities
 import com.fs.starfarer.api.impl.campaign.ids.Factions
-import com.fs.starfarer.api.impl.campaign.rulecmd.PaginatedOptions
 import com.fs.starfarer.api.loading.Description
 import com.fs.starfarer.api.util.Misc
 import org.lwjgl.input.Keyboard
 import org.wisp.gatesawakened.*
 import org.wisp.gatesawakened.constants.MOD_PREFIX
-import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.jumping.Jump
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.wispLib.addPara
@@ -56,7 +56,8 @@ class JumpDialog : PaginatedOptions() {
     }
 
     override fun optionSelected(optionText: String?, optionData: Any?) {
-        val activatedGates = Common.getGates(GateFilter.Active, excludeCurrentGate = true)
+        val activatedGates =
+            Common.getGates(GateFilter.Active, excludeCurrentGate = true, includeGatesFromOtherMods = true)
 
         if (optionData in Option.values().map { it.id }) {
             // If player chose a normal dialog option (not jump)
@@ -109,8 +110,14 @@ class JumpDialog : PaginatedOptions() {
                     activatedGates.forEach { activatedGate ->
                         val jumpCostInFuel = Common.jumpCostInFuel(activatedGate.gate.distanceFromPlayerInHyperspace)
                         val fuelRemainingAfterJump = di.sector.playerFleet.cargo.fuel - jumpCostInFuel
+
+                        val gateModText = when (activatedGate.sourceMod) {
+                            GateMod.BoggledPlayerGateConstruction -> " (warning: unrecognized Gate protocol)"
+                            else -> String.empty
+                        }
+
                         var jumpText =
-                            "Jump to ${activatedGate.systemName} ($jumpCostInFuel fuel)"
+                            "Jump to ${activatedGate.systemName} ($jumpCostInFuel fuel)$gateModText"
 
                         if (fuelRemainingAfterJump < 0) {
                             jumpText += " (${fuelRemainingAfterJump.absoluteValue} more required)"
@@ -317,20 +324,32 @@ class JumpDialog : PaginatedOptions() {
         }
 
         // Jump player fleet to new system
-        val gates = newSystem.getEntitiesWithTag(Tags.TAG_GATE_ACTIVATED)
+        val gates = Common.getGates(
+            filter = GateFilter.Active,
+            excludeCurrentGate = false,
+            includeGatesFromOtherMods = true
+        )
+            .filter { it.systemId == newSystem.id }
+            .map { it.gate }
 
-        return when (val result = Jump.jumpPlayer(
-            sourceLocation = dialog.interactionTarget,
-            destinationGate = gates.first()
-        )) {
-            is Jump.JumpResult.Success -> {
-                text.addPara { "Your fleet passes through the gate..." }
-                true
+        try {
+            return when (val result = Jump.jumpPlayer(
+                sourceLocation = dialog.interactionTarget,
+                destinationGate = gates.first()
+            )) {
+                is Jump.JumpResult.Success -> {
+                    text.addPara { "Your fleet passes through the gate..." }
+                    true
+                }
+                is Jump.JumpResult.FuelRequired -> {
+                    text.addPara { "You lack the " + mark(result.fuelCost) + " fuel necessary to use the gate." }
+                    false
+                }
             }
-            is Jump.JumpResult.FuelRequired -> {
-                text.addPara { "You lack the " + mark(result.fuelCost) + " fuel necessary to use the gate." }
-                false
-            }
+        } catch (e: Exception) {
+            // Can happen if can't find a valid gate in the system to jump to
+            di.errorReporter.reportCrash(e)
+            return false
         }
     }
 

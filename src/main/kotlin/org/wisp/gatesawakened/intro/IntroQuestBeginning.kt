@@ -27,26 +27,6 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                     "${heOrShe.capitalize()} is focused on $hisOrHer tripad in a corner of the bar " +
                     "and it looks like $heOrShe is staring at an image of a ${mark("Gate")}."
         }
-
-        if (isNaziShitEnabled) {
-            addPara {
-                "As you move closer, the $manOrWoman silently collapses forward, their TriPad flickering out. You spin around to see a " +
-                        "man quickly pocketing a gun and leaving, inconspicuous but for his shaved head " +
-                        "marred by a tattoo of a cross with bent arms - the unofficial symbol of the New Galactic Order - and " +
-                        "by the words across the back of his jacket;"
-            }
-            addPara { "" }
-            addPara(textColor = Misc.getHighlightColor()) { "\"War is peace." }
-            addPara(textColor = Misc.getHighlightColor()) { "Freedom is slavery." }
-            addPara(textColor = Misc.getHighlightColor()) { "Ignorance is strength\"" }
-            addPara { "" }
-            addPara {
-                "You get the sense that a sector where the NGO exists isn't compatible with free scientific pursuit " +
-                        "or individual exploration."
-            }
-
-            navigator.close(hideQuestOfferAfterClose = true)
-        }
     },
     textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
     onInteractionStarted = {
@@ -56,16 +36,21 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
         Page(
             id = 1,
             onPageShown = {
-                addPara {
-                    "As soon as you get close, " +
-                            "$heOrShe flips off $hisOrHer tripad and quickly rushes out."
-                }
-                addPara {
-                    "However, just before $hisOrHer tripad goes dark, you catch one line: " + mark(destinationSystem!!.name)
+                if (!isNaziScumAlive) {
+                    addPara {
+                        "As soon as you get close, " +
+                                "$heOrShe flips off $hisOrHer tripad and quickly rushes out."
+                    }
+                    addPara {
+                        "However, just before $hisOrHer tripad goes dark, you catch one line: " + mark(destinationSystem!!.name)
+                    }
+                } else {
+                    displayNgoInteraction()
                 }
             },
             options = listOf(
                 Option(
+                    showIf = { !isNaziScumAlive },
                     text = {
                         "Watch the $manOrWoman hurry down the street and consider what " +
                                 "could be at ${destinationSystem!!.baseName}."
@@ -78,6 +63,11 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                             errorReporter.reportCrash(RuntimeException("Unable to start intro quest!"))
                         }
                     }
+                ),
+                Option(
+                    showIf = { isNaziScumAlive },
+                    text = { "Leave" },
+                    onOptionSelected = { it.close(hideQuestOfferAfterClose = true) }
                 )
             )
         )
@@ -87,7 +77,26 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     private var destinationSystem: StarSystemAPI? = null
     private val errorReporter = di.errorReporter
 
-    private val isNaziShitEnabled = false
+    private val isNaziScumAlive = di.settings.modManager.isModEnabled("new_galactic_order")
+            && Misc.getFactionMarkets(di.sector.getFaction("new_galactic_order")).any()
 
     override fun createInstanceOfSelf() = IntroQuestBeginning()
+}
+
+private fun IntroQuestBeginning.displayNgoInteraction() {
+    addPara {
+        "As you move closer, the $manOrWoman silently collapses forward, their TriPad flickering out. You spin around to see a " +
+                "man quickly pocketing a gun and leaving, inconspicuous but for his shaved head " +
+                "marred by a tattoo of a cross with bent arms - the unofficial symbol of the New Galactic Order - and " +
+                "by the words across the back of his jacket;"
+    }
+    addPara { "" }
+    addPara(textColor = Misc.getHighlightColor()) { "\"War is peace." }
+    addPara(textColor = Misc.getHighlightColor()) { "Freedom is slavery." }
+    addPara(textColor = Misc.getHighlightColor()) { "Ignorance is strength\"" }
+    addPara { "" }
+    addPara {
+        "You get the sense that a sector where the NGO holds power isn't compatible with free scientific pursuit " +
+                "or individual exploration."
+    }
 }

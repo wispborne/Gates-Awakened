@@ -119,7 +119,9 @@ abstract class BarEventDefinition<S : InteractionDefinition<S>>(
                 dialog.optionPanel.clearOptions()
 
                 page.onPageShown(this@BarEventDefinition as S)
-                page.options.forEach { option ->
+                page.options
+                    .filter { it.showIf(this@BarEventDefinition) }
+                    .forEach { option ->
                     dialog.optionPanel.addOption(option.text(this@BarEventDefinition as S), option.id)
                 }
             }

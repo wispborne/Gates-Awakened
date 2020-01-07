@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignPlugin
 import com.fs.starfarer.api.impl.campaign.rulecmd.JumpDialog
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Memory
+import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.createGate.GateCreatedDialog
@@ -48,7 +49,8 @@ class CampaignPlugin : BaseCampaignPlugin() {
                     }
                     CreateGateQuest.hasQuestBeenStarted == true
                             && CreateGateQuest.wasGateDelivered == true
-                            && CreateGateQuest.wasQuestCompleted != true -> {
+                            && CreateGateQuest.wasQuestCompleted != true
+                            && interactionTarget.hasTag(Tags.TAG_NEWLY_CONSTRUCTED_GATE) -> {
                         // Show dialog to complete the final, create gate quest
                         PluginPick<InteractionDialogPlugin>(
                             GateCreatedDialog().build(),

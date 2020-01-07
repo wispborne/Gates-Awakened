@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3
 import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.Common
+import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
@@ -73,13 +74,17 @@ object CreateGateQuest {
 
     fun spawnGateQuestStep() {
         Common.spawnGateAtLocation(summonLocation, activateAfterSpawning = true)
+            ?.apply {
+                this.tags += Tags.TAG_NEWLY_CONSTRUCTED_GATE
+            }
         addGateDefenceFleet(summonLocation)
         wasGateDelivered = true
         di.intelManager.addIntel(GateDeliveredIntel(summonLocation))
     }
 
-    fun completeQuest() {
+    fun completeQuest(createdGate: SectorEntityToken?) {
         wasQuestCompleted = true
+        createdGate?.removeTag(Tags.TAG_NEWLY_CONSTRUCTED_GATE)
     }
 
     private fun addGateDefenceFleet(gateToDefend: SectorEntityToken?) {

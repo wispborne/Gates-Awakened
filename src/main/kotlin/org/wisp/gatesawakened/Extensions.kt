@@ -18,7 +18,11 @@ internal val SectorEntityToken.isGate: Boolean
     get() = com.fs.starfarer.api.impl.campaign.ids.Tags.GATE in this.tags
 
 internal val Gate.isActive: Boolean
-    get() = Tags.TAG_GATE_ACTIVATED in this.tags || Tags.TAG_ACTIVE_GATES_GATE_ACTIVATED in this.tags
+    get() = this.tags.any { tag ->
+        tag == Tags.TAG_GATE_ACTIVATED
+                || tag == Tags.TAG_ACTIVE_GATES_GATE
+                || tag == Tags.TAG_BOGGLED_GATE
+    }
 
 /**
  * Gates that are active from other mods (Active Gates) cannot be deactivated by Gates Awakened.
