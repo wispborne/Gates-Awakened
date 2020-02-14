@@ -4,14 +4,18 @@
   ],
   "GatesAwakened_Debug": false,
   "GatesAwakened_FuelMultiplier": 0.8,
-  "GatesAwakened_midgameQuestRewardCodeCount": 6,
+  "GatesAwakened_midgameQuestRewardCodeCount": 3,
   "GatesAwakened_numberOfDaysToDeliverGate": 10,
-  
   "graphics": {
     "intel": {
-      "GatesAwakened_gate_quest": "graphics/intel/GatesAwakened_gate_quest.png"
+      "GatesAwakened_gate_quest": "graphics/intel/GatesAwakened_gate_quest.png",
+      "GatesAwakened_gate": "graphics/intel/GatesAwakened_gate.png"
+    },
+    "GatesAwakenedFx": {
+      "emp_arcs": "graphics/fx/emp_arcs.png"
     }
   }
 }
+
 # where rule commands called from rules.csv can be implemented.
 # rules from multiple packages CAN NOT share the same name

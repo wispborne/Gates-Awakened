@@ -334,7 +334,7 @@ class JumpDialog : PaginatedOptions() {
 
         try {
             return when (val result = Jump.jumpPlayer(
-                sourceLocation = dialog.interactionTarget,
+                sourceGate = dialog.interactionTarget,
                 destinationGate = gates.first()
             )) {
                 is Jump.JumpResult.Success -> {

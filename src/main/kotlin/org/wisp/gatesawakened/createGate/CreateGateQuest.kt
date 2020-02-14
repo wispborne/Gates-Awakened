@@ -94,7 +94,6 @@ object CreateGateQuest {
         }
 
         val fleetParams = FleetParamsV3(
-            null,
             gateToDefend.locationInHyperspace,
             Factions.DERELICT,
             null,
@@ -111,7 +110,7 @@ object CreateGateQuest {
         val fleet = FleetFactoryV3.createFleet(fleetParams)
             .apply {
                 isTransponderOn = false
-                name = "Gate Drone Fleet © The Reach"
+                name = "The Reach - Gate Drone Fleet"
             }
         gateToDefend.starSystem.addEntity(fleet)
         Misc.makeHostile(fleet)

@@ -1,11 +1,21 @@
 # Changelog
 
-## 2.0.3 (2020-1-5)
+## 2.2.0 (unreleased)
+
+- Set number of gate activation codes back to 3 (unintentionally increased to 6 in 2.0.0)
+
+## 2.1.0 (2020-2)
+
+- Fixes gate icon not showing sometimes (thanks to those who reported, including @Ner'zhulAI)
+- Fixes gate defence fleet spawning on star instead of gate (reported by @Ner'zhulAI)
+- Fixes invalid character in gate defence fleet name (reported by @Ner'zhulAI)
+
+## 2.0.3 (2020-1-7)
 
 - Added support for jumping to Boggled's player constructed gates
-- If no Remnant systems exist, second quest uses a non-Remnant system instead
+- If no Remnant systems exist, second quest uses a non-Remnant system instead (reported by Tiberiumkyle on the forums)
 - Fixed third quest intel showing planet type instead of name (reported by @Avanitia)
-- Possibly fixed quest intel icon showing incorrectly (unconfirmed)
+- Possibly fixed quest intel icon showing incorrectly (unconfirmed) (edit: nope didn't fix it, fixed in 2.1.0)
 - Fixed bug where declining a quest, then trying to start it again would crash
 - Fixed bug where final quest epilogue could be triggered by interacting with any active gate  (reported by @Histidine)
 - Adds forum id to version checker

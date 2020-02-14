@@ -1,9 +1,6 @@
 package org.wisp.gatesawakened
 
-import com.fs.starfarer.api.FactoryAPI
-import com.fs.starfarer.api.GameState
-import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.SettingsAPI
+import com.fs.starfarer.api.*
 import com.fs.starfarer.api.campaign.SectorAPI
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI
 import com.fs.starfarer.api.combat.CombatEngineAPI
@@ -39,6 +36,9 @@ class Di {
 
     val factory: FactoryAPI
         get() = Global.getFactory()
+
+    val soundPlayer: SoundPlayerAPI
+        get() = Global.getSoundPlayer()
 
     val errorReporter: CrashReporter =
         CrashReporter(modName = "Gates Awakened", modAuthor = "Wisp (aka Wispborne)", di = this)

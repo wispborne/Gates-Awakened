@@ -14,9 +14,10 @@ class DemoQuestCoordinator {
     /**
      * The tag that is applied to the planet the player must travel to.
      */
-    private static String TAG_DESTINATION_PLANET = "Demo_destination_planet";
+    private static String TAG_DESTINATION_PLANET = DemoBaseModPlugin.MOD_PREFIX + "destination_planet";
 
-    private static String FLAG_IS_COMPLETE = "Demo_isQuestComplete";
+    private static String FLAG_IS_COMPLETE = DemoBaseModPlugin.MOD_PREFIX + "isQuestComplete";
+    private static String FLAG_IS_STARTED = DemoBaseModPlugin.MOD_PREFIX + "isQuestStarted";
 
     static SectorEntityToken getDestinationPlanet() {
         return Global.getSector().getEntityById(TAG_DESTINATION_PLANET);
@@ -37,6 +38,8 @@ class DemoQuestCoordinator {
      * Player has accepted quest.
      */
     static void startQuest(SectorEntityToken sourceLocation) {
+        // Update the persistent data (stored in save game) to flag the quest as started
+        Global.getSector().getPersistentData().put(FLAG_IS_STARTED, true);
         Global.getSector().getIntelManager().addIntel(new DemoIntel(sourceLocation, getDestinationPlanet()));
     }
 
@@ -63,6 +66,14 @@ class DemoQuestCoordinator {
         if (demoIntel != null) {
             demoIntel.endAfterDelay();
         }
+    }
+
+    /**
+     * Whether the quest is started or not.
+     */
+    public static Boolean isStarted() {
+        // The "false" is the default value; if the flag doesn't exist, the quest will be considered not started
+        return (Boolean) Global.getSector().getPersistentData().getOrDefault(FLAG_IS_STARTED, false);
     }
 
     /**

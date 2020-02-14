@@ -1,9 +1,11 @@
 package org.wisp.demo;
 
 import com.fs.starfarer.api.BaseModPlugin;
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager;
 
 public class DemoBaseModPlugin extends BaseModPlugin {
+    public static final String MOD_PREFIX = "Demo_";
 
     /**
      * Called when the player loads a saved game.
@@ -22,5 +24,7 @@ public class DemoBaseModPlugin extends BaseModPlugin {
         if (DemoQuestCoordinator.shouldOfferQuest() && !barEventManager.hasEventCreator(DemoBarEventCreator.class)) {
             barEventManager.addEventCreator(new DemoBarEventCreator());
         }
+
+        Global.getSector().registerPlugin(new DemoCampaignPlugin());
     }
 }

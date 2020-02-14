@@ -83,6 +83,21 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
     override fun createInstanceOfSelf() = IntroQuestBeginning()
 }
 
+/**
+ * If you're reading this, there's a good chance you dislike the fact that this mod refuses to work if NGO owns any worlds.
+ * That's fine. This mod, like most mods, was developed in my free time and released for free.
+ * It is also licensed under the Apache 2 license, which means that it's perfectly fine to set "isNaziScumAlive = false"
+ * and then release a new version under your name. Put it on your pastebin or whatever. It's not my job to police how you play
+ * your game; use whatever mods you want and edit them as you like.
+ *
+ * The reason that this NGO interaction exists is captured well here: [https://twitter.com/HoldenShearer/status/1212727688085090305]
+ * [Archived version](https://web.archive.org/web/20200104121345/https://twitter.com/HoldenShearer/status/1212727688085090305)
+ *
+ * This may seem like a Streisand Effect, but it's not intentionally so.
+ * The goal is to step toward normalizing the rejection of extreme hate. This is not a slippery slope.
+ * Disagreements with other mod authors or other minor squabbles can be dealt with without affecting users.
+ * Allowing mods with Nazi idolisation to be part of the Starsector modiverse is far enough off the slippery slope as to be another mountain.
+ */
 private fun IntroQuestBeginning.displayNgoInteraction() {
     addPara {
         "As you move closer, the $manOrWoman silently collapses forward, their TriPad flickering out. You spin around to see a " +
