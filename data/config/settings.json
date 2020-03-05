@@ -12,7 +12,8 @@
       "GatesAwakened_gate": "graphics/intel/GatesAwakened_gate.png"
     },
     "GatesAwakenedFx": {
-      "emp_arcs": "graphics/fx/emp_arcs.png"
+      "gate_circle_inner": "graphics/gate/inner_circle.png",
+      "gate_circle_outer": "graphics/gate/outer_circle.png"
     }
   }
 }

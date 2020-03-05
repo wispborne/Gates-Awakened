@@ -1,15 +1,16 @@
 package org.wisp.gatesawakened.jumping
 
-import com.fs.starfarer.api.campaign.JumpPointAPI
+import com.fs.starfarer.api.Global
+import com.fs.starfarer.api.campaign.CampaignEngineLayers
 import com.fs.starfarer.api.campaign.SectorEntityToken
+import com.fs.starfarer.api.campaign.StarSystemAPI
+import com.fs.starfarer.api.combat.ViewportAPI
+import com.fs.starfarer.api.graphics.SpriteAPI
+import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin
 import com.fs.starfarer.api.util.Misc
-import data.scripts.plugins.MagicCampaignTrailPlugin
-import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.Gate
 import org.wisp.gatesawakened.di
-import java.awt.Color
-import kotlin.random.Random
 
 
 internal object Jump {
@@ -47,20 +48,114 @@ internal object Jump {
 //            1.5f
 //        )
 
-        if(sourceGate != null) {
-            renderEffects(sourceGate)
+        if (sourceGate != null) {
+//            renderEffectsMagicLib(sourceGate)
+//            renderEffectsGraphicsLib(sourceGate)
+            renderEffectsHomegrown(sourceGate, destinationGate)
         }
 
         // Jump player fleet to new system
-        di.sector.doHyperspaceTransition(
-            di.sector.playerFleet,
-            if (flyToGateBeforeJumping) sourceGate else null,
-            JumpPointAPI.JumpDestination(destinationGate, null)
-        )
+//        di.sector.doHyperspaceTransition(
+//            di.sector.playerFleet,
+//            if (flyToGateBeforeJumping) sourceGate else null,
+//            JumpPointAPI.JumpDestination(destinationGate, null)
+//        )
         return JumpResult.Success
     }
 
-    fun renderEffects(anchor: SectorEntityToken) {
+    private fun renderEffectsHomegrown(sourceGate: SectorEntityToken, destinationGate: Gate) {
+        sourceGate.containingLocation.addCustomEntity(
+            null,
+            "",
+            "GatesAwakened_innerCircle",
+            null,
+            destinationGate.starSystem
+        )
+            .apply {
+                this.setLocation(
+                    sourceGate.location.x,
+                    sourceGate.location.y
+                )
+                this.orbit = sourceGate.orbit.makeCopy()
+            }
+
+        sourceGate.containingLocation.addCustomEntity(
+            null,
+            "",
+            "GatesAwakened_outerCircle",
+            null
+        )
+            .apply {
+                this.setLocation(
+                    sourceGate.location.x,
+                    sourceGate.location.y
+                )
+                this.orbit = sourceGate.orbit.makeCopy()
+            }
+//        di.sector.addScript(WarpEffectScript(10f, di.sector.playerFleet))
+    }
+
+//    class WarpEffectScript(duration: Float, val location: SectorEntityToken) : EveryFrameScript {
+//        var remainingDuration: Float = duration
+//        val sprite = GenericCampaignEntitySprite(location, "graphics/gate/inner_circle.png", 1f)
+//
+//        override fun runWhilePaused(): Boolean = false
+//
+//        override fun isDone(): Boolean = remainingDuration <= 0f
+//
+//        override fun advance(amount: Float) {
+//            sprite.angle += 5f
+//            sprite.render(location.x, location.y)
+//
+//            remainingDuration -= amount
+//        }
+//    }
+
+    class InnerRingEntity : BaseCustomEntityPlugin() {
+
+        @Transient
+        private var sprite // needs to be transient - can't save sprites
+                : SpriteAPI? = null
+
+        override fun init(entity: SectorEntityToken?, pluginParams: Any?) {
+            super.init(entity, pluginParams)
+            //this.entity = entity;
+            readResolve()
+        }
+
+        // this methods gets called after the object is loaded from a savefile
+// init the sprite here
+        fun readResolve(): Any? {
+            sprite = Global.getSettings().getSprite("misc", "wormhole_ring")
+            return this
+        }
+
+        override fun advance(amount: Float) {}
+
+        override fun getRenderRange(): Float {
+            return entity.radius + 100f
+        }
+
+        override fun render(layer: CampaignEngineLayers?, viewport: ViewportAPI) {
+            val alphaMult = viewport.alphaMult
+            val loc = entity.location
+            sprite!!.setSize(128f, 128f)
+            sprite!!.alphaMult = alphaMult
+            sprite!!.setAdditiveBlend()
+            sprite!!.renderAtCenter(loc.x, loc.y)
+        }
+    }
+
+//    fun renderEffectsGraphicsLib(anchor: SectorEntityToken) {
+//        DistortionShader.addDistortion(
+//            RippleDistortion(anchor.location, Vector2f(1f, 1f))
+//                .apply {
+//                    this.setLifetime(3f)
+//                }
+//        )
+//    }
+
+    fun renderEffectsMagicLib(anchor: SectorEntityToken) {
 //        di.sector.addScript(MagicCampaignTrailPlugin())
 
 //        val jumpFxId = MagicCampaignTrailPlugin.getUniqueID()
