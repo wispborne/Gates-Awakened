@@ -16,6 +16,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
 ) {
     @Transient
     lateinit var dialog: InteractionDialogAPI
+    val navigator = PageNavigator()
 
     class Page<S>(
         val id: Any,
@@ -144,8 +145,6 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
 
     fun build(): InteractionDialog {
         return object : InteractionDialog() {
-            val navigator = PageNavigator()
-
             /**
              * Called when this class is instantiated.
              */
