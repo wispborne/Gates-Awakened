@@ -14,6 +14,9 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
     @Transient var pages: List<Page<S>>,
     private val shouldValidateOnDialogStart: Boolean = true
 ) {
+    @Transient
+    lateinit var dialog: InteractionDialogAPI
+
     class Page<S>(
         val id: Any,
         val image: Image? = null,
@@ -126,9 +129,6 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
         val displayHeight: Float = 300f
     )
 
-    lateinit var dialog: InteractionDialogAPI
-    val navigator = PageNavigator()
-
     fun addPara(
         textColor: Color = Misc.getTextColor(),
         highlightColor: Color = Misc.getHighlightColor(),
@@ -144,6 +144,7 @@ abstract class InteractionDefinition<S : InteractionDefinition<S>>(
 
     fun build(): InteractionDialog {
         return object : InteractionDialog() {
+            val navigator = PageNavigator()
 
             /**
              * Called when this class is instantiated.
