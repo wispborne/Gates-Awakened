@@ -1,12 +1,11 @@
 # Changelog
 
-
 ## 2.0.4 (2020-3-6)
 
 - Fixes gate icon not showing sometimes (thanks to those who reported, including @Ner'zhulAI)
 - Fixes gate defence fleet spawning on star instead of gate (reported by @Ner'zhulAI)
 - Fixes invalid character in gate defence fleet name (reported by @Ner'zhulAI)
-- Fixes crash when loading save game after taking a GA quest from the bar (reported by Atopo on the forums)
+- Fixes crash when loading save game after taking a GA quest from the bar (reported by Atopo on the forums and QA'ed by @Bribe Guntails)
 
 ## 2.0.3 (2020-1-7)
 
