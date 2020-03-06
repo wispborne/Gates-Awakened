@@ -92,15 +92,15 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
  * That's fine. This mod, like most mods, was developed in my free time and released for free.
  * It is also licensed under the Apache 2 license, which means that it's perfectly fine to set "isNaziScumAlive = false"
  * and then release a new version under your name. Put it on your pastebin or wherever. It's not my job to police how you play
- * your game; use whatever mods you want and edit them as you like.
+ * your game; use whatever mods you want and edit them as you like. Do understand, though, that if I'm creating opt-in content for free,
+ * I'm allow to set my own rules, just as you can set yours, such as not using GA, not using NGO, or not either either.
  *
  * The reason that this NGO interaction exists is captured well here: [https://twitter.com/HoldenShearer/status/1212727688085090305]
  * [Archived version](https://web.archive.org/web/20200104121345/https://twitter.com/HoldenShearer/status/1212727688085090305)
  *
- * This may seem like creating a Streisand Effect, but it's not intentionally so.
  * The goal is to step toward normalizing the rejection of extreme hate. This is not a slippery slope.
- * Disagreements with other mod authors or other minor squabbles can be dealt with without affecting users.
- * Allowing mods with Nazi idolisation to be part of the Starsector modiverse is far enough off the slippery slope as to be another mountain.
+ * Disagreements with other mod authors or other minor squabbles can and should be dealt with without hostile code changes.
+ * Allowing mods with unironic Nazi idolisation to be part of the Starsector modiverse is far enough off the slippery slope as to be another mountain.
  */
 private fun IntroQuestBeginning.displayNgoInteraction() {
     addPara {
