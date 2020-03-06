@@ -3,13 +3,9 @@ package org.wisp.gatesawakened.jumping
 import com.fs.starfarer.api.campaign.JumpPointAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.util.Misc
-import data.scripts.plugins.MagicCampaignTrailPlugin
-import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.Gate
 import org.wisp.gatesawakened.di
-import java.awt.Color
-import kotlin.random.Random
 
 
 internal object Jump {
@@ -47,9 +43,9 @@ internal object Jump {
 //            1.5f
 //        )
 
-        if(sourceGate != null) {
-            renderEffects(sourceGate)
-        }
+//        if(sourceGate != null) {
+//            renderEffects(sourceGate)
+//        }
 
         // Jump player fleet to new system
         di.sector.doHyperspaceTransition(
@@ -61,7 +57,7 @@ internal object Jump {
     }
 
     fun renderEffects(anchor: SectorEntityToken) {
-        di.sector.addScript(MagicCampaignTrailPlugin())
+//        di.sector.addScript(MagicCampaignTrailPlugin())
 
 //        val jumpFxId = MagicCampaignTrailPlugin.getUniqueID()
 //        MagicCampaignTrailPlugin.AddTrailMemberSimple(
