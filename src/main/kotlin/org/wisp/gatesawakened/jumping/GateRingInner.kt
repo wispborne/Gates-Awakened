@@ -8,21 +8,28 @@ import com.fs.starfarer.api.campaign.StarSystemAPI
 import com.fs.starfarer.api.combat.ViewportAPI
 import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin
+import com.fs.starfarer.api.util.FlickerUtilV2
 import com.fs.starfarer.campaign.CampaignPlanet
 import com.fs.starfarer.combat.CombatViewport
 import com.fs.starfarer.combat.entities.terrain.Planet
 import org.wisp.gatesawakened.di
+import kotlin.math.sin
 
 class GateRingInner : BaseCustomEntityPlugin() {
     private lateinit var starSystemId: String
+    private var timeLeftVisibleInMs: Float = 5000f
 
     @Transient
     private lateinit var sprite: SpriteAPI
 
     @Transient
     private lateinit var starSystemAPI: StarSystemAPI
+
     @Transient
     private lateinit var star: Planet
+
+    @Transient
+    private lateinit var flickerer: FlickerUtilV2
 
     override fun init(entity: SectorEntityToken?, pluginParams: Any?) {
         super.init(entity, pluginParams)
@@ -43,9 +50,22 @@ class GateRingInner : BaseCustomEntityPlugin() {
         starSystemAPI = (di.sector.getStarSystem(starSystemId) as StarSystemAPI)
         star = (starSystemAPI.star as CampaignPlanet).graphics.clone()
             .run { Planet(this.spec, this.radius, this.gravity, entity.location) }
+        flickerer = FlickerUtilV2()
 //        sprite = di.settings.getSprite(spriteName)
 
         return this
+    }
+
+    override fun advance(amount: Float) {
+        super.advance(amount)
+        timeLeftVisibleInMs -= amount
+//        flickerer.advance(amount)
+//
+//        if (flickerer.numBursts == 0) {
+//            flickerer.wait = 0f
+//            flickerer.numBursts = 5
+//            flickerer.newBurst()
+//        }
     }
 
     override fun render(layer: CampaignEngineLayers, viewport: ViewportAPI) {
@@ -53,17 +73,21 @@ class GateRingInner : BaseCustomEntityPlugin() {
 
         val alphaMult = viewport.alphaMult
         val loc = entity.location
-        sprite.alphaMult = alphaMult
+        val pulseFrequency = timeLeftVisibleInMs * .1f // This needs to increase when closer to zero
+        val pulseAmplitudeMod = 0.5f
+        sprite.alphaMult = (sin(pulseFrequency) * pulseAmplitudeMod) + .5f //alphaMult
         sprite.setNormalBlend()
         sprite.color = starSystemAPI.lightColor
         sprite.angle += .5f
         sprite.renderAtCenter(loc.x, loc.y)
 
+//        sprite.alphaMult = flickerer.brightness.absoluteValue
+
         viewport as CombatViewport
         star.setLoc(loc)
 
 //        if (layer == CampaignEngineLayers.PLANETS) {
-        star.renderSphere(viewport)
+//        star.renderSphere(viewport)
 //        } else if (layer == CampaignEngineLayers.ABOVE) {
 //        star.renderStarGlow(viewport)
 //        }
