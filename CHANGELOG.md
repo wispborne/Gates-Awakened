@@ -1,10 +1,7 @@
 # Changelog
 
-## 2.2.0 (unreleased)
 
-- Set number of gate activation codes back to 3 (unintentionally increased to 6 in 2.0.0)
-
-## 2.1.0 (2020-2)
+## 2.0.4 (2020-3-6)
 
 - Fixes gate icon not showing sometimes (thanks to those who reported, including @Ner'zhulAI)
 - Fixes gate defence fleet spawning on star instead of gate (reported by @Ner'zhulAI)

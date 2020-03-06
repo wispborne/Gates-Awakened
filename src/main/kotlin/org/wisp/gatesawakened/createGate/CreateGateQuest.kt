@@ -110,7 +110,8 @@ object CreateGateQuest {
         val fleet = FleetFactoryV3.createFleet(fleetParams)
             .apply {
                 isTransponderOn = false
-                name = "The Reach - Gate Drone Fleet"
+                setLocation(gateToDefend.location.x, gateToDefend.location.y)
+                name = "Gate Drone Fleet of The Reach"
             }
         gateToDefend.starSystem.addEntity(fleet)
         Misc.makeHostile(fleet)
