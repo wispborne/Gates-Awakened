@@ -1,0 +1,9 @@
+{
+	"GatesAwakened_jump": [
+		{
+			"file": "sounds/sfx_gates_awakened/jump.ogg",
+			"pitch": 1,
+			"volume": 1
+		}
+	]
+}

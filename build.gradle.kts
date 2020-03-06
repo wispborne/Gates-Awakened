@@ -29,13 +29,14 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersionInLazyLib")
 
     compileOnly(fileTree("$starsectorModDirectory/LazyLib/jars") { include("*.jar") })
+//    compileOnly(fileTree("$starsectorModDirectory/MagicLib/jars") { include("*.jar") })
     compileOnly(fileTree("$starsectorModDirectory/Console Commands/jars") { include("*.jar") })
 
     // Include to be able to browse the non-decompiled source
 //    compileOnly("starfarer:starfarer-api:1.0")
     // Starsector jars and dependencies
     compileOnly(fileTree(starsectorCoreDirectory) {
-        include("*.jar")
+        include("*.jar", "*.zip")
 //        exclude("*_obf.jar")
     })
 
@@ -43,11 +44,6 @@ dependencies {
     implementation("ch.tutteli.kbox:kbox:0.13.0") {
         exclude("org.jetbrains.kotlin")
     }
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
-    testImplementation("org.assertj:assertj-core:3.11.1")
-    testImplementation("io.mockk:mockk:1.9")
 }
 
 tasks {

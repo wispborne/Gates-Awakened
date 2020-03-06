@@ -3,7 +3,7 @@
     "name": "Gates Awakened",
     "author": "Wispborne",
     "utility": "false",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": "Adds a short series of missions that open up instantaneous travel between Gates.",
     "gameVersion": "0.9.1a",
     "jars":["jars/Gates_Awakened.jar"],

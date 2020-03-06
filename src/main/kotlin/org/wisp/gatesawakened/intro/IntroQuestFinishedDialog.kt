@@ -72,7 +72,7 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
                     dialog.dismiss()
                     di.sector.isPaused = false
                     Jump.jumpPlayer(
-                        sourceLocation = null,
+                        sourceGate = null,
                         destinationGate = coreGate,
                         isFuelRequired = false
                     )
