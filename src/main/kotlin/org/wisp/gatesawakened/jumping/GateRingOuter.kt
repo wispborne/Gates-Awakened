@@ -11,10 +11,23 @@ import org.wisp.gatesawakened.di
 
 class GateRingOuter : BaseCustomEntityPlugin() {
     @Transient
-    private lateinit var sprite: SpriteAPI
+    var sprite: SpriteAPI? = null
+
+    @Transient
+    private var jumpAnimation: JumpAnimation? = null
 
     override fun init(entity: SectorEntityToken?, pluginParams: Any?) {
         super.init(entity, pluginParams)
+
+        // Circular dependency bad, but if save/reload during animation we'll just lose the animation
+        // so no need to overengineer this by making this into an EveryFrameScript
+        if (pluginParams !is JumpAnimation) {
+            throw ClassCastException("GateRingOuter's pluginParams must be a JumpAnimation")
+        }
+
+        jumpAnimation = pluginParams
+        jumpAnimation?.gateRingOuter = this
+
         readResolve()
     }
 
@@ -27,11 +40,7 @@ class GateRingOuter : BaseCustomEntityPlugin() {
     override fun render(layer: CampaignEngineLayers, viewport: ViewportAPI) {
         super.render(layer, viewport)
 
-        val alphaMult = viewport.alphaMult
         val loc = entity.location
-        sprite.alphaMult = alphaMult
-        sprite.setAdditiveBlend()
-        sprite.angle -= .5f
-        sprite.renderAtCenter(loc.x, loc.y)
+        sprite!!.renderAtCenter(loc.x, loc.y)
     }
 }

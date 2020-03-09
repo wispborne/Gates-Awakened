@@ -1,12 +1,6 @@
 package org.wisp.gatesawakened.jumping
 
-import com.fs.starfarer.api.Global
-import com.fs.starfarer.api.campaign.CampaignEngineLayers
 import com.fs.starfarer.api.campaign.SectorEntityToken
-import com.fs.starfarer.api.campaign.StarSystemAPI
-import com.fs.starfarer.api.combat.ViewportAPI
-import com.fs.starfarer.api.graphics.SpriteAPI
-import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.Gate
@@ -64,13 +58,14 @@ internal object Jump {
     }
 
     private fun renderEffectsHomegrown(sourceGate: SectorEntityToken, destinationGate: Gate) {
+        val jumpAnimation = JumpAnimation()
         sourceGate.containingLocation.addCustomEntity(
-            null,
-            "",
-            "GatesAwakened_innerCircle",
-            null,
-            destinationGate.starSystem
-        )
+                null,
+                "",
+                "GatesAwakened_innerCircle",
+                null,
+                jumpAnimation
+            )
             .apply {
                 this.setLocation(
                     sourceGate.location.x,
@@ -80,11 +75,12 @@ internal object Jump {
             }
 
         sourceGate.containingLocation.addCustomEntity(
-            null,
-            "",
-            "GatesAwakened_outerCircle",
-            null
-        )
+                null,
+                "",
+                "GatesAwakened_outerCircle",
+                null,
+                jumpAnimation
+            )
             .apply {
                 this.setLocation(
                     sourceGate.location.x,
@@ -110,41 +106,6 @@ internal object Jump {
 //            remainingDuration -= amount
 //        }
 //    }
-
-    class InnerRingEntity : BaseCustomEntityPlugin() {
-
-        @Transient
-        private var sprite // needs to be transient - can't save sprites
-                : SpriteAPI? = null
-
-        override fun init(entity: SectorEntityToken?, pluginParams: Any?) {
-            super.init(entity, pluginParams)
-            //this.entity = entity;
-            readResolve()
-        }
-
-        // this methods gets called after the object is loaded from a savefile
-// init the sprite here
-        fun readResolve(): Any? {
-            sprite = Global.getSettings().getSprite("misc", "wormhole_ring")
-            return this
-        }
-
-        override fun advance(amount: Float) {}
-
-        override fun getRenderRange(): Float {
-            return entity.radius + 100f
-        }
-
-        override fun render(layer: CampaignEngineLayers?, viewport: ViewportAPI) {
-            val alphaMult = viewport.alphaMult
-            val loc = entity.location
-            sprite!!.setSize(128f, 128f)
-            sprite!!.alphaMult = alphaMult
-            sprite!!.setAdditiveBlend()
-            sprite!!.renderAtCenter(loc.x, loc.y)
-        }
-    }
 
 //    fun renderEffectsGraphicsLib(anchor: SectorEntityToken) {
 //        DistortionShader.addDistortion(
