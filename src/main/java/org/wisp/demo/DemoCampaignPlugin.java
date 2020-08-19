@@ -24,7 +24,7 @@ public class DemoCampaignPlugin extends BaseCampaignPlugin {
         if (DemoQuestCoordinator.isStarted()
                 && !DemoQuestCoordinator.isComplete()
                 && interactionTarget.getId().equals(DemoQuestCoordinator.getDestinationPlanet().getId())) {
-            return new PluginPick<>(new DemoEndDialog(), PickPriority.MOD_SET);
+            return new PluginPick<InteractionDialogPlugin>(new DemoEndDialog(), PickPriority.MOD_SET);
         }
 
         // Otherwise, return null to show that some other `CampaignPlugin` class should handle the interaction

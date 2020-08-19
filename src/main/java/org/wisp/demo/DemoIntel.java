@@ -77,6 +77,6 @@ public class DemoIntel extends BreadcrumbIntel {
      */
     @Override
     public Set<String> getIntelTags(SectorMapAPI map) {
-        return new HashSet<>(Arrays.asList(Tags.INTEL_EXPLORATION, Tags.INTEL_STORY));
+        return new HashSet<String>(Arrays.asList(Tags.INTEL_EXPLORATION, Tags.INTEL_STORY));
     }
 }

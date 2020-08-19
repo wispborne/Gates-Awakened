@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.5 (2020-8-18)
+- Adds a better error message if LazyLib is missing (this patch dedicated to @MesoTroniK)
+
 ## 2.0.4 (2020-3-6)
 
 - Fixes gate icon not showing sometimes (thanks to those who reported, including @Ner'zhulAI)

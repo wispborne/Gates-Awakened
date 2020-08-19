@@ -1,5 +1,5 @@
 id,trigger,conditions,script,text,options,notes
-"#RULESET_NAME Gates Awakened",,,,,,
+#RULESET_NAME Gates Awakened,,,,,,
+GatesAwakened_aaaaaLazyLibCheck,,,DearPlayer_PleaseAdd_LazyLib_ToUseGatesAwakened,,,
 GatesAwakened_gateOpenDialog,OpenInteractionDialog,"$tag:gate
-$tag:GatesAwakened__gate_activated score:10","JumpDialog",,"gateLeave:Leave",
-
+$tag:GatesAwakened__gate_activated score:10",JumpDialog,,gateLeave:Leave,
