@@ -1,5 +1,6 @@
 package org.wisp.gatesawakened.jumping
 
+import com.fs.starfarer.api.campaign.JumpPointAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.Common
@@ -45,19 +46,21 @@ internal object Jump {
         if (sourceGate != null) {
 //            renderEffectsMagicLib(sourceGate)
 //            renderEffectsGraphicsLib(sourceGate)
-            renderEffectsHomegrown(sourceGate, destinationGate)
-        }
+            launch {
+                renderEffectsHomegrown(sourceGate, destinationGate)
 
-        // Jump player fleet to new system
-//        di.sector.doHyperspaceTransition(
-//            di.sector.playerFleet,
-//            if (flyToGateBeforeJumping) sourceGate else null,
-//            JumpPointAPI.JumpDestination(destinationGate, null)
-//        )
+                // Jump player fleet to new system
+                di.sector.doHyperspaceTransition(
+                    di.sector.playerFleet,
+                    if (flyToGateBeforeJumping) sourceGate else null,
+                    JumpPointAPI.JumpDestination(destinationGate, null)
+                )
+            }
+        }
         return JumpResult.Success
     }
 
-    private fun renderEffectsHomegrown(sourceGate: SectorEntityToken, destinationGate: Gate) {
+    private suspend fun renderEffectsHomegrown(sourceGate: SectorEntityToken, destinationGate: Gate) {
         val jumpAnimation = JumpAnimation()
         sourceGate.containingLocation.addCustomEntity(
                 null,
