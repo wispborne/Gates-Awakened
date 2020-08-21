@@ -5,8 +5,8 @@ import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import org.wisp.gatesawakened.constants.MiscKt;
 
-public class ModVerificationPlugin extends BaseModPlugin {
-    private LifecyclePlugin mainPlugin = null;
+public class ModVerificationPlugin extends BaseModPlugin implements ILifecyclePlugin {
+    private ILifecyclePlugin mainPlugin = null;
 
     @Override
     public void onApplicationLoad() throws Exception {
@@ -14,22 +14,21 @@ public class ModVerificationPlugin extends BaseModPlugin {
 
         if (Global.getSettings().getModManager().isModEnabled(MiscKt.LazyLibId)) {
             mainPlugin = new LifecyclePlugin();
-            mainPlugin.onApplicationLoad();
         } else {
             throw new RuntimeException("LazyLib is required to run Gates Awakened.");
         }
     }
 
     @Override
-    public void onNewGameAfterTimePass() {
-        super.onNewGameAfterTimePass();
-        mainPlugin.onNewGameAfterTimePass();
+    public void onGameLoad(boolean newGame) {
+        super.onGameLoad(newGame);
+        mainPlugin.onGameLoad(newGame);
     }
 
     @Override
-    public void onNewGame() {
-        super.onNewGame();
-        mainPlugin.onNewGame();
+    public void onNewGameAfterTimePass() {
+        super.onNewGameAfterTimePass();
+        mainPlugin.onNewGameAfterTimePass();
     }
 
     @Override

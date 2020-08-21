@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.0.5.1 (2020-8-21)
+- Fixes interactions with gates not working (thanks to @Apky for report)
+
 ## 2.0.5 (2020-8-18)
 - Adds a better error message if LazyLib is missing (this patch dedicated to @MesoTroniK)
 

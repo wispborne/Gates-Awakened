@@ -1,7 +1,5 @@
 package org.wisp.gatesawakened
 
-import com.fs.starfarer.api.BaseModPlugin
-import com.fs.starfarer.api.Global
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
@@ -23,11 +21,21 @@ import org.wisp.gatesawakened.midgame.MidgameIntel
 import org.wisp.gatesawakened.midgame.MidgameQuestBeginning
 import org.wisp.gatesawakened.questLib.BarEventDefinition
 
-class LifecyclePlugin : BaseModPlugin() {
+interface ILifecyclePlugin {
+    fun onNewGameAfterTimePass()
+    fun onGameLoad(newGame: Boolean)
+    fun afterGameSave()
+    fun beforeGameSave()
+
+    /**
+     * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
+     */
+    fun configureXStream(x: XStream)
+}
+
+class LifecyclePlugin : ILifecyclePlugin {
 
     override fun onNewGameAfterTimePass() {
-        super.onNewGameAfterTimePass()
-
         if (!Intro.haveGatesBeenTagged()) {
             Intro.findAndTagIntroGatePair()
         }
@@ -38,8 +46,6 @@ class LifecyclePlugin : BaseModPlugin() {
     }
 
     override fun onGameLoad(newGame: Boolean) {
-        super.onGameLoad(newGame)
-
         // When the game (re)loads, we want to grab the new instances of everything, especially the new sector.
         di = Di()
 //        Global.getSettings().modManager.enabledModPlugins.add(ModVerificationPlugin())
@@ -73,13 +79,10 @@ class LifecyclePlugin : BaseModPlugin() {
     }
 
     override fun afterGameSave() {
-        super.afterGameSave()
         addQuestStarts()
     }
 
     override fun beforeGameSave() {
-        super.beforeGameSave()
-
         // Remove quest bar events so they don't get into save file.
         // It's a pain to migrate after refactoring and they are stateless
         // so there's no reason for them to be in the save file.
@@ -93,8 +96,6 @@ class LifecyclePlugin : BaseModPlugin() {
      * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
      */
     override fun configureXStream(x: XStream) {
-        super.configureXStream(x)
-
         // DO NOT CHANGE THESE STRINGS, DOING SO WILL BREAK SAVE GAMES
         val aliases = listOf(
             IntroIntel::class to "IntroIntel",
