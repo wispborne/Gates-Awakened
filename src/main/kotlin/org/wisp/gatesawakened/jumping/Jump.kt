@@ -3,6 +3,9 @@ package org.wisp.gatesawakened.jumping
 import com.fs.starfarer.api.campaign.JumpPointAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.util.Misc
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.Gate
 import org.wisp.gatesawakened.di
@@ -46,8 +49,10 @@ internal object Jump {
         if (sourceGate != null) {
 //            renderEffectsMagicLib(sourceGate)
 //            renderEffectsGraphicsLib(sourceGate)
-            launch {
+            GlobalScope.launch {
                 renderEffectsHomegrown(sourceGate, destinationGate)
+
+                delay(3200)
 
                 // Jump player fleet to new system
                 di.sector.doHyperspaceTransition(
