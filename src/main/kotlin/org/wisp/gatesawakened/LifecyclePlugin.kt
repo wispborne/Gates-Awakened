@@ -1,6 +1,5 @@
 package org.wisp.gatesawakened
 
-import com.fs.starfarer.api.BaseModPlugin
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
 import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
@@ -22,11 +21,21 @@ import org.wisp.gatesawakened.midgame.MidgameIntel
 import org.wisp.gatesawakened.midgame.MidgameQuestBeginning
 import org.wisp.gatesawakened.questLib.BarEventDefinition
 
-class LifecyclePlugin : BaseModPlugin() {
+interface ILifecyclePlugin {
+    fun onNewGameAfterTimePass()
+    fun onGameLoad(newGame: Boolean)
+    fun afterGameSave()
+    fun beforeGameSave()
+
+    /**
+     * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
+     */
+    fun configureXStream(x: XStream)
+}
+
+class LifecyclePlugin : ILifecyclePlugin {
 
     override fun onNewGameAfterTimePass() {
-        super.onNewGameAfterTimePass()
-
         if (!Intro.haveGatesBeenTagged()) {
             Intro.findAndTagIntroGatePair()
         }
@@ -37,10 +46,9 @@ class LifecyclePlugin : BaseModPlugin() {
     }
 
     override fun onGameLoad(newGame: Boolean) {
-        super.onGameLoad(newGame)
-
         // When the game (re)loads, we want to grab the new instances of everything, especially the new sector.
         di = Di()
+//        Global.getSettings().modManager.enabledModPlugins.add(ModVerificationPlugin())
 
         // Keep track of what gates this mod can interact with
         // Other mods may blacklist systems at will.
@@ -71,13 +79,10 @@ class LifecyclePlugin : BaseModPlugin() {
     }
 
     override fun afterGameSave() {
-        super.afterGameSave()
         addQuestStarts()
     }
 
     override fun beforeGameSave() {
-        super.beforeGameSave()
-
         // Remove quest bar events so they don't get into save file.
         // It's a pain to migrate after refactoring and they are stateless
         // so there's no reason for them to be in the save file.
@@ -85,6 +90,30 @@ class LifecyclePlugin : BaseModPlugin() {
         bar.active.items
             .filter { it is BarEventDefinition<*>.BarEvent || it is BarEventDefinition<*> }
             .forEach { bar.active.remove(it) }
+    }
+
+    /**
+     * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
+     */
+    override fun configureXStream(x: XStream) {
+        // DO NOT CHANGE THESE STRINGS, DOING SO WILL BREAK SAVE GAMES
+        val aliases = listOf(
+            IntroIntel::class to "IntroIntel",
+            IntroQuestBeginning::class to "IntroBarEvent",
+            IntroBarEventCreator::class to "IntroBarEventCreator",
+            MidgameQuestBeginning::class to "MidgameQuestBeginning",
+            MidgameBarEventCreator::class to "MidgameBarEventCreator",
+            MidgameIntel::class to "MidgameIntel",
+            CreateGateQuestStart::class to "CreateGateQuestStart",
+            CreateGateQuestIntel::class to "CreateGateQuestIntel",
+            GateDeliveredIntel::class to "GateCreatedIntel",
+            CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
+            ActiveGateIntel::class to "ActiveGateIntel",
+            CampaignPlugin::class to "CampaignPlugin"
+        )
+
+        // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
+        aliases.forEach { x.alias("$MOD_PREFIX${it.second}", it.first.java) }
     }
 
     private fun addQuestStarts() {
@@ -147,32 +176,6 @@ class LifecyclePlugin : BaseModPlugin() {
                 system.removeTag(Tags.TAG_BLACKLISTED_SYSTEM)
             }
         }
-    }
-
-    /**
-     * Tell the XML serializer to use custom naming, so that moving or renaming classes doesn't break saves.
-     */
-    override fun configureXStream(x: XStream) {
-        super.configureXStream(x)
-
-        // DO NOT CHANGE THESE STRINGS, DOING SO WILL BREAK SAVE GAMES
-        val aliases = listOf(
-            IntroIntel::class to "IntroIntel",
-            IntroQuestBeginning::class to "IntroBarEvent",
-            IntroBarEventCreator::class to "IntroBarEventCreator",
-            MidgameQuestBeginning::class to "MidgameQuestBeginning",
-            MidgameBarEventCreator::class to "MidgameBarEventCreator",
-            MidgameIntel::class to "MidgameIntel",
-            CreateGateQuestStart::class to "CreateGateQuestStart",
-            CreateGateQuestIntel::class to "CreateGateQuestIntel",
-            GateDeliveredIntel::class to "GateCreatedIntel",
-            CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
-            ActiveGateIntel::class to "ActiveGateIntel",
-            CampaignPlugin::class to "CampaignPlugin"
-        )
-
-        // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
-        aliases.forEach { x.alias("$MOD_PREFIX${it.second}", it.first.java) }
     }
 
     /**

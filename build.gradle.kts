@@ -83,3 +83,8 @@ tasks {
         kotlinOptions.jvmTarget = "1.6"
     }
 }
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_6
+    targetCompatibility = JavaVersion.VERSION_1_6
+}
