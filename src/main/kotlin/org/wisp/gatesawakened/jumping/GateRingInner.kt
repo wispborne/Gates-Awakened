@@ -46,6 +46,9 @@ class GateRingInner : BaseCustomEntityPlugin() {
         return this
     }
 
+    /**
+     * Only call this from [GateRingInner], not [GateRingOuter], so that it isn't triggered twice per tick.
+     */
     override fun advance(amount: Float) {
         super.advance(amount)
         jumpAnimation?.advance(amount)

@@ -29,7 +29,7 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                     "and it looks like $heOrShe is staring at an image of a ${mark("Gate")}."
         }
     },
-    textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
+    textToStartInteraction = { "Move nearer for a closer look at the Gate on the $manOrWoman's screen." },
     onInteractionStarted = {
         destinationSystem = Intro.fringeGate?.starSystem!!
     },
