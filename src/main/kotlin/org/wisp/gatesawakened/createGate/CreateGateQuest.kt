@@ -12,7 +12,7 @@ import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createToken
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.midgame.Midgame
-import org.wisp.gatesawakened.wispLib.PersistentData
+import org.wisp.gatesawakened.wispLib.PersistentNullableData
 
 object CreateGateQuest {
     fun shouldOfferQuest(): Boolean =
@@ -23,17 +23,17 @@ object CreateGateQuest {
                 && (1..3).random() == 1 // 33% chance.
     // If you are at endgame and really want to trigger the quest, just keep interacting with a Gate, then leaving
 
-    var gateSummonedTimestamp: Long? by PersistentData("create_gate_hauler_summon_timestamp")
+    var gateSummonedTimestamp: Long? by PersistentNullableData("create_gate_hauler_summon_timestamp")
 
-    var wasGateSummoned: Boolean? by PersistentData("create_gate_was_gate_summoned")
+    var wasGateSummoned: Boolean? by PersistentNullableData("create_gate_was_gate_summoned")
 
-    var summonLocation: SectorEntityToken? by PersistentData("create_gate_location_for_gate")
+    var summonLocation: SectorEntityToken? by PersistentNullableData("create_gate_location_for_gate")
 
-    var hasQuestBeenStarted: Boolean? by PersistentData("create_gate_in_progress", defaultValue = false)
+    var hasQuestBeenStarted: Boolean? by PersistentNullableData("create_gate_in_progress", defaultValue = false)
 
-    var wasGateDelivered: Boolean? by PersistentData("create_gate_gate_delivered", defaultValue = false)
+    var wasGateDelivered: Boolean? by PersistentNullableData("create_gate_gate_delivered", defaultValue = false)
 
-    var wasQuestCompleted: Boolean? by PersistentData("create_gate_done", defaultValue = false)
+    var wasQuestCompleted: Boolean? by PersistentNullableData("create_gate_done", defaultValue = false)
 
     var numberOfDaysToDeliverGate = di.settings.getInt("GatesAwakened_numberOfDaysToDeliverGate")
 

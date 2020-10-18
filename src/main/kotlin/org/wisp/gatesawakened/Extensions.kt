@@ -11,6 +11,9 @@ import kotlin.math.pow
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
     this.addPara(text, Misc.getHighlightColor(), *highlights)
 
+/**
+ * Same as [TooltipMakerAPI.addPara].
+ */
 internal fun TooltipMakerAPI.appendPara(text: String, padding: Float = 0f, vararg highlights: String) =
     this.addPara(text, padding, Misc.getHighlightColor(), *highlights)
 

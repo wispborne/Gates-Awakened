@@ -68,33 +68,42 @@ class CreateGateQuestIntel : IntelDefinition(
     override fun createConfirmationPrompt(buttonId: Any?, prompt: TooltipMakerAPI) {
         super.createConfirmationPrompt(buttonId, prompt)
 
-        prompt.addPara {
-            "Are you sure that you would like to command the waiting Gate Hauler to " +
-                    mark("place a Gate here") + "?"
-        }
+        if (buttonId == BUTTON_CHOOSE) {
+            prompt.addPara {
+                "Are you sure that you would like to command the waiting Gate Hauler to " +
+                        mark("place a Gate here") + "?"
+            }
 
-        prompt.addPara {
-            "It will take " + mark(CreateGateQuest.numberOfDaysToDeliverGate.toString()) + " days to maneuver the Gate into place " +
-                    "and it cannot be stopped once started."
+            prompt.addPara {
+                "It will take " + mark(CreateGateQuest.numberOfDaysToDeliverGate.toString()) + " days to maneuver the Gate into place " +
+                        "and it cannot be stopped once started."
+            }
         }
     }
 
     override fun getConfirmText(buttonId: Any?): String {
-        return "Place Gate"
+        return if (buttonId == BUTTON_CHOOSE) {
+            "Place Gate"
+        } else String.empty
     }
 
     override fun buttonPressConfirmed(buttonId: Any?, ui: IntelUIAPI) {
         super.buttonPressConfirmed(buttonId, ui)
 
-        val reasonGateCannotBePlacedAtLocation =
-            reasonGateCannotBePlacedAtEntityLocation(entityToPlaceGateOn = di.sector.playerFleet.createToken())
+        if (buttonId == BUTTON_CHOOSE) {
+            val reasonGateCannotBePlacedAtLocation =
+                reasonGateCannotBePlacedAtEntityLocation(entityToPlaceGateOn = di.sector.playerFleet.createToken())
 
-        if (reasonGateCannotBePlacedAtLocation != null) {
-            ui.showDialog(di.sector.playerFleet, CannotSummonGateHereDialog(reasonGateCannotBePlacedAtLocation).build())
-        } else {
-            ui.showDialog(di.sector.playerFleet, SummoningBegunDialog().build())
-            CreateGateQuest.placeGateAtPlayerLocationAfterDelay()
-            ui.recreateIntelUI()
+            if (reasonGateCannotBePlacedAtLocation != null) {
+                ui.showDialog(
+                    di.sector.playerFleet,
+                    CannotSummonGateHereDialog(reasonGateCannotBePlacedAtLocation).build()
+                )
+            } else {
+                ui.showDialog(di.sector.playerFleet, SummoningBegunDialog().build())
+                CreateGateQuest.placeGateAtPlayerLocationAfterDelay()
+                ui.recreateIntelUI()
+            }
         }
     }
 
@@ -119,7 +128,8 @@ class CreateGateQuestIntel : IntelDefinition(
                 )
             } -> CreateGateQuest.Rules.Proximity
             di.sector.playerFleet.isInHyperspace || di.sector.playerFleet.isInHyperspaceTransition -> CreateGateQuest.Rules.Hyperspace
-            di.sector.playerFleet.starSystem.getCustomEntitiesWithTag(Tags.GATE).any() -> CreateGateQuest.Rules.MultipleGates
+            di.sector.playerFleet.starSystem.getCustomEntitiesWithTag(Tags.GATE)
+                .any() -> CreateGateQuest.Rules.MultipleGates
             else -> null
         }
     }

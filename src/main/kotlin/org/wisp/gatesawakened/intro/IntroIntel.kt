@@ -1,18 +1,13 @@
 package org.wisp.gatesawakened.intro
 
 import com.fs.starfarer.api.campaign.SectorEntityToken
-import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin
 import com.fs.starfarer.api.impl.campaign.ids.Tags
-import com.fs.starfarer.api.impl.campaign.intel.misc.BreadcrumbIntel
-import com.fs.starfarer.api.ui.SectorMapAPI
-import com.fs.starfarer.api.ui.TooltipMakerAPI
 import com.fs.starfarer.api.util.Misc
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.empty
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.questLib.IntelDefinition
 import org.wisp.gatesawakened.wispLib.addPara
-import java.awt.Color
 
 
 class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
@@ -31,13 +26,13 @@ class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
 
         info.addPara { "You saw an image of a Gate and the name of a system on a tripad in a bar." }
 
-        if (!Intro.wasQuestCompleted) {
+        if (!IntroQuest.wasQuestCompleted) {
             info.addPara { "Perhaps it's worth a visit to ${mark(target.starSystem.baseName)} to search for a Gate." }
         } else {
             info.addPara {
                 "You followed a Gate in ${mark(
-                    Intro.fringeGate?.starSystem?.baseName ?: "the fringe"
-                )} that led to ${mark(Intro.coreGate?.starSystem?.baseName ?: "the core")}, " +
+                    IntroQuest.fringeGate?.starSystem?.baseName ?: "the fringe"
+                )} that led to ${mark(IntroQuest.coreGate?.starSystem?.baseName ?: "the core")}, " +
                         "a discovery best kept quiet lest the factions interrogate you."
             }
             info.addPara {
@@ -60,7 +55,7 @@ class IntroIntel(private val target: SectorEntityToken) : IntelDefinition(
         super.advance(amount)
 
         // If it's not already ending or ended and the quest was completed, mark the quest as complete
-        if ((!isEnding || !isEnded) && Intro.wasQuestCompleted) {
+        if ((!isEnding || !isEnded) && IntroQuest.wasQuestCompleted) {
             endAfterDelay()
         }
     }

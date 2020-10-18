@@ -4,7 +4,7 @@ import org.lazywizard.console.BaseCommand
 import org.lazywizard.console.Console
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.intro.Intro
+import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.midgame.Midgame
 
 class GatesAwakenedViewInfo : BaseCommand {
@@ -13,11 +13,11 @@ class GatesAwakenedViewInfo : BaseCommand {
 
         info.appendln("Gates Awakened Debug Info")
         info.appendln("-------")
-        info.appendln("Intro quest gates chosen? ${Intro.haveGatesBeenTagged()}")
-        info.appendln("Intro quest started? ${Intro.hasQuestBeenStarted}")
-        info.appendln("Intro quest done? ${Intro.wasQuestCompleted}")
-        info.appendln("Intro quest core gate: ${Intro.coreGate?.fullName} in ${Intro.coreGate?.containingLocation?.name}")
-        info.appendln("Intro quest fringe gate: ${Intro.fringeGate?.fullName} in ${Intro.fringeGate?.containingLocation?.name}")
+        info.appendln("Intro quest gates chosen? ${IntroQuest.haveGatesBeenTagged()}")
+        info.appendln("Intro quest started? ${IntroQuest.hasQuestBeenStarted}")
+        info.appendln("Intro quest done? ${IntroQuest.wasQuestCompleted}")
+        info.appendln("Intro quest core gate: ${IntroQuest.coreGate?.fullName} in ${IntroQuest.coreGate?.containingLocation?.name}")
+        info.appendln("Intro quest fringe gate: ${IntroQuest.fringeGate?.fullName} in ${IntroQuest.fringeGate?.containingLocation?.name}")
         info.appendln("-------")
         info.appendln("Is considered midgame (big enough fleet or established colony)? ${Midgame.isMidgame()}")
         info.appendln("Midgame quest started? ${Midgame.hasQuestBeenStarted}")

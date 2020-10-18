@@ -66,7 +66,7 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
                 )
             }
             Option.FLY_THROUGH -> {
-                val coreGate = Intro.coreGate
+                val coreGate = IntroQuest.coreGate
 
                 if (coreGate != null) {
                     dialog.dismiss()

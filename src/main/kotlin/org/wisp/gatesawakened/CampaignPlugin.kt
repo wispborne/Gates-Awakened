@@ -10,7 +10,7 @@ import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.createGate.GateCreatedDialog
-import org.wisp.gatesawakened.intro.Intro
+import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.intro.IntroQuestFinishedDialog
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameQuestFinishedDialog
@@ -38,9 +38,9 @@ class CampaignPlugin : BaseCampaignPlugin() {
             )
                 .map { it.gate } -> {
                 when {
-                    Intro.hasQuestBeenStarted
-                            && !Intro.wasQuestCompleted
-                            && interactionTarget == Intro.fringeGate -> {
+                    IntroQuest.hasQuestBeenStarted
+                            && !IntroQuest.wasQuestCompleted
+                            && interactionTarget == IntroQuest.fringeGate -> {
                         // Show dialog to complete the intro quest
                         PluginPick<InteractionDialogPlugin>(
                             IntroQuestFinishedDialog(),

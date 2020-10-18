@@ -16,13 +16,13 @@ class ShowIntroEpilogueAfterJumpCompletes : EveryFrameScript {
         if (!wasDialogShown
             && !di.sector.campaignUI.isShowingDialog
             && !di.sector.campaignUI.isShowingMenu
-            && di.sector.playerFleet.containingLocation == Intro.coreGate?.containingLocation
+            && di.sector.playerFleet.containingLocation == IntroQuest.coreGate?.containingLocation
         ) {
             // When player enters system, wait 2 seconds before showing dialog
             if (playerEnteredSystemTimestamp != null
                 && Date().time - playerEnteredSystemTimestamp!! > 2000
             ) {
-                Intro.displayIntroQuestEpilogueWindow()
+                IntroQuest.displayIntroQuestEpilogueWindow()
                 wasDialogShown = true
             } else if(playerEnteredSystemTimestamp == null) {
                 playerEnteredSystemTimestamp = Date().time

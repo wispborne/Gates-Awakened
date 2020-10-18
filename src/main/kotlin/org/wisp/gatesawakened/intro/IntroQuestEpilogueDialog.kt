@@ -38,8 +38,8 @@ class IntroQuestEpilogueDialog : InteractionDefinition<IntroQuestEpilogueDialog>
                 addPara { "" }
                 addPara {
                     "- You may now jump between the Gates in " +
-                            mark(Intro.fringeGate?.starSystem?.baseName ?: String.empty) +
-                            " and ${mark(Intro.coreGate?.starSystem?.baseName ?: String.empty)}."
+                            mark(IntroQuest.fringeGate?.starSystem?.baseName ?: String.empty) +
+                            " and ${mark(IntroQuest.coreGate?.starSystem?.baseName ?: String.empty)}."
                 }
                 addPara {
                     "- Each jump will incur a ${mark("fuel cost")} to power the Gate relative to the cost of a direct flight."

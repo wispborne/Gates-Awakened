@@ -51,4 +51,5 @@ fun TooltipMakerAPI.addPara(
 object ParagraphText {
     fun highlight(string: String) = "${WispText.startTag}$string${WispText.endTag}"
     fun mark(string: String) = highlight(string)
+    fun mark(int: Int) = highlight(int.toString())
 }

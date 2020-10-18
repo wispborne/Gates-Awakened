@@ -7,7 +7,7 @@ import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.intro.Intro
+import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.logging.i
 
 object Midgame {
@@ -16,7 +16,7 @@ object Midgame {
 
     fun shouldOfferQuest(market: MarketAPI): Boolean =
         market.factionId !in listOf("luddic_church", "luddic_path")
-                && Intro.wasQuestCompleted
+                && IntroQuest.wasQuestCompleted
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
                 && isMidgame()

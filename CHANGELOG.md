@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0
+
+- Added sound and visual effects to gate use.
+- Inactive, discovered gates are now displayed as intel.
+    - This may be toggled off by selecting the intel.
+
 ## 2.0.5.1 (2020-8-21)
 - Fixes interactions with gates not working (thanks to @Apky for report)
 

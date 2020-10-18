@@ -9,11 +9,13 @@
   "graphics": {
     "intel": {
       "GatesAwakened_gate_quest": "graphics/intel/GatesAwakened_gate_quest.png",
+      "GatesAwakened_inactive_gate": "graphics/intel/GatesAwakened_inactive_gate.png",
       "GatesAwakened_gate": "graphics/intel/GatesAwakened_gate.png"
     },
     "GatesAwakenedFx": {
       "gate_circle_inner": "graphics/gate/inner_circle.png",
-      "gate_circle_outer": "graphics/gate/outer_circle.png"
+      "gate_circle_outer": "graphics/gate/outer_circle.png",
+      "zappy_trail": "graphics/gate/zappy_trail.png"
     }
   }
 }

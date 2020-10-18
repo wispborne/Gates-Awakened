@@ -35,7 +35,7 @@ class JumpAnimation(
 
         // Don't do anything until both [GateRingInner] and [GateRingOuter] have set their properties
         val innerSprite = gateRingInner?.sprite ?: return
-        val outerSprite = gateRingOuter?.sprite ?: return
+        val outerSprite = gateRingOuter?.ringSprite ?: return
 
         innerSprite.alphaMult = 0f
         outerSprite.alphaMult = 0f

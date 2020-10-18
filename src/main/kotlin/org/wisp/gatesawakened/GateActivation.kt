@@ -3,6 +3,7 @@ package org.wisp.gatesawakened
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
+import org.wisp.gatesawakened.gateIntel.GateIntelCommon
 
 object GateActivation {
 
@@ -14,7 +15,7 @@ object GateActivation {
             gate.tags += Tags.TAG_GATE_ACTIVATED
             storeOriginalGateNameInMemory(gate)
             gate.name = Strings.activeGateName
-            Common.updateActiveGateIntel()
+            GateIntelCommon.updateActiveGateIntel()
             return true
         }
 
@@ -28,7 +29,7 @@ object GateActivation {
         if (gate.isGate && gate.canBeDeactivated) {
             gate.tags -= Tags.TAG_GATE_ACTIVATED
             gate.name = popOriginalGateNameFromMemory(gate) ?: Strings.inactiveGateName
-            Common.updateActiveGateIntel()
+            GateIntelCommon.updateActiveGateIntel()
             return true
         }
 
