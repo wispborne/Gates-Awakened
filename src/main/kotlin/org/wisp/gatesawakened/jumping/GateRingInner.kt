@@ -5,15 +5,10 @@ package org.wisp.gatesawakened.jumping
 import com.fs.starfarer.api.campaign.CampaignEngineLayers
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.combat.ViewportAPI
-import com.fs.starfarer.api.graphics.SpriteAPI
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin
-import org.wisp.gatesawakened.di
 
 class GateRingInner : BaseCustomEntityPlugin() {
 //    private lateinit var starSystemId: String
-
-    @Transient
-    var sprite: SpriteAPI? = null
 
     @Transient
     private var jumpAnimation: JumpAnimation? = null
@@ -32,18 +27,6 @@ class GateRingInner : BaseCustomEntityPlugin() {
 
         jumpAnimation = pluginParams
         jumpAnimation?.gateRingInner = this
-
-        readResolve()
-    }
-
-    @Suppress("MemberVisibilityCanBePrivate")
-    fun readResolve(): Any {
-        sprite = di.settings.getSprite("GatesAwakenedFx", "gate_circle_inner")
-//        starSystemAPI = (di.sector.getStarSystem(starSystemId) as StarSystemAPI)
-//        star = (starSystemAPI.star as CampaignPlanet).graphics.clone()
-//            .run { Planet(this.spec, this.radius, this.gravity, entity.location) }
-
-        return this
     }
 
     /**
@@ -57,7 +40,6 @@ class GateRingInner : BaseCustomEntityPlugin() {
     override fun render(layer: CampaignEngineLayers, viewport: ViewportAPI) {
         super.render(layer, viewport)
 
-        val loc = entity.location
-        sprite!!.renderAtCenter(loc.x, loc.y)
+        jumpAnimation?.render(entity.location)
     }
 }

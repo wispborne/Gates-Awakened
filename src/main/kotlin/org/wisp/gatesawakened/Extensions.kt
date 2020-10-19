@@ -78,5 +78,19 @@ internal fun Vector2f.isInsideCircle(
     radius: Float
 ) = isPointInsideCircle(this, center, radius)
 
+operator fun Vector2f.plus(other: Vector2f): Vector2f = Vector2f(this.x + other.x, this.y + other.y)
+
+operator fun Vector2f.minus(other: Vector2f): Vector2f = Vector2f(this.x - other.x, this.y - other.y)
+
+operator fun Vector2f.plusAssign(other: Vector2f) {
+    this.x = this.x + other.x
+    this.y = this.y + other.y
+}
+
+operator fun Vector2f.minusAssign(other: Vector2f) {
+    this.x = this.x - other.x
+    this.y = this.y - other.y
+}
+
 internal fun InteractionDialogPlugin.show(campaignUIAPI: CampaignUIAPI, targetEntity: SectorEntityToken) =
     campaignUIAPI.showInteractionDialog(this, targetEntity)

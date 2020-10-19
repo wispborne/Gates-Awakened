@@ -100,12 +100,12 @@ internal object IntroQuest {
         coreGate?.activate()
         di.memory[Memory.INTRO_QUEST_DONE] = true
 
-        // Pop up a dialog explaining how gates work
-        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog().build(), di.sector.playerFleet)
-
         // Display all inactive gates they've already found.
         GateIntelCommon.updateDiscoveredInactiveGates(newlyDiscoveredInactiveGatesToAppend = null)
         GateIntelCommon.updateInactiveGateIntel()
+
+        // Pop up a dialog explaining how gates work
+        di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog().build(), di.sector.playerFleet)
     }
 
     private fun findClosestInactiveGateToCenter(): GateInfo? {

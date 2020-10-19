@@ -51,7 +51,7 @@ internal object Common {
     ): List<GateInfo> {
         return getSystems()
             .flatMap { system ->
-                system.getEntitiesWithTag(Tags.TAG_GATE) +
+                system.allEntities.filter { Tags.TAG_GATE in it.tags } +
                         if (includeGatesFromOtherMods)
                             system.getEntitiesWithTag(Tags.TAG_BOGGLED_GATE)
                         else

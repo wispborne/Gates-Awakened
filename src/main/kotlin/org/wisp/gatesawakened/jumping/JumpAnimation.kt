@@ -1,7 +1,16 @@
 package org.wisp.gatesawakened.jumping
 
 import com.fs.starfarer.api.SoundAPI
+import com.fs.starfarer.api.graphics.SpriteAPI
+import org.lazywizard.lazylib.MathUtils
+import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.di
+import org.wisp.gatesawakened.plus
+import java.awt.Color
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.random.Random
+
 
 class JumpAnimation(
 ) {
@@ -15,6 +24,23 @@ class JumpAnimation(
         private const val WARP_TIMESTAMP = 4200f
 
         private const val RING_APPEAR_SPEED = 2f
+
+        const val INTENSITY_MULT = 1f
+    }
+
+    var outerRingSprite: SpriteAPI? = null
+    var innerRingSprite: SpriteAPI? = null
+    var lightningSprite: SpriteAPI? = null
+
+    var spriteBatch: SpriteBatch
+
+    private val particles = List(size = 150) {
+        Particle(
+            orientationAngle = MathUtils.getRandomNumberInRange(0f, 360f),
+            orbitalSpeed = 0.006f * INTENSITY_MULT,
+            size = MathUtils.getRandomNumberInRange(10f, 25f) * INTENSITY_MULT,
+            lifetime = MathUtils.getRandomNumberInRange(0.8f, 1.4f)
+        )
     }
 
     var gateRingInner: GateRingInner? = null
@@ -25,17 +51,30 @@ class JumpAnimation(
     private var ringAppearSound: SoundAPI? = null
     private var wasWarpSoundTriggered = false
 
+    init {
+        innerRingSprite = di.settings.getSprite("GatesAwakenedFx", "gate_circle_inner")
+        outerRingSprite = di.settings.getSprite("GatesAwakenedFx", "gate_circle_outer")
+        lightningSprite = di.settings.getSprite("GatesAwakenedFx", "smoke")
+        spriteBatch = SpriteBatch(lightningSprite!!)
+    }
+
     fun advance(amountInSeconds: Float) {
         millisSinceStart += (amountInSeconds * 1000)
         update()
+    }
+
+    fun render(location: Vector2f) {
+        innerRingSprite!!.renderAtCenter(location.x, location.y)
+        outerRingSprite!!.renderAtCenter(location.x, location.y)
+        renderParticles(location)
     }
 
     private fun update() {
         val playerFleet = di.sector.playerFleet
 
         // Don't do anything until both [GateRingInner] and [GateRingOuter] have set their properties
-        val innerSprite = gateRingInner?.sprite ?: return
-        val outerSprite = gateRingOuter?.ringSprite ?: return
+        val innerSprite = innerRingSprite ?: return
+        val outerSprite = outerRingSprite ?: return
 
         innerSprite.alphaMult = 0f
         outerSprite.alphaMult = 0f
@@ -109,5 +148,49 @@ class JumpAnimation(
             di.soundPlayer.playUISound("GatesAwakened_gate_warp", 1f, 1f)
             wasWarpSoundTriggered = true
         }
+
+
+        if (!di.sector.isPaused) {
+            for (particle in particles) {
+                // Set up next render
+                particle.orientationAngle
+                particle.angleOnCircle = particle.angleOnCircle.plus(particle.orbitalSpeed)
+                particle.distanceFromCenter = particle.distanceFromCenter.minus(0.3f).coerceAtLeast(0f)
+            }
+        }
+    }
+
+    private fun renderParticles(location: Vector2f) {
+        spriteBatch.clear()
+
+        for (particle in particles) {
+            spriteBatch.add(
+                x = particle.locationRelativeTo(location).x,
+                y = particle.locationRelativeTo(location).y,
+                angle = particle.orientationAngle,
+                size = particle.size,
+                color = Color.BLACK,
+                alphaMod = 1f
+            )
+        }
+
+        spriteBatch.finish()
+
+        SpriteBatch.drawAll(spriteBatch)
+    }
+
+    data class Particle(
+        var orientationAngle: Float,
+        val orbitalSpeed: Float,
+        val size: Float,
+        var lifetime: Float,
+        var distanceFromCenter: Float = 70f,
+        var angleOnCircle: Float = Random.nextDouble(0.0, 360.0).toFloat()
+    ) {
+        fun locationRelativeTo(center: Vector2f): Vector2f =
+            center + Vector2f(
+                cos((angleOnCircle * Math.PI * 2).toFloat()) * distanceFromCenter,
+                sin(angleOnCircle * Math.PI * 2).toFloat() * distanceFromCenter
+            )
     }
 }

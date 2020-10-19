@@ -85,12 +85,12 @@ object GateIntelCommon {
     fun updateInactiveGateIntel() {
         if (!IntroQuest.wasQuestCompleted) return
 
-        val inactiveGates = GateIntelCommon.discoveredInactiveGates
+        val inactiveGates = discoveredInactiveGates
 
         val currentGateIntels = di.intelManager.getIntel(InactiveGateIntel::class.java)
             .filterIsInstance(InactiveGateIntel::class.java)
 
-        if (GateIntelCommon.shouldShowInactiveGateIntel) {        // Add intel for gates that don't have any
+        if (shouldShowInactiveGateIntel) {        // Add intel for gates that don't have any
             inactiveGates
                 .filter { it !in currentGateIntels.map { activeIntel -> activeIntel.inactiveGate } }
                 .forEach { di.intelManager.addIntel(InactiveGateIntel(it)) }

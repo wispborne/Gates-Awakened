@@ -4,6 +4,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI
 import org.lwjgl.opengl.GL11
 import java.awt.Color
 import java.util.*
+import kotlin.math.roundToLong
 
 
 /**
@@ -20,22 +21,21 @@ import java.util.*
 // TODO: Rewrite to use buffers (clone of DrawQueue?)
 class SpriteBatch @JvmOverloads constructor(
     sprite: SpriteAPI,
-    internal val blendSrc: Int = GL11.GL_SRC_ALPHA,
+    private val blendSrc: Int = GL11.GL_SRC_ALPHA,
     internal val blendDest: Int = GL11.GL_ONE_MINUS_SRC_ALPHA
 ) {
-    internal val textureId: Int
-    internal val textureWidth: Float
-    internal val textureHeight: Float
-    internal val offsetScaleX: Float
-    internal val offsetScaleY: Float
-    internal val hScale: Float
-    internal val toDraw: MutableList<DrawCall> = ArrayList()
-    internal var finished = false
+    private val textureId: Int = sprite.textureId
+    private val textureWidth: Float = sprite.textureWidth
+    private val textureHeight: Float = sprite.textureHeight
+    private val offsetScaleX: Float = if (sprite.centerX > 0f) sprite.centerX / (sprite.width * .5f) else 1f
+    private val offsetScaleY: Float = if (sprite.centerY > 0f) sprite.centerY / (sprite.height * .5f) else 1f
+    private val hScale: Float = sprite.width / sprite.height
+    private val toDraw: MutableList<DrawCall> = ArrayList()
+    private var finished = false
 
     // Size is height of sprite, width is automatically calculated
-    fun add(x: Float, y: Float, angle: Float, size: Float, color: Color, alphaMod: Float) {
+    fun add(x: Float, y: Float, angle: Float, size: Float, color: Color, alphaMod: Float) =
         add(x, y, angle, size * hScale, size, color, alphaMod)
-    }
 
     fun add(x: Float, y: Float, angle: Float, width: Float, height: Float, color: Color, alphaMod: Float) {
         if (finished) {
@@ -65,6 +65,7 @@ class SpriteBatch @JvmOverloads constructor(
         finished = true
     }
 
+    @Deprecated("Call `SpriteBatch.drawAll` instead.")
     fun draw() {
         if (!finished) {
             throw RuntimeException("Must call finish() before drawing!")
@@ -104,45 +105,43 @@ class SpriteBatch @JvmOverloads constructor(
     }
 
     internal class DrawCall internal constructor(
-        internal val x: Float, internal val y: Float, angle: Float, width: Float, height: Float,
-        color: Color, alphaMod: Float
+        internal val x: Float,
+        internal val y: Float,
+        angle: Float,
+        internal val width: Float,
+        internal val height: Float,
+        color: Color,
+        alphaMod: Float
     ) {
-        internal val angle: Float
-        internal val width: Float
-        internal val height: Float
-        internal val color: ByteArray
+        internal val angle: Float = angle - 90f
+        internal val color: ByteArray = getColorBytes(color, alphaMod)
 
         companion object {
             internal fun getColorBytes(color: Color, alphaMod: Float): ByteArray {
                 val value = color.rgb
+
                 return byteArrayOf(
                     (value shr 16 and 0xFF).toByte(),
                     (value shr 8 and 0xFF).toByte(),
                     (value and 0xFF).toByte(),
-                    (Math.round((value shr 24 and 0xFF.toFloat().toInt()).toDouble()) * alphaMod).toByte()
+                    ((value shr 24 and 0xFF.toFloat().toInt()).toDouble().roundToLong() * alphaMod).toInt().toByte()
                 )
             }
-        }
-
-        init {
-            this.angle = angle - 90f
-            this.width = width
-            this.height = height
-            this.color = getColorBytes(color, alphaMod)
         }
     }
 
     companion object {
         //internal static final Logger Log = Logger.getLogger(SpriteBatch.class);
         internal const val DEBUG_MODE = false
-    }
 
-    init {
-        textureId = sprite.textureId
-        textureWidth = sprite.textureWidth
-        textureHeight = sprite.textureHeight
-        hScale = sprite.width / sprite.height
-        offsetScaleX = if (sprite.centerX > 0f) sprite.centerX / (sprite.width * .5f) else 1f
-        offsetScaleY = if (sprite.centerY > 0f) sprite.centerY / (sprite.height * .5f) else 1f
+        fun drawAll(vararg spriteBatches: SpriteBatch) {
+            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS)
+            GL11.glEnable(GL11.GL_TEXTURE_2D)
+            GL11.glEnable(GL11.GL_BLEND)
+            spriteBatches.forEach {
+                it.draw()
+            }
+            GL11.glPopAttrib()
+        }
     }
 }

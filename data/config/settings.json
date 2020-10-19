@@ -15,7 +15,7 @@
     "GatesAwakenedFx": {
       "gate_circle_inner": "graphics/gate/inner_circle.png",
       "gate_circle_outer": "graphics/gate/outer_circle.png",
-      "zappy_trail": "graphics/gate/zappy_trail.png"
+      "smoke": "graphics/fx/smoke32.png"
     }
   }
 }
