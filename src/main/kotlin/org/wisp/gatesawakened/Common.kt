@@ -127,6 +127,13 @@ internal object Common {
             orbitRadius / (20f + StarSystemGenerator.random.nextFloat() * 5f) // taken from StarSystemGenerator:1655
         )
     }
+
+    val playerFleetPoints: Int
+        get() = di.sector.playerFleet.fleetPoints
+
+    fun establishedPlayerColonyCount(establishedDays: Int): Int = di.sector.economy.marketsCopy
+        .filter { it.isPlayerOwned && it.daysInExistence > establishedDays }
+        .count()
 }
 
 internal data class GateInfo(

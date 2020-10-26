@@ -5,6 +5,8 @@
 - Added sound and visual effects to gate use.
 - Inactive, discovered gates are now displayed as intel.
     - This may be toggled off by selecting the intel.
+- The third quest will now always trigger if prereqs are met (previously 33% chance).
+- The GatesAwakenedViewInfo console command will now show what is missing for the second and third quests to trigger.
 
 ## 2.0.5.1 (2020-8-21)
 - Fixes interactions with gates not working (thanks to @Apky for report)

@@ -2,6 +2,7 @@ package org.wisp.gatesawakened.consoleCommands
 
 import org.lazywizard.console.BaseCommand
 import org.lazywizard.console.Console
+import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.createGate.CreateGateQuest
 import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.intro.IntroQuest
@@ -19,7 +20,13 @@ class GatesAwakenedViewInfo : BaseCommand {
         info.appendln("Intro quest core gate: ${IntroQuest.coreGate?.fullName} in ${IntroQuest.coreGate?.containingLocation?.name}")
         info.appendln("Intro quest fringe gate: ${IntroQuest.fringeGate?.fullName} in ${IntroQuest.fringeGate?.containingLocation?.name}")
         info.appendln("-------")
-        info.appendln("Is considered midgame (big enough fleet or established colony)? ${Midgame.isMidgame()}")
+        info.appendln("Is considered midgame? ${Midgame.isMidgame()}")
+        info.appendln("  For the second quest to appear, one of the below criteria must be met:")
+        info.appendln("  - You have ${di.sector.playerFleet.fleetPoints} of ${Midgame.PREREQ_FLEET_POINTS} fleet points.")
+        info.appendln(
+            "  - You have ${Common.establishedPlayerColonyCount(Midgame.PREREQ_COLONY_ESTABLISHED_DAYS)}" +
+                    " of ${Midgame.PREREQ_COLONIES} colonies 60 days or older."
+        )
         info.appendln("Midgame quest started? ${Midgame.hasQuestBeenStarted}")
         info.appendln("Midgame quest done? ${Midgame.wasQuestCompleted}")
         info.appendln("Midgame quest planet chosen? ${Midgame.hasPlanetWithCacheBeenTagged()}")
@@ -27,7 +34,13 @@ class GatesAwakenedViewInfo : BaseCommand {
         info.appendln("Midgame quest total codes allowed: ${Midgame.midgameRewardActivationCodeCount}")
         info.appendln("Midgame quest total codes remaining: ${Midgame.remainingActivationCodes}")
         info.appendln("-------")
-        info.appendln("Is considered endgame (big enough fleet or 3 established colonies)? ${CreateGateQuest.isEndgame()}")
+        info.appendln("Is considered endgame? ${CreateGateQuest.isEndgame()}")
+        info.appendln("  For the third quest to appear, one of the below criteria must be met:")
+        info.appendln("  - You have ${di.sector.playerFleet.fleetPoints} of ${CreateGateQuest.PREREQ_FLEET_POINTS} fleet points.")
+        info.appendln(
+            "  - You have ${Common.establishedPlayerColonyCount(CreateGateQuest.PREREQ_COLONY_ESTABLISHED_DAYS)}" +
+                    " of ${CreateGateQuest.PREREQ_COLONIES} colonies 60 days or older."
+        )
         info.appendln("Create gate quest started? ${CreateGateQuest.hasQuestBeenStarted}")
         info.appendln("Create gate quest done? ${CreateGateQuest.wasQuestCompleted}")
         info.appendln("Create gate quest days needed to deliver a gate: ${CreateGateQuest.numberOfDaysToDeliverGate}")

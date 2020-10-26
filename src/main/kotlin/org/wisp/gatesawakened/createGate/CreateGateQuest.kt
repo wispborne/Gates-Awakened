@@ -20,8 +20,6 @@ object CreateGateQuest {
                 && hasQuestBeenStarted != true
                 && wasQuestCompleted != true
                 && isEndgame()
-                && (1..3).random() == 1 // 33% chance.
-    // If you are at endgame and really want to trigger the quest, just keep interacting with a Gate, then leaving
 
     var gateSummonedTimestamp: Long? by PersistentNullableData("create_gate_hauler_summon_timestamp")
 
@@ -37,27 +35,19 @@ object CreateGateQuest {
 
     var numberOfDaysToDeliverGate = di.settings.getInt("GatesAwakened_numberOfDaysToDeliverGate")
 
+    const val PREREQ_FLEET_POINTS = 180
+    const val PREREQ_COLONIES = 3
+    const val PREREQ_COLONY_ESTABLISHED_DAYS = 60
+
     /**
      * We are defining midgame as either:
      * - Player has a large enough fleet, or
      * - Player has three established colonies.
      */
-    fun isEndgame(): Boolean {
-        val fleetPoints = di.sector.playerFleet.fleetPoints
-
-        if (fleetPoints >= 180) {
-            return true
-        }
-
-        val playerColonies = di.sector.economy.marketsCopy
-            .filter { it.isPlayerOwned }
-
-        if (playerColonies.count { it.daysInExistence >= 60 } > 3) {
-            return true
-        }
-
-        return false
-    }
+    fun isEndgame(): Boolean =
+        Common.playerFleetPoints >= PREREQ_FLEET_POINTS || Common.establishedPlayerColonyCount(
+            PREREQ_COLONY_ESTABLISHED_DAYS
+        ) > PREREQ_COLONIES
 
     fun startQuest() {
         di.intelManager.addIntel(CreateGateQuestIntel())
