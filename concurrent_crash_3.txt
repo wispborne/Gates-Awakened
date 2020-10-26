@@ -1,0 +1,112 @@
+"Thread-4@1481" prio=5 tid=0x14 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at java.util.ArrayList$Itr.checkForComodification(ArrayList.java:859)
+	  at java.util.ArrayList$Itr.next(ArrayList.java:831)
+	  at com.fs.starfarer.campaign.BaseLocation.getEntitiesWithTag(Unknown Source:-1)
+	  at com.fs.starfarer.campaign.comms.v2.IntelManager.findNearestCommRelayToReceive(Unknown Source:-1)
+	  at com.fs.starfarer.campaign.comms.v2.IntelManager.isPlayerInRangeOfCommRelay(Unknown Source:-1)
+	  at com.fs.starfarer.campaign.comms.v2.IntelManager.advance(Unknown Source:-1)
+	  at com.fs.starfarer.campaign.CampaignEngine.advance(Unknown Source:-1)
+	  at com.fs.starfarer.campaign.CampaignState.advance(Unknown Source:-1)
+	  at com.fs.starfarer.BaseGameState.traverse(Unknown Source:-1)
+	  at com.fs.state.AppDriver.begin(Unknown Source:-1)
+	  at com.fs.starfarer.combat.CombatMain.main(Unknown Source:-1)
+	  at com.fs.starfarer.StarfarerLauncher$1.run(Unknown Source:-1)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"DefaultDispatcher-worker-4@4740" daemon prio=5 tid=0x23 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at java.lang.System.nanoTime(System.java:-1)
+	  at kotlinx.coroutines.scheduling.NanoTimeSource.nanoTime(Tasks.kt:122)
+	  at kotlinx.coroutines.scheduling.WorkQueue.trySteal(WorkQueue.kt:99)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.trySteal(CoroutineScheduler.kt:987)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.findTaskWithCpuPermit(CoroutineScheduler.kt:971)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.findTask$kotlinx_coroutines_core(CoroutineScheduler.kt:944)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:725)
+
+"kotlinx.coroutines.DefaultExecutor@4706" daemon prio=5 tid=0x20 nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at sun.misc.Unsafe.park(Unsafe.java:-1)
+	  at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:226)
+	  at kotlinx.coroutines.DefaultTimeSource.parkNanos(TimeSource.kt:31)
+	  at kotlinx.coroutines.DefaultExecutor.run(DefaultExecutor.kt:83)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"DefaultDispatcher-worker-3@4658" daemon prio=5 tid=0x1f nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at sun.misc.Unsafe.park(Unsafe.java:-1)
+	  at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:349)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.doPark(CoroutineScheduler.kt:850)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.cpuWorkerIdle(CoroutineScheduler.kt:823)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:729)
+
+"DefaultDispatcher-worker-2@4655" daemon prio=5 tid=0x1e nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at sun.misc.Unsafe.park(Unsafe.java:-1)
+	  at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:349)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.doPark(CoroutineScheduler.kt:850)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.cpuWorkerIdle(CoroutineScheduler.kt:823)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:729)
+
+"DefaultDispatcher-worker-1@4654" daemon prio=5 tid=0x1d nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at sun.misc.Unsafe.park(Unsafe.java:-1)
+	  at java.util.concurrent.locks.LockSupport.parkNanos(LockSupport.java:349)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.doPark(CoroutineScheduler.kt:850)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.cpuWorkerIdle(CoroutineScheduler.kt:823)
+	  at kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:729)
+
+"LWJGL Timer@3875" daemon prio=5 tid=0x1c nid=NA sleeping
+  java.lang.Thread.State: TIMED_WAITING
+	  at java.lang.Thread.sleep(Thread.java:-1)
+	  at org.lwjgl.opengl.Sync$1.run(Sync.java:116)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"Thread-9@2997" prio=5 tid=0x1a nid=NA sleeping
+  java.lang.Thread.State: TIMED_WAITING
+	  at java.lang.Thread.sleep(Thread.java:-1)
+	  at sound.null$2.run(Unknown Source:-1)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"Thread-5@1494" daemon prio=5 tid=0x15 nid=NA sleeping
+  java.lang.Thread.State: TIMED_WAITING
+	  at java.lang.Thread.sleep(Thread.java:-1)
+	  at com.fs.starfarer.combat.CombatMain$1.run(Unknown Source:-1)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"AWT-Windows@1106" daemon prio=6 tid=0xf nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+	  at sun.awt.windows.WToolkit.eventLoop(WToolkit.java:-1)
+	  at sun.awt.windows.WToolkit.run(WToolkit.java:312)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"Java2D Disposer@1102" daemon prio=10 tid=0xd nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at java.lang.Object.wait(Object.java:-1)
+	  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:135)
+	  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:151)
+	  at sun.java2d.Disposer.run(Disposer.java:145)
+	  at java.lang.Thread.run(Thread.java:745)
+
+"Finalizer@4726" daemon prio=8 tid=0x3 nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at java.lang.Object.wait(Object.java:-1)
+	  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:135)
+	  at java.lang.ref.ReferenceQueue.remove(ReferenceQueue.java:151)
+	  at java.lang.ref.Finalizer$FinalizerThread.run(Finalizer.java:209)
+
+"Reference Handler@4727" daemon prio=10 tid=0x2 nid=NA waiting
+  java.lang.Thread.State: WAITING
+	  at java.lang.Object.wait(Object.java:-1)
+	  at java.lang.Object.wait(Object.java:503)
+	  at java.lang.ref.Reference$ReferenceHandler.run(Reference.java:133)
+
+"DestroyJavaVM@1120" prio=5 tid=0x12 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+
+"Attach Listener@4724" daemon prio=5 tid=0x5 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+
+"Signal Dispatcher@4725" daemon prio=9 tid=0x4 nid=NA runnable
+  java.lang.Thread.State: RUNNABLE
+

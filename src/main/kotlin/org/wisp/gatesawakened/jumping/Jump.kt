@@ -55,11 +55,11 @@ internal object Jump {
                 delay(3200)
 
                 // Jump player fleet to new system
-//                di.sector.doHyperspaceTransition(
-//                    di.sector.playerFleet,
-//                    if (flyToGateBeforeJumping) sourceGate else null,
-//                    JumpPointAPI.JumpDestination(destinationGate, null)
-//                )
+                di.sector.doHyperspaceTransition(
+                    di.sector.playerFleet,
+                    if (flyToGateBeforeJumping) sourceGate else null,
+                    JumpPointAPI.JumpDestination(destinationGate, null)
+                )
             }
         }
         return JumpResult.Success

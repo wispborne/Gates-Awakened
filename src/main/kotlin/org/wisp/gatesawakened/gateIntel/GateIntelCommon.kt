@@ -90,7 +90,8 @@ object GateIntelCommon {
         val currentGateIntels = di.intelManager.getIntel(InactiveGateIntel::class.java)
             .filterIsInstance(InactiveGateIntel::class.java)
 
-        if (shouldShowInactiveGateIntel) {        // Add intel for gates that don't have any
+        if (shouldShowInactiveGateIntel) {
+            // Add intel for gates that don't have any
             inactiveGates
                 .filter { it !in currentGateIntels.map { activeIntel -> activeIntel.inactiveGate } }
                 .forEach { di.intelManager.addIntel(InactiveGateIntel(it)) }

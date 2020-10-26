@@ -1,7 +1,9 @@
 package org.wisp.gatesawakened.jumping
 
 import com.fs.starfarer.api.SoundAPI
+import com.fs.starfarer.api.campaign.CampaignFleetAPI
 import com.fs.starfarer.api.graphics.SpriteAPI
+import com.fs.starfarer.api.util.FlickerUtilV2
 import org.lazywizard.lazylib.MathUtils
 import org.lwjgl.util.vector.Vector2f
 import org.wisp.gatesawakened.di
@@ -30,32 +32,37 @@ class JumpAnimation(
 
     var outerRingSprite: SpriteAPI? = null
     var innerRingSprite: SpriteAPI? = null
+    var smokeSprite: SpriteAPI? = null
     var lightningSprite: SpriteAPI? = null
+    var gateLightSprite: SpriteAPI? = null
 
-    var spriteBatch: SpriteBatch
+    var smokeSpriteBatch: SpriteBatch
+    var lightningSpriteBatch: SpriteBatch
 
-    private val particles = List(size = 150) {
-        Particle(
-            orientationAngle = MathUtils.getRandomNumberInRange(0f, 360f),
-            orbitalSpeed = 0.006f * INTENSITY_MULT,
-            size = MathUtils.getRandomNumberInRange(10f, 25f) * INTENSITY_MULT,
-            lifetime = MathUtils.getRandomNumberInRange(0.8f, 1.4f)
-        )
+    val particles = List(size = 1000) {
+        Particle()
     }
+
+    val lightnings = mutableListOf<Lightning>()
 
     var gateRingInner: GateRingInner? = null
     var gateRingOuter: GateRingOuter? = null
 
-    private var millisSinceStart: Float = 0f
-    private var currentSpinSpeed = 0f
-    private var ringAppearSound: SoundAPI? = null
-    private var wasWarpSoundTriggered = false
+    var millisSinceStart: Float = 0f
+    var currentSpinSpeed = 0f
+    var ringAppearSound: SoundAPI? = null
+    var wasWarpSoundTriggered = false
 
     init {
         innerRingSprite = di.settings.getSprite("GatesAwakenedFx", "gate_circle_inner")
+            .apply { alphaMult = 0f }
         outerRingSprite = di.settings.getSprite("GatesAwakenedFx", "gate_circle_outer")
-        lightningSprite = di.settings.getSprite("GatesAwakenedFx", "smoke")
-        spriteBatch = SpriteBatch(lightningSprite!!)
+            .apply { alphaMult = 0f }
+        smokeSprite = di.settings.getSprite("GatesAwakenedFx", "smoke")
+        lightningSprite = di.settings.getSprite("GatesAwakenedFx", "lightning")
+        gateLightSprite = di.settings.getSprite("GatesAwakenedFx", "gatelight")
+        smokeSpriteBatch = SpriteBatch(smokeSprite!!)
+        lightningSpriteBatch = SpriteBatch(lightningSprite!!)
     }
 
     fun advance(amountInSeconds: Float) {
@@ -64,9 +71,15 @@ class JumpAnimation(
     }
 
     fun render(location: Vector2f) {
+        prepareToRenderParticles(location)
+        prepareToRenderLightning(location)
+        SpriteBatch.drawAll(
+            smokeSpriteBatch,
+            lightningSpriteBatch
+        )
         innerRingSprite!!.renderAtCenter(location.x, location.y)
         outerRingSprite!!.renderAtCenter(location.x, location.y)
-        renderParticles(location)
+        gateLightSprite!!.renderAtCenter(location.x, location.y)
     }
 
     private fun update() {
@@ -75,10 +88,37 @@ class JumpAnimation(
         // Don't do anything until both [GateRingInner] and [GateRingOuter] have set their properties
         val innerSprite = innerRingSprite ?: return
         val outerSprite = outerRingSprite ?: return
+        val lightSprite = gateLightSprite ?: return
 
-        innerSprite.alphaMult = 0f
-        outerSprite.alphaMult = 0f
+        updateInnerGlowy(lightSprite)
+        updateGateSpinupSound(playerFleet)
+        updateInnerRingAppearance(innerSprite, playerFleet)
+        updateOuterRingAppearance(outerSprite)
+        updateRingSpin(innerSprite, outerSprite)
 
+        if (!wasWarpSoundTriggered && millisSinceStart >= WARP_TIMESTAMP) {
+            di.soundPlayer.playUISound("GatesAwakened_gate_warp", 1f, 1f)
+            wasWarpSoundTriggered = true
+        }
+
+        updateParticles()
+        updateLightning()
+    }
+
+    private fun updateInnerGlowy(lightSprite: SpriteAPI) {
+        // Central glowy light
+        lightSprite.alphaMult = Easing.Cubic.easeIn(
+            time = millisSinceStart,
+            valueAtStart = 0f,
+            valueAtEnd = 0.7f,
+            duration = WARP_TIMESTAMP
+        )
+
+        lightSprite.angle += 0.3f
+        lightSprite.setSize(160f, 160f)
+    }
+
+    private fun updateGateSpinupSound(playerFleet: CampaignFleetAPI) {
         if (millisSinceStart >= SHOW_INNER_RING_TIMESTAMP && millisSinceStart < WARP_TIMESTAMP) {
             di.soundPlayer.playLoop(
                 "GatesAwakened_gate_spinup",
@@ -94,7 +134,12 @@ class JumpAnimation(
                 playerFleet.velocity
             )
         }
+    }
 
+    private fun updateInnerRingAppearance(
+        innerSprite: SpriteAPI,
+        playerFleet: CampaignFleetAPI
+    ) {
         if (millisSinceStart >= SHOW_INNER_RING_TIMESTAMP) {
             innerSprite.alphaMult = 1f
 
@@ -109,8 +154,10 @@ class JumpAnimation(
             } else if (di.sector.isPaused)
                 ringAppearSound?.stop()
         }
+    }
 
-        if (millisSinceStart >= SHOW_OUTER_RING_FADEIN_START_TIMESTAMP) {
+    private fun updateOuterRingAppearance(outerSprite: SpriteAPI) {
+        if (millisSinceStart in SHOW_OUTER_RING_FADEIN_START_TIMESTAMP..SHOW_OUTER_RING_FADEIN_END_TIMESTAMP) {
             outerSprite.alphaMult = Easing.Quadratic.easeIn(
                 time = millisSinceStart - SHOW_OUTER_RING_FADEIN_START_TIMESTAMP,
                 valueAtStart = 0f,
@@ -118,18 +165,23 @@ class JumpAnimation(
                 duration = SHOW_OUTER_RING_FADEIN_END_TIMESTAMP - SHOW_OUTER_RING_FADEIN_START_TIMESTAMP
             )
 
-//            if (!wasOuterRingSoundTriggered) {
-//                di.soundPlayer.playSound(
-//                    "GatesAwakened_gate_ringAppear",
-//                    1f,
-//                    1f,
-//                    playerFleet.location,
-//                    playerFleet.velocity
-//                )
-//                wasOuterRingSoundTriggered = true
-//            }
+            //            if (!wasOuterRingSoundTriggered) {
+            //                di.soundPlayer.playSound(
+            //                    "GatesAwakened_gate_ringAppear",
+            //                    1f,
+            //                    1f,
+            //                    playerFleet.location,
+            //                    playerFleet.velocity
+            //                )
+            //                wasOuterRingSoundTriggered = true
+            //            }
         }
+    }
 
+    private fun updateRingSpin(
+        innerSprite: SpriteAPI,
+        outerSprite: SpriteAPI
+    ) {
         if (millisSinceStart >= START_SPIN_TIMESTAMP) {
             if (currentSpinSpeed < MAX_SPIN_SPEED) {
                 currentSpinSpeed = Easing.Quadratic.easeIn(
@@ -143,54 +195,130 @@ class JumpAnimation(
             innerSprite.angle += currentSpinSpeed
             outerSprite.angle -= currentSpinSpeed
         }
+    }
 
-        if (!wasWarpSoundTriggered && millisSinceStart >= WARP_TIMESTAMP) {
-            di.soundPlayer.playUISound("GatesAwakened_gate_warp", 1f, 1f)
-            wasWarpSoundTriggered = true
-        }
-
-
+    private fun updateLightning() {
         if (!di.sector.isPaused) {
-            for (particle in particles) {
-                // Set up next render
-                particle.orientationAngle
-                particle.angleOnCircle = particle.angleOnCircle.plus(particle.orbitalSpeed)
-                particle.distanceFromCenter = particle.distanceFromCenter.minus(0.3f).coerceAtLeast(0f)
+            if (lightnings.count() < 1 && millisSinceStart >= SHOW_INNER_RING_TIMESTAMP) {
+                lightnings += Lightning(scatterMultiplier = 0.6f)
+            }
+
+            if (lightnings.count() < 2 && millisSinceStart >= SHOW_OUTER_RING_FADEIN_START_TIMESTAMP) {
+                lightnings += Lightning(scatterMultiplier = 0.8f)
+            }
+
+            while (lightnings.count() < 6 && millisSinceStart >= START_SPIN_TIMESTAMP) {
+                lightnings += Lightning(scatterMultiplier = 1.5f)
+            }
+
+            lightnings.forEach {
+                // This is what is done in [HyperspaceTerrainPlugin]
+                it.flicker.advance(di.sector.clock.convertToDays(millisSinceStart / 1000f) / 4f)
             }
         }
     }
 
-    private fun renderParticles(location: Vector2f) {
-        spriteBatch.clear()
+    private fun updateParticles() {
+        if (!di.sector.isPaused) {
+            if (millisSinceStart > SHOW_INNER_RING_TIMESTAMP) {
+                val timeSinceParticleAnimationStarted = millisSinceStart - SHOW_INNER_RING_TIMESTAMP
+
+                particles.forEach { particle ->
+                    particle.alpha = Easing.Linear.tween(
+                        time = timeSinceParticleAnimationStarted,
+                        valueAtStart = 0f,
+                        valueAtEnd = 1f,
+                        duration = WARP_TIMESTAMP
+                    )
+                    // Set up next render
+                    particle.orientationAngle
+                    particle.orbitalSpeed = Easing.Linear.tween(
+                        time = timeSinceParticleAnimationStarted,
+                        valueAtStart = particle.initialOrbitalSpeed,
+                        valueAtEnd = particle.finalOrbitalSpeed,
+                        duration = WARP_TIMESTAMP
+                    )
+                    particle.angleOnCircle = particle.angleOnCircle.plus(particle.orbitalSpeed)
+
+                    // Collapse in on center
+                    particle.distanceFromCenter = particle.initialDistanceFromCenter - Easing.Quadratic.easeIn(
+                        time = timeSinceParticleAnimationStarted,
+                        valueAtStart = particle.finalDistanceFromCenter,
+                        valueAtEnd = particle.initialDistanceFromCenter,
+                        duration = WARP_TIMESTAMP - SHOW_INNER_RING_TIMESTAMP
+                    )
+                }
+            } else {
+                particles.forEach { it.alpha = 0f }
+            }
+        }
+    }
+
+    private fun prepareToRenderParticles(location: Vector2f) {
+        smokeSpriteBatch.clear()
 
         for (particle in particles) {
-            spriteBatch.add(
+            smokeSpriteBatch.add(
                 x = particle.locationRelativeTo(location).x,
                 y = particle.locationRelativeTo(location).y,
                 angle = particle.orientationAngle,
                 size = particle.size,
                 color = Color.BLACK,
-                alphaMod = 1f
+                alphaMod = particle.alpha
             )
         }
 
-        spriteBatch.finish()
+        smokeSpriteBatch.finish()
+    }
 
-        SpriteBatch.drawAll(spriteBatch)
+    private fun prepareToRenderLightning(location: Vector2f) {
+        lightningSpriteBatch.clear()
+
+        for (lightning in lightnings) {
+            lightningSpriteBatch.add(
+                x = lightning.locationRelativeTo(location).x,
+                y = lightning.locationRelativeTo(location).y,
+                angle = lightning.flicker.angle,
+                size = lightning.size,
+                color = Color.WHITE,
+                alphaMod = lightning.flicker.brightness
+            )
+        }
+
+        lightningSpriteBatch.finish()
     }
 
     data class Particle(
-        var orientationAngle: Float,
-        val orbitalSpeed: Float,
-        val size: Float,
-        var lifetime: Float,
-        var distanceFromCenter: Float = 70f,
-        var angleOnCircle: Float = Random.nextDouble(0.0, 360.0).toFloat()
+        var orientationAngle: Float = MathUtils.getRandomNumberInRange(0f, 360f),
+        val initialOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.001f, 0.005f) * INTENSITY_MULT,
+        val finalOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.010f, 0.020f) * INTENSITY_MULT,
+        val size: Float = MathUtils.getRandomNumberInRange(10f, 25f) * INTENSITY_MULT,
+        val initialDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(50f, 400f),
+        val finalDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(50f, initialDistanceFromCenter),
+        var angleOnCircle: Float = Random.nextDouble(0.0, 360.0).toFloat(),
+        var alpha: Float = 0f
     ) {
+        var distanceFromCenter: Float = initialDistanceFromCenter
+        var orbitalSpeed: Float = initialOrbitalSpeed
+
         fun locationRelativeTo(center: Vector2f): Vector2f =
             center + Vector2f(
-                cos((angleOnCircle * Math.PI * 2).toFloat()) * distanceFromCenter,
-                sin(angleOnCircle * Math.PI * 2).toFloat() * distanceFromCenter
+                cos((angleOnCircle * Math.PI * 2).toFloat()) * distanceFromCenter.coerceAtLeast(minimumValue = 0f),
+                sin(angleOnCircle * Math.PI * 2).toFloat() * distanceFromCenter.coerceAtLeast(minimumValue = 0f)
             )
+    }
+
+    data class Lightning(
+        val scatterMultiplier: Float = 1f,
+        val flicker: FlickerUtilV2 = FlickerUtilV2().apply { newBurst() },
+        var orientationAngle: Float = MathUtils.getRandomNumberInRange(0f, 360f),
+        var relativeLocation: Vector2f = Vector2f(
+            MathUtils.getRandomNumberInRange(-100f * scatterMultiplier, 100f * scatterMultiplier),
+            MathUtils.getRandomNumberInRange(-100f * scatterMultiplier, 100f * scatterMultiplier)
+        ),
+        val size: Float = 150f
+    ) {
+        fun locationRelativeTo(center: Vector2f): Vector2f =
+            center + relativeLocation
     }
 }

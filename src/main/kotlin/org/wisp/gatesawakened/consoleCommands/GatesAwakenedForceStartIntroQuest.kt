@@ -6,7 +6,7 @@ import org.wisp.gatesawakened.di
 import org.wisp.gatesawakened.intro.IntroQuest
 
 class GatesAwakenedForceStartIntroQuest : BaseCommand {
-    override fun runCommand(args: String?, context: BaseCommand.CommandContext): BaseCommand.CommandResult {
+    override fun runCommand(args: String, context: BaseCommand.CommandContext): BaseCommand.CommandResult {
         if (!context.isCampaignAccessible) {
             return BaseCommand.CommandResult.WRONG_CONTEXT
         }
