@@ -26,7 +26,7 @@
 - Added support for jumping to Boggled's player constructed gates
 - If no Remnant systems exist, second quest uses a non-Remnant system instead (reported by Tiberiumkyle on the forums)
 - Fixed third quest intel showing planet type instead of name (reported by @Avanitia)
-- Possibly fixed quest intel icon showing incorrectly (unconfirmed) (edit: nope didn't fix it, fixed in 2.1.0)
+- Possibly fixed quest intel icon showing incorrectly (unconfirmed) (edit: nope didn't fix it, fixed in 2.0.4)
 - Fixed bug where declining a quest, then trying to start it again would crash
 - Fixed bug where final quest epilogue could be triggered by interacting with any active gate  (reported by @Histidine)
 - Adds forum id to version checker

@@ -28,6 +28,8 @@ class JumpAnimation(
         private const val RING_APPEAR_SPEED = 2f
 
         const val INTENSITY_MULT = 1f
+
+        val color: Color = Color(10, 10, 10)
     }
 
     var outerRingSprite: SpriteAPI? = null
@@ -39,7 +41,7 @@ class JumpAnimation(
     var smokeSpriteBatch: SpriteBatch
     var lightningSpriteBatch: SpriteBatch
 
-    val particles = List(size = 1000) {
+    val particles = List(size = 4000) {
         Particle()
     }
 
@@ -241,15 +243,15 @@ class JumpAnimation(
                     particle.angleOnCircle = particle.angleOnCircle.plus(particle.orbitalSpeed)
 
                     // Collapse in on center
-                    particle.distanceFromCenter = particle.initialDistanceFromCenter - Easing.Quadratic.easeIn(
+                    particle.distanceFromCenter = Easing.Quadratic.easeIn(
                         time = timeSinceParticleAnimationStarted,
-                        valueAtStart = particle.finalDistanceFromCenter,
-                        valueAtEnd = particle.initialDistanceFromCenter,
+                        valueAtStart = particle.initialDistanceFromCenter,
+                        valueAtEnd = particle.finalDistanceFromCenter,
                         duration = WARP_TIMESTAMP - SHOW_INNER_RING_TIMESTAMP
                     )
                 }
             } else {
-                particles.forEach { it.alpha = 0f }
+//                particles.forEach { it.alpha = 0f }
             }
         }
     }
@@ -263,7 +265,7 @@ class JumpAnimation(
                 y = particle.locationRelativeTo(location).y,
                 angle = particle.orientationAngle,
                 size = particle.size,
-                color = Color.BLACK,
+                color = color,
                 alphaMod = particle.alpha
             )
         }
@@ -291,10 +293,10 @@ class JumpAnimation(
     data class Particle(
         var orientationAngle: Float = MathUtils.getRandomNumberInRange(0f, 360f),
         val initialOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.001f, 0.005f) * INTENSITY_MULT,
-        val finalOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.010f, 0.020f) * INTENSITY_MULT,
+        val finalOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.007f, 0.09f) * INTENSITY_MULT,
         val size: Float = MathUtils.getRandomNumberInRange(10f, 25f) * INTENSITY_MULT,
         val initialDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(50f, 400f),
-        val finalDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(50f, initialDistanceFromCenter),
+        val finalDistanceFromCenter: Float = initialDistanceFromCenter, //MathUtils.getRandomNumberInRange(50f, initialDistanceFromCenter),
         var angleOnCircle: Float = Random.nextDouble(0.0, 360.0).toFloat(),
         var alpha: Float = 0f
     ) {

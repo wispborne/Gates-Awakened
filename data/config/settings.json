@@ -15,7 +15,7 @@
     "GatesAwakenedFx": {
       "gate_circle_inner": "graphics/gate/inner_circle.png",
       "gate_circle_outer": "graphics/gate/outer_circle.png",
-      "smoke": "graphics/fx/smoke32.png",
+      "smoke": "graphics/fx/wind_effect.png",
       "lightning": "graphics/gate/lightning_lovepik.png",
       "gatelight": "graphics/fx/explosion_ring0.png"
     }
