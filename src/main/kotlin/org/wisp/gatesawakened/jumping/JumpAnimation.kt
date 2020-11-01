@@ -20,12 +20,10 @@ class JumpAnimation(
         private const val DURATION = 3000f
         private const val MAX_SPIN_SPEED = 8f
         private const val SHOW_INNER_RING_TIMESTAMP = 800f
-        private const val SHOW_OUTER_RING_FADEIN_START_TIMESTAMP = SHOW_INNER_RING_TIMESTAMP
-        private const val SHOW_OUTER_RING_FADEIN_END_TIMESTAMP = SHOW_INNER_RING_TIMESTAMP + 450f
-        private const val START_SPIN_TIMESTAMP = SHOW_OUTER_RING_FADEIN_END_TIMESTAMP + 450f
+        private const val SHOW_OUTER_RING_FADE_IN_START_TIMESTAMP = SHOW_INNER_RING_TIMESTAMP
+        private const val SHOW_OUTER_RING_FADE_IN_END_TIMESTAMP = SHOW_INNER_RING_TIMESTAMP + 450f
+        private const val START_SPIN_TIMESTAMP = SHOW_OUTER_RING_FADE_IN_END_TIMESTAMP + 450f
         private const val WARP_TIMESTAMP = 4200f
-
-        private const val RING_APPEAR_SPEED = 2f
 
         const val INTENSITY_MULT = 1f
 
@@ -41,14 +39,11 @@ class JumpAnimation(
     var smokeSpriteBatch: SpriteBatch
     var lightningSpriteBatch: SpriteBatch
 
-    val particles = List(size = 4000) {
+    val particles = List(size = 2000) {
         Particle()
     }
 
     val lightnings = mutableListOf<Lightning>()
-
-    var gateRingInner: GateRingInner? = null
-    var gateRingOuter: GateRingOuter? = null
 
     var millisSinceStart: Float = 0f
     var currentSpinSpeed = 0f
@@ -159,24 +154,13 @@ class JumpAnimation(
     }
 
     private fun updateOuterRingAppearance(outerSprite: SpriteAPI) {
-        if (millisSinceStart in SHOW_OUTER_RING_FADEIN_START_TIMESTAMP..SHOW_OUTER_RING_FADEIN_END_TIMESTAMP) {
+        if (millisSinceStart in SHOW_OUTER_RING_FADE_IN_START_TIMESTAMP..SHOW_OUTER_RING_FADE_IN_END_TIMESTAMP) {
             outerSprite.alphaMult = Easing.Quadratic.easeIn(
-                time = millisSinceStart - SHOW_OUTER_RING_FADEIN_START_TIMESTAMP,
+                time = millisSinceStart - SHOW_OUTER_RING_FADE_IN_START_TIMESTAMP,
                 valueAtStart = 0f,
                 valueAtEnd = 1f,
-                duration = SHOW_OUTER_RING_FADEIN_END_TIMESTAMP - SHOW_OUTER_RING_FADEIN_START_TIMESTAMP
+                duration = SHOW_OUTER_RING_FADE_IN_END_TIMESTAMP - SHOW_OUTER_RING_FADE_IN_START_TIMESTAMP
             )
-
-            //            if (!wasOuterRingSoundTriggered) {
-            //                di.soundPlayer.playSound(
-            //                    "GatesAwakened_gate_ringAppear",
-            //                    1f,
-            //                    1f,
-            //                    playerFleet.location,
-            //                    playerFleet.velocity
-            //                )
-            //                wasOuterRingSoundTriggered = true
-            //            }
         }
     }
 
@@ -205,11 +189,11 @@ class JumpAnimation(
                 lightnings += Lightning(scatterMultiplier = 0.6f)
             }
 
-            if (lightnings.count() < 2 && millisSinceStart >= SHOW_OUTER_RING_FADEIN_START_TIMESTAMP) {
+            if (lightnings.count() < 2 && millisSinceStart >= SHOW_OUTER_RING_FADE_IN_START_TIMESTAMP) {
                 lightnings += Lightning(scatterMultiplier = 0.8f)
             }
 
-            while (lightnings.count() < 6 && millisSinceStart >= START_SPIN_TIMESTAMP) {
+            while (lightnings.count() < 4 && millisSinceStart >= START_SPIN_TIMESTAMP) {
                 lightnings += Lightning(scatterMultiplier = 1.5f)
             }
 
@@ -250,8 +234,6 @@ class JumpAnimation(
                         duration = WARP_TIMESTAMP - SHOW_INNER_RING_TIMESTAMP
                     )
                 }
-            } else {
-//                particles.forEach { it.alpha = 0f }
             }
         }
     }
@@ -295,8 +277,8 @@ class JumpAnimation(
         val initialOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.001f, 0.005f) * INTENSITY_MULT,
         val finalOrbitalSpeed: Float = MathUtils.getRandomNumberInRange(0.007f, 0.09f) * INTENSITY_MULT,
         val size: Float = MathUtils.getRandomNumberInRange(10f, 25f) * INTENSITY_MULT,
-        val initialDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(50f, 400f),
-        val finalDistanceFromCenter: Float = initialDistanceFromCenter, //MathUtils.getRandomNumberInRange(50f, initialDistanceFromCenter),
+        val initialDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(0f, 40f),
+        val finalDistanceFromCenter: Float = MathUtils.getRandomNumberInRange(initialDistanceFromCenter, 100f),
         var angleOnCircle: Float = Random.nextDouble(0.0, 360.0).toFloat(),
         var alpha: Float = 0f
     ) {
@@ -318,7 +300,7 @@ class JumpAnimation(
             MathUtils.getRandomNumberInRange(-100f * scatterMultiplier, 100f * scatterMultiplier),
             MathUtils.getRandomNumberInRange(-100f * scatterMultiplier, 100f * scatterMultiplier)
         ),
-        val size: Float = 150f
+        val size: Float = 110f
     ) {
         fun locationRelativeTo(center: Vector2f): Vector2f =
             center + relativeLocation

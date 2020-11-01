@@ -1,5 +1,5 @@
 {
-  "GatesAwakened_innerCircle": {
+  "GatesAwakened_gateJumpAnimationEntity": {
     "defaultName": "",
     "defaultRadius": 302,
     "renderShadow": false,
@@ -12,21 +12,6 @@
     "scanIconWithZoom": true,
     "interactable":false,
     "layers": [STATIONS],
-    "pluginClass": "org.wisp.gatesawakened.jumping.GateRingInner"
-  },
-  "GatesAwakened_outerCircle": {
-    "defaultName": "",
-    "defaultRadius": 302,
-    "renderShadow": false,
-    "useLightColor": false,
-    "showInCampaign": true,
-    "showIconOnMap": false,
-    "showNameOnMap": false,
-    "renderCircleIndicator": false,
-    "renderCircleIndicatorSelectionFlash": false,
-    "scanIconWithZoom": true,
-    "interactable":false,
-    "layers": [STATIONS],
-    "pluginClass": "org.wisp.gatesawakened.jumping.GateRingOuter"
+    "pluginClass": "org.wisp.gatesawakened.jumping.GateJumpAnimationEntity"
   }
 }

@@ -1,5 +1,6 @@
 package org.wisp.gatesawakened.jumping
 
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI
 import com.fs.starfarer.api.campaign.JumpPointAPI
 import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.util.Misc
@@ -40,19 +41,11 @@ internal object Jump {
             }
         }
 
-//        di.soundPlayer.playUISound(
-//            "GatesAwakened_jump",
-//            1f,
-//            1.5f
-//        )
-
         if (sourceGate != null) {
-//            renderEffectsMagicLib(sourceGate)
-//            renderEffectsGraphicsLib(sourceGate)
             GlobalScope.launch {
-                renderEffectsHomegrown(sourceGate, destinationGate)
+                val animationEntity = createJumpAnimation(sourceGate)
 
-                delay(3200)
+                delay(timeMillis = 3200)
 
                 // Jump player fleet to new system
                 di.sector.doHyperspaceTransition(
@@ -60,20 +53,24 @@ internal object Jump {
                     if (flyToGateBeforeJumping) sourceGate else null,
                     JumpPointAPI.JumpDestination(destinationGate, null)
                 )
+
+                // After player has jumped, remove the animation entity
+                delay(timeMillis = 6000)
+                sourceGate.containingLocation.removeEntity(animationEntity)
             }
         }
         return JumpResult.Success
     }
 
-    private suspend fun renderEffectsHomegrown(sourceGate: SectorEntityToken, destinationGate: Gate) {
+    private fun createJumpAnimation(sourceGate: SectorEntityToken): CustomCampaignEntityAPI {
         val jumpAnimation = JumpAnimation()
-        sourceGate.containingLocation.addCustomEntity(
-                null,
-                "",
-                "GatesAwakened_innerCircle",
-                null,
-                jumpAnimation
-            )
+        return sourceGate.containingLocation.addCustomEntity(
+            null,
+            "",
+            "GatesAwakened_gateJumpAnimationEntity",
+            null,
+            jumpAnimation
+        )
             .apply {
                 this.setLocation(
                     sourceGate.location.x,
@@ -81,120 +78,7 @@ internal object Jump {
                 )
                 this.orbit = sourceGate.orbit.makeCopy()
             }
-
-        sourceGate.containingLocation.addCustomEntity(
-                null,
-                "",
-                "GatesAwakened_outerCircle",
-                null,
-                jumpAnimation
-            )
-            .apply {
-                this.setLocation(
-                    sourceGate.location.x,
-                    sourceGate.location.y
-                )
-                this.orbit = sourceGate.orbit.makeCopy()
-            }
-//        di.sector.addScript(WarpEffectScript(10f, di.sector.playerFleet))
     }
-
-//    class WarpEffectScript(duration: Float, val location: SectorEntityToken) : EveryFrameScript {
-//        var remainingDuration: Float = duration
-//        val sprite = GenericCampaignEntitySprite(location, "graphics/gate/inner_circle.png", 1f)
-//
-//        override fun runWhilePaused(): Boolean = false
-//
-//        override fun isDone(): Boolean = remainingDuration <= 0f
-//
-//        override fun advance(amount: Float) {
-//            sprite.angle += 5f
-//            sprite.render(location.x, location.y)
-//
-//            remainingDuration -= amount
-//        }
-//    }
-
-//    fun renderEffectsGraphicsLib(anchor: SectorEntityToken) {
-//        DistortionShader.addDistortion(
-//            RippleDistortion(anchor.location, Vector2f(1f, 1f))
-//                .apply {
-//                    this.setLifetime(3f)
-//                }
-//        )
-//    }
-
-    fun renderEffectsMagicLib(anchor: SectorEntityToken) {
-//        di.sector.addScript(MagicCampaignTrailPlugin())
-
-//        val jumpFxId = MagicCampaignTrailPlugin.getUniqueID()
-//        MagicCampaignTrailPlugin.AddTrailMemberSimple(
-//            di.sector.playerFleet,
-//            jumpFxId,
-//            di.settings.getSprite("GatesAwakenedFx", "emp_arcs"),
-//            di.sector.playerFleet.location,
-//            0f,
-//            Random.nextFloat(),
-//            5f,
-//            2f,
-//            Color.RED,
-//            .5f,
-//            5f,
-//            true,
-//            Vector2f(2f, 2f)
-//        )
-//
-//        MagicCampaignTrailPlugin.AddTrailMemberSimple(
-//            di.sector.playerFleet,
-//            jumpFxId,
-//            di.settings.getSprite("GatesAwakenedFx", "emp_arcs"),
-//            di.sector.playerFleet.location,
-//            0f,
-//            Random.nextFloat(),
-//            5f,
-//            2f,
-//            Color.GREEN,
-//            .5f,
-//            5f,
-//            true,
-//            Vector2f(4f, 4f)
-//        )
-//
-//        MagicCampaignTrailPlugin.AddTrailMemberSimple(
-//            di.sector.playerFleet,
-//            jumpFxId,
-//            di.settings.getSprite("GatesAwakenedFx", "emp_arcs"),
-//            di.sector.playerFleet.location,
-//            0f,
-//            Random.nextFloat(),
-//            5f,
-//            2f,
-//            Color.BLUE,
-//            .5f,
-//            5f,
-//            true,
-//            Vector2f(6f, 6f)
-//        )
-    }
-
-    private fun createParticle() {
-
-    }
-
-    /**
-     * Updates a particle position
-     * @param particle The particle to update
-     * @param elapsedTime Elapsed time in milliseconds
-     */
-//    fun updatePosition(particle: Particle, elapsedTime: Long) {
-//        val speed: Vector3f = particle.getSpeed()
-//        val delta = elapsedTime / 1000.0f
-//        val dx = speed.x * delta
-//        val dy = speed.y * delta
-//        val dz = speed.z * delta
-//        val pos: Vector3f = particle.getPosition()
-//        particle.setPosition(pos.x + dx, pos.y + dy, pos.z + dz)
-//    }
 
     sealed class JumpResult {
         object Success : JumpResult()

@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken
 import com.fs.starfarer.api.combat.ViewportAPI
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin
 
-class GateRingInner : BaseCustomEntityPlugin() {
+class GateJumpAnimationEntity : BaseCustomEntityPlugin() {
 //    private lateinit var starSystemId: String
 
     @Transient
@@ -26,11 +26,10 @@ class GateRingInner : BaseCustomEntityPlugin() {
         }
 
         jumpAnimation = pluginParams
-        jumpAnimation?.gateRingInner = this
     }
 
     /**
-     * Only call this from [GateRingInner], not [GateRingOuter], so that it isn't triggered twice per tick.
+     * Only call this from [GateJumpAnimationEntity], not [GateRingOuter], so that it isn't triggered twice per tick.
      */
     override fun advance(amount: Float) {
         super.advance(amount)
