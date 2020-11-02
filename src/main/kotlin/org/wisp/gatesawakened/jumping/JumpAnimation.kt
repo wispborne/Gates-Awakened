@@ -193,7 +193,7 @@ class JumpAnimation(
                 lightnings += Lightning(scatterMultiplier = 0.8f)
             }
 
-            while (lightnings.count() < 4 && millisSinceStart >= START_SPIN_TIMESTAMP) {
+            while (lightnings.count() < 5 && millisSinceStart >= START_SPIN_TIMESTAMP) {
                 lightnings += Lightning(scatterMultiplier = 1.5f)
             }
 

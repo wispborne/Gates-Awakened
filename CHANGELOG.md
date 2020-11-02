@@ -1,8 +1,8 @@
 # Changelog
 
-## 2.1.0
-
-- Added sound and visual effects to gate use.
+## 2.1.0 (2020-11-1) 
+- Save-compatible back to 2.0.0
+- Added sound and visual effects to gate use. Sounds created by MesoTroniK.
 - Inactive, discovered gates are now displayed as intel.
     - This may be toggled off by selecting the intel.
 - The third quest will now always trigger if prereqs are met (previously 33% chance).

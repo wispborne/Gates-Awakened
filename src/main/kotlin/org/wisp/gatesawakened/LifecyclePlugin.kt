@@ -11,10 +11,13 @@ import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.createGate.GateDeliveredIntel
 import org.wisp.gatesawakened.gateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.gateIntel.GateIntelCommon
+import org.wisp.gatesawakened.gateIntel.InactiveGateIntel
 import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.intro.IntroBarEventCreator
 import org.wisp.gatesawakened.intro.IntroIntel
 import org.wisp.gatesawakened.intro.IntroQuestBeginning
+import org.wisp.gatesawakened.jumping.JumpScript
+import org.wisp.gatesawakened.jumping.GateJumpAnimationEntity
 import org.wisp.gatesawakened.logging.i
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameBarEventCreator
@@ -112,7 +115,10 @@ class LifecyclePlugin : ILifecyclePlugin {
             GateDeliveredIntel::class to "GateCreatedIntel",
             CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
             ActiveGateIntel::class to "ActiveGateIntel",
-            CampaignPlugin::class to "CampaignPlugin"
+            InactiveGateIntel::class to "InactiveGateIntel",
+            CampaignPlugin::class to "CampaignPlugin",
+            GateJumpAnimationEntity::class to "GateJumpAnimationEntity",
+            JumpScript::class to "JumpScript"
         )
 
         // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
