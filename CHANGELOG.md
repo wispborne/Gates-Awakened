@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.0 (2020-11-1) 
+- Save-compatible back to 2.0.0
+- Added sound and visual effects to gate use. Sounds created by MesoTroniK.
+- Inactive, discovered gates are now displayed as intel.
+    - This may be toggled off by selecting the intel.
+- The third quest will now always trigger if prereqs are met (previously 33% chance).
+- The GatesAwakenedViewInfo console command will now show what is missing for the second and third quests to trigger.
+
 ## 2.0.5.1 (2020-8-21)
 - Fixes interactions with gates not working (thanks to @Apky for report)
 
@@ -18,7 +26,7 @@
 - Added support for jumping to Boggled's player constructed gates
 - If no Remnant systems exist, second quest uses a non-Remnant system instead (reported by Tiberiumkyle on the forums)
 - Fixed third quest intel showing planet type instead of name (reported by @Avanitia)
-- Possibly fixed quest intel icon showing incorrectly (unconfirmed) (edit: nope didn't fix it, fixed in 2.1.0)
+- Possibly fixed quest intel icon showing incorrectly (unconfirmed) (edit: nope didn't fix it, fixed in 2.0.4)
 - Fixed bug where declining a quest, then trying to start it again would crash
 - Fixed bug where final quest epilogue could be triggered by interacting with any active gate  (reported by @Histidine)
 - Adds forum id to version checker

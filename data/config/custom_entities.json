@@ -1,0 +1,17 @@
+{
+  "GatesAwakened_gateJumpAnimationEntity": {
+    "defaultName": "",
+    "defaultRadius": 302,
+    "renderShadow": false,
+    "useLightColor": false,
+    "showInCampaign": true,
+    "showIconOnMap": false,
+    "showNameOnMap": false,
+    "renderCircleIndicator": false,
+    "renderCircleIndicatorSelectionFlash": false,
+    "scanIconWithZoom": true,
+    "interactable":false,
+    "layers": [STATIONS],
+    "pluginClass": "org.wisp.gatesawakened.jumping.GateJumpAnimationEntity"
+  }
+}

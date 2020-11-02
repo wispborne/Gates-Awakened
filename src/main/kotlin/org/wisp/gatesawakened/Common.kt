@@ -7,9 +7,9 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator
 import com.fs.starfarer.api.util.Misc
-import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isBlacklisted
+import org.wisp.gatesawakened.midgame.Midgame
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -36,6 +36,12 @@ internal object Common {
             .filterNot { it.isBlacklisted }
 
     /**
+     * Total number of activation codes the player can distribute.
+     * `2` is the number of gates activated from the first quest.
+     */
+    val totalNumberOfActivationCodes = Midgame.midgameRewardActivationCodeCount + 2
+
+    /**
      * List of non-blacklisted gates (filterable), sorted by shortest distance from player first
      */
     fun getGates(
@@ -45,7 +51,7 @@ internal object Common {
     ): List<GateInfo> {
         return getSystems()
             .flatMap { system ->
-                system.getEntitiesWithTag(Tags.TAG_GATE) +
+                system.allEntities.filter { Tags.TAG_GATE in it.tags } +
                         if (includeGatesFromOtherMods)
                             system.getEntitiesWithTag(Tags.TAG_BOGGLED_GATE)
                         else
@@ -82,23 +88,6 @@ internal object Common {
             }
             .sortedBy { it.gate.distanceFromPlayerInHyperspace }
             .toList()
-    }
-
-    fun updateActiveGateIntel() {
-        val activeGates = getGates(GateFilter.Active, excludeCurrentGate = false).map { it.gate }
-
-        val currentGateIntels = di.intelManager.getIntel(ActiveGateIntel::class.java)
-            .filterIsInstance(ActiveGateIntel::class.java)
-
-        // Add intel for gates that don't have any
-        activeGates
-            .filter { it !in currentGateIntels.map { activeIntel -> activeIntel.activeGate } }
-            .forEach { di.intelManager.addIntel(ActiveGateIntel(it)) }
-
-        // Remove intel for gates that aren't in the active list
-        currentGateIntels
-            .filter { it.activeGate !in activeGates }
-            .forEach { di.intelManager.removeIntel(it) }
     }
 
     fun spawnGateAtLocation(location: SectorEntityToken?, activateAfterSpawning: Boolean): SectorEntityToken? {
@@ -138,6 +127,13 @@ internal object Common {
             orbitRadius / (20f + StarSystemGenerator.random.nextFloat() * 5f) // taken from StarSystemGenerator:1655
         )
     }
+
+    val playerFleetPoints: Int
+        get() = di.sector.playerFleet.fleetPoints
+
+    fun establishedPlayerColonyCount(establishedDays: Int): Int = di.sector.economy.marketsCopy
+        .filter { it.isPlayerOwned && it.daysInExistence > establishedDays }
+        .count()
 }
 
 internal data class GateInfo(

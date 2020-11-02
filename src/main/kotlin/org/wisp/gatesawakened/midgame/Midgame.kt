@@ -7,16 +7,20 @@ import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.di
-import org.wisp.gatesawakened.intro.Intro
+import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.logging.i
 
 object Midgame {
+    const val PREREQ_FLEET_POINTS = 65
+    const val PREREQ_COLONIES = 1
+    const val PREREQ_COLONY_ESTABLISHED_DAYS = 60
+
     fun hasPlanetWithCacheBeenTagged(): Boolean =
         planetWithCache != null
 
     fun shouldOfferQuest(market: MarketAPI): Boolean =
         market.factionId !in listOf("luddic_church", "luddic_path")
-                && Intro.wasQuestCompleted
+                && IntroQuest.wasQuestCompleted
                 && !hasQuestBeenStarted
                 && !wasQuestCompleted
                 && isMidgame()
@@ -63,22 +67,10 @@ object Midgame {
      * - Player has a large enough fleet, or
      * - Player has an established colony.
      */
-    fun isMidgame(): Boolean {
-        val fleetPoints = di.sector.playerFleet.fleetPoints
-
-        if (fleetPoints >= 65) {
-            return true
-        }
-
-        val playerColonies = di.sector.economy.marketsCopy
-            .filter { it.isPlayerOwned }
-
-        if (playerColonies.any { it.daysInExistence >= 60 }) {
-            return true
-        }
-
-        return false
-    }
+    fun isMidgame(): Boolean =
+        Common.playerFleetPoints >= PREREQ_FLEET_POINTS || Common.establishedPlayerColonyCount(
+            PREREQ_COLONY_ESTABLISHED_DAYS
+        ) > PREREQ_COLONIES
 
     /**
      * Attempts to start the midgame quest by adding player intel.

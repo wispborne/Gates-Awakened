@@ -8,6 +8,7 @@ import org.wisp.gatesawakened.constants.Memory
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
 import org.wisp.gatesawakened.constants.isValidSystemForRandomActivation
+import org.wisp.gatesawakened.gateIntel.GateIntelCommon
 import org.wisp.gatesawakened.logging.i
 
 /**
@@ -15,7 +16,7 @@ import org.wisp.gatesawakened.logging.i
  * It then tells the player to go to the fringe gate, which activates both gates and allows
  * the player to travel between them.
  */
-internal object Intro {
+internal object IntroQuest {
     fun shouldOfferQuest(market: MarketAPI): Boolean =
         market.factionId !in listOf("luddic_church", "luddic_path")
                 && !hasQuestBeenStarted
@@ -98,6 +99,10 @@ internal object Intro {
         fringeGate?.activate()
         coreGate?.activate()
         di.memory[Memory.INTRO_QUEST_DONE] = true
+
+        // Display all inactive gates they've already found.
+        GateIntelCommon.updateDiscoveredInactiveGates(newlyDiscoveredInactiveGatesToAppend = null)
+        GateIntelCommon.updateInactiveGateIntel()
 
         // Pop up a dialog explaining how gates work
         di.sector.campaignUI.showInteractionDialog(IntroQuestEpilogueDialog().build(), di.sector.playerFleet)

@@ -38,6 +38,7 @@ class MidgameQuestFinishedDialog : InteractionDefinition<MidgameQuestFinishedDia
 
                         di.memory[Memory.MID_QUEST_DONE] = true
                         addPara { mark("You may now activate up to ${Midgame.remainingActivationCodes} Gates of your choosing.") }
+                        addPara { "Active gates may be deactivated to reclaim a code." }
                         it.goToPage(2)
                     }
                 )

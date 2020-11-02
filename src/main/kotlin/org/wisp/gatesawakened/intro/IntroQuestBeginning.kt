@@ -19,7 +19,7 @@ class IntroBarEventCreator : BaseBarEventCreator() {
  * Facilitates the intro quest at the bar.
  */
 class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
-    shouldShowEvent = { market -> Intro.shouldOfferQuest(market) },
+    shouldShowEvent = { market -> IntroQuest.shouldOfferQuest(market) },
     interactionPrompt = {
         addPara {
             "A $manOrWoman's tattoo catches your attention. " +
@@ -29,9 +29,9 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                     "and it looks like $heOrShe is staring at an image of a ${mark("Gate")}."
         }
     },
-    textToStartInteraction = { "Move nearer for a closer look at $hisOrHer screen." },
+    textToStartInteraction = { "Move nearer for a closer look at the Gate on the $manOrWoman's screen." },
     onInteractionStarted = {
-        destinationSystem = Intro.fringeGate?.starSystem!!
+        destinationSystem = IntroQuest.fringeGate?.starSystem!!
     },
     pages = listOf(
         Page(
@@ -57,7 +57,7 @@ class IntroQuestBeginning : BarEventDefinition<IntroQuestBeginning>(
                                 "could be at ${destinationSystem!!.baseName}."
                     },
                     onOptionSelected = { navigator ->
-                        val wasQuestSuccessfullyStarted = Intro.startQuest(dialog.interactionTarget)
+                        val wasQuestSuccessfullyStarted = IntroQuest.startQuest(dialog.interactionTarget)
                         navigator.close(hideQuestOfferAfterClose = true)
 
                         if (!wasQuestSuccessfullyStarted) {

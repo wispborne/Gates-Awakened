@@ -66,13 +66,13 @@ class IntroQuestFinishedDialog : InteractionDialogPlugin {
                 )
             }
             Option.FLY_THROUGH -> {
-                val coreGate = Intro.coreGate
+                val coreGate = IntroQuest.coreGate
 
                 if (coreGate != null) {
                     dialog.dismiss()
                     di.sector.isPaused = false
                     Jump.jumpPlayer(
-                        sourceGate = null,
+                        sourceGate = dialog.interactionTarget,
                         destinationGate = coreGate,
                         isFuelRequired = false
                     )

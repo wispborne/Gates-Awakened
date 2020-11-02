@@ -11,6 +11,9 @@ import kotlin.math.pow
 internal fun TextPanelAPI.appendPara(text: String, vararg highlights: String) =
     this.addPara(text, Misc.getHighlightColor(), *highlights)
 
+/**
+ * Same as [TooltipMakerAPI.addPara].
+ */
 internal fun TooltipMakerAPI.appendPara(text: String, padding: Float = 0f, vararg highlights: String) =
     this.addPara(text, padding, Misc.getHighlightColor(), *highlights)
 
@@ -74,6 +77,20 @@ internal fun Vector2f.isInsideCircle(
     center: Vector2f,
     radius: Float
 ) = isPointInsideCircle(this, center, radius)
+
+operator fun Vector2f.plus(other: Vector2f): Vector2f = Vector2f(this.x + other.x, this.y + other.y)
+
+operator fun Vector2f.minus(other: Vector2f): Vector2f = Vector2f(this.x - other.x, this.y - other.y)
+
+operator fun Vector2f.plusAssign(other: Vector2f) {
+    this.x = this.x + other.x
+    this.y = this.y + other.y
+}
+
+operator fun Vector2f.minusAssign(other: Vector2f) {
+    this.x = this.x - other.x
+    this.y = this.y - other.y
+}
 
 internal fun InteractionDialogPlugin.show(campaignUIAPI: CampaignUIAPI, targetEntity: SectorEntityToken) =
     campaignUIAPI.showInteractionDialog(this, targetEntity)

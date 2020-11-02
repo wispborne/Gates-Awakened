@@ -2,7 +2,6 @@ package org.wisp.gatesawakened
 
 import com.fs.starfarer.api.impl.campaign.intel.bar.events.BarEventManager
 import com.thoughtworks.xstream.XStream
-import org.wisp.gatesawakened.activeGateIntel.ActiveGateIntel
 import org.wisp.gatesawakened.constants.MOD_PREFIX
 import org.wisp.gatesawakened.constants.Strings
 import org.wisp.gatesawakened.constants.Tags
@@ -10,10 +9,15 @@ import org.wisp.gatesawakened.createGate.CountdownToGateHaulerScript
 import org.wisp.gatesawakened.createGate.CreateGateQuestIntel
 import org.wisp.gatesawakened.createGate.CreateGateQuestStart
 import org.wisp.gatesawakened.createGate.GateDeliveredIntel
-import org.wisp.gatesawakened.intro.Intro
+import org.wisp.gatesawakened.gateIntel.ActiveGateIntel
+import org.wisp.gatesawakened.gateIntel.GateIntelCommon
+import org.wisp.gatesawakened.gateIntel.InactiveGateIntel
+import org.wisp.gatesawakened.intro.IntroQuest
 import org.wisp.gatesawakened.intro.IntroBarEventCreator
 import org.wisp.gatesawakened.intro.IntroIntel
 import org.wisp.gatesawakened.intro.IntroQuestBeginning
+import org.wisp.gatesawakened.jumping.JumpScript
+import org.wisp.gatesawakened.jumping.GateJumpAnimationEntity
 import org.wisp.gatesawakened.logging.i
 import org.wisp.gatesawakened.midgame.Midgame
 import org.wisp.gatesawakened.midgame.MidgameBarEventCreator
@@ -36,8 +40,8 @@ interface ILifecyclePlugin {
 class LifecyclePlugin : ILifecyclePlugin {
 
     override fun onNewGameAfterTimePass() {
-        if (!Intro.haveGatesBeenTagged()) {
-            Intro.findAndTagIntroGatePair()
+        if (!IntroQuest.haveGatesBeenTagged()) {
+            IntroQuest.findAndTagIntroGatePair()
         }
 
         if (!Midgame.hasPlanetWithCacheBeenTagged()) {
@@ -59,8 +63,8 @@ class LifecyclePlugin : ILifecyclePlugin {
         fixBugWithBarCreatorDurationTooHigh(bar)
 
         // Intro quest
-        if (!Intro.haveGatesBeenTagged()) {
-            Intro.findAndTagIntroGatePair()
+        if (!IntroQuest.haveGatesBeenTagged()) {
+            IntroQuest.findAndTagIntroGatePair()
         }
 
         // Midgame quest
@@ -72,7 +76,9 @@ class LifecyclePlugin : ILifecyclePlugin {
 
         adjustPlayerActivationCodesToMatchSettings()
 
-        Common.updateActiveGateIntel()
+        GateIntelCommon.listenForWhenPlayerDiscoversNewGates()
+        GateIntelCommon.updateActiveGateIntel()
+        GateIntelCommon.updateInactiveGateIntel()
 
         // Register this so we can intercept and replace interactions, such as with a gate
         di.sector.registerPlugin(CampaignPlugin())
@@ -109,7 +115,10 @@ class LifecyclePlugin : ILifecyclePlugin {
             GateDeliveredIntel::class to "GateCreatedIntel",
             CountdownToGateHaulerScript::class to "CountdownToGateHaulerScript",
             ActiveGateIntel::class to "ActiveGateIntel",
-            CampaignPlugin::class to "CampaignPlugin"
+            InactiveGateIntel::class to "InactiveGateIntel",
+            CampaignPlugin::class to "CampaignPlugin",
+            GateJumpAnimationEntity::class to "GateJumpAnimationEntity",
+            JumpScript::class to "JumpScript"
         )
 
         // Prepend with mod prefix so the classes don't conflict with anything else getting serialized
@@ -119,8 +128,8 @@ class LifecyclePlugin : ILifecyclePlugin {
     private fun addQuestStarts() {
         val bar = BarEventManager.getInstance()
 
-        if (Intro.haveGatesBeenTagged()
-            && !Intro.hasQuestBeenStarted
+        if (IntroQuest.haveGatesBeenTagged()
+            && !IntroQuest.hasQuestBeenStarted
             && !bar.hasEventCreator(IntroBarEventCreator::class.java)
         ) {
             bar.addEventCreator(IntroBarEventCreator())
@@ -183,12 +192,11 @@ class LifecyclePlugin : ILifecyclePlugin {
      * codes to match that, subtracting ones they've already used to activate gates.
      */
     private fun adjustPlayerActivationCodesToMatchSettings() {
-        val numberOfEarlyQuestGates = 2
         val activeGateCount = Common.getGates(GateFilter.Active, excludeCurrentGate = false)
             .filter { it.gate.canBeDeactivated }
             .count()
         val currentTotalActivateCodeCount = activeGateCount + Midgame.remainingActivationCodes
-        val expectedTotalActivationCodeCount = Midgame.midgameRewardActivationCodeCount + numberOfEarlyQuestGates
+        val expectedTotalActivationCodeCount = Common.totalNumberOfActivationCodes
 
         if (Midgame.wasQuestCompleted && currentTotalActivateCodeCount != expectedTotalActivationCodeCount
         ) {

@@ -7,7 +7,7 @@ import org.wisp.gatesawakened.Common
 import org.wisp.gatesawakened.di
 
 class SpawnGate : BaseCommand {
-    override fun runCommand(args: String?, context: BaseCommand.CommandContext): BaseCommand.CommandResult {
+    override fun runCommand(args: String, context: BaseCommand.CommandContext): BaseCommand.CommandResult {
         if (!context.isInCampaign || di.sector.playerFleet.isInHyperspace) {
             return BaseCommand.CommandResult.WRONG_CONTEXT
         }

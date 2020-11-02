@@ -1,7 +1,20 @@
 {
-	"GatesAwakened_jump": [
+	"GatesAwakened_gate_ringAppear": [
 		{
-			"file": "sounds/sfx_gates_awakened/jump.ogg",
+			"file": "sounds/sfx_gates_awakened/Wisp_gate_ring_appear.ogg",
+			"pitch": 1,
+			"volume": 1
+		}
+	],	"GatesAwakened_gate_spinup": [
+		{
+			"file": "sounds/sfx_gates_awakened/Wisp_gate_spinup_loop.ogg",
+			"pitch": 1,
+			"volume": 1
+		}
+	],
+	"GatesAwakened_gate_warp": [
+		{
+			"file": "sounds/sfx_gates_awakened/Wisp_gate_warp_stereo.ogg",
 			"pitch": 1,
 			"volume": 1
 		}
