@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.1.1 (2020-12-12)
+## 2.1.1 (2021-01-12)
 - Save-compatible back to 2.0.0
 - Fixes crash when using gates with no orbit, such as one in Interstellar Imperium (thanks to @Freetimez on Discord for the report)
 
