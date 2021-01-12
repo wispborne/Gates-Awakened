@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1 (2020-12-12)
+- Save-compatible back to 2.0.0
+- Fixes crash when using gates with no orbit, such as one in Interstellar Imperium (thanks to @Freetimez on Discord for the report)
+
 ## 2.1.0 (2020-11-1) 
 - Save-compatible back to 2.0.0
 - Added sound and visual effects to gate use. Sounds created by MesoTroniK.

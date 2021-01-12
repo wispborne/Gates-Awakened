@@ -52,7 +52,7 @@ tasks {
     named<Jar>("jar")
     {
         // Include all runtime files in the jar so mod is standalone
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) }) //        with(tasks.jar.get() as CopySpec)
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
         destinationDir = file("$rootDir/jars")
         archiveName = "Gates_Awakened.jar"
     }

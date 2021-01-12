@@ -82,7 +82,7 @@ class JumpScript : EveryFrameScript {
                     sourceGate.location.x,
                     sourceGate.location.y
                 )
-                this.orbit = sourceGate.orbit.makeCopy()
+                this.orbit = sourceGate.orbit?.makeCopy()
             }
     }
 }
